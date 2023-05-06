@@ -1,0 +1,160 @@
+from django.shortcuts import render, redirect
+from django.urls import reverse
+from django.http import HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+from .models import *
+import re
+
+# Create your views here.
+
+
+def index(request):
+    if request.user.is_authenticated:
+        if request.user.isProf == True:
+            return redirect('indexProf')
+        userid = User.objects.get(username=request.user)
+        if (Studentprofile.objects.filter(userID=userid).count() > 0):
+            studentN = Studentprofile.objects.get(userID=userid)
+            return HttpResponseRedirect(reverse('studentProfile', args=(studentN.studentNumber,)))
+        if request.user.username == "jan":
+            return HttpResponseRedirect(reverse('admin'))
+
+        # return HttpResponseRedirect(reverse('profileForm'))
+
+    return render(request, "landing.html")
+
+
+@login_required
+def demographicForm(request):
+    if request.user.isProf == True:
+        return redirect('indexProf')
+    userid = User.objects.get(username=request.user)
+    if (Studentprofile.objects.filter(userID=userid).count() > 0):
+        studentN = Studentprofile.objects.get(userID=userid)
+        return HttpResponseRedirect(reverse('studentProfile', args=(studentN.studentNumber,)))
+
+    if request.method == "POST":
+        studentNumber = request.POST['studentNumber']
+        first = request.user.first_name
+        last = request.user.last_name
+        course = request.POST['course']
+        yearlevel = request.POST['yearlevel']
+        gender = request.POST['gender']
+        phoneNumber = request.POST['phoneNumber']
+        email = request.user.email
+        guardianNumber = request.POST['guardianNumber']
+        guardianName = request.POST['guardianName']
+
+        studentNumberFormat = r'^TUPM-\d{2}-\d{4}$'
+
+        match_result = re.match(studentNumberFormat, studentNumber)
+
+        if not match_result:
+            return render(request, "studentForm.html", {
+                'courses': Course.objects.all(),
+                'yearLevels': YearLevel.objects.all(),
+                'gender': Gender.objects.all(),
+                'studentNumber': studentNumber,
+                'first': first,
+                'last': last,
+                'phoneNumber': phoneNumber,
+                'email': email,
+                'guardianNumber': guardianNumber,
+                'course': course,
+                'guardianName': guardianName,
+                'error': 'Wrong Format'
+
+            })
+
+        courseInstance = Course.objects.get(pk=course)
+        yearInstance = YearLevel.objects.get(pk=yearlevel)
+        genderInstance = Gender.objects.get(pk=gender)
+
+        studentProfile = Studentprofile(userID=request.user, studentNumber=studentNumber, lastName=last, firstName=first, courseID=courseInstance, yearID=yearInstance,
+                                        genderID=genderInstance, contactNumber=phoneNumber, emailAddress=email, guardianNumber=guardianNumber, guardianName=guardianName)
+
+        studentProfile.save()
+        return HttpResponseRedirect(reverse("studentProfile", args=(str(studentNumber),)))
+
+    return render(request, "studentForm.html", {
+        'courses': Course.objects.all(),
+        'yearLevels': YearLevel.objects.all(),
+        'gender': Gender.objects.all(),
+    })
+
+
+def studentProfile(request, studentID):
+    studentprof = Studentprofile.objects.get(studentNumber=studentID)
+    subjects = Subject.objects.filter(studentProfileID=studentprof)
+    availableSubs = Subject.objects.all()
+    if request.method == "POST":
+        subID = request.POST['addSub']
+        sub = Subject.objects.get(pk=subID)
+        sub.studentProfileID = studentprof
+        sub.save()
+        studentNumber = studentprof.studentNumber
+        return HttpResponseRedirect(reverse("studentProfile", args=(str(studentNumber),)))
+
+    return render(request, "studentProfile.html", {
+        'studentprof': studentprof,
+        'subjects': subjects,
+        'availSubs': availableSubs
+    })
+
+
+@login_required
+def studentSubject(request, studentID, subjectCode):
+    profile = Studentprofile.objects.get(studentNumber=studentID)
+    subject = Subject.objects.get(
+        studentProfileID=profile, subjectCode=subjectCode)
+    studentTask = Task.objects.filter(taskSubject=subject)
+    tasktype = TaskType.objects.all()
+    rubrik = Rubrick.objects.filter(subjectID=subject).filter(~Q(percentage=0))
+
+    if request.method == "POST":
+        type = request.POST['type']
+        title = request.POST['title']
+        myScore = request.POST['myScore']
+        totalScore = request.POST['totalScore']
+        date = request.POST['date']
+        image = request.FILES['image']
+
+        tType = TaskType.objects.get(taskType=type)
+        uploadedTask = Task(task_Type=tType, taskSubject=subject, title=title,
+                            overallscore=totalScore, score=myScore, image=image, date=date)
+        uploadedTask.save()
+        return HttpResponseRedirect(reverse("studentSubject", args=(str(profile.studentNumber), str(subject.subjectCode))))
+    return render(request, 'studentSubject.html', {
+        'subject': subject,
+        'sNumber': studentID,
+        'task': studentTask,
+        'types': tasktype,
+        'rubricks': rubrik
+    })
+
+
+def adminSite(request):
+    return render(request, 'admin.html')
+
+# def login(request):
+#     return render(request, 'login.html')
+
+# def landing(request):
+#     return render(request, 'landing.html')
+
+
+def about(request):
+    return render(request, 'about.html')
+
+
+def overview(request):
+    return render(request, 'overview.html')
+
+
+def contact(request):
+    return render(request, 'contact.html')
+
+
+def dashboard(request):
+    return render(request, 'ePortfolioUI/template/dashboard.html')

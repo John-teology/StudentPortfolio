@@ -1,0 +1,113 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  </head>
+  <body>
+    <h1>prof page</h1>
+    <h1>Add Subject</h1>
+    <form id="addSubjectForm">
+      <input type="text" id="subjectCode" placeholder="Subject Code" />
+      <input type="text" id="subjectName" placeholder="subject Name" />
+      <input type="text" id="facultyName" placeholder="faculty Name" />
+      <input type="number" id="units" placeholder="No. of Units" />
+      <br />
+      <h1>Rubricks</h1>
+      {% for type in tasksT %}
+      <input
+        type="number"
+        value=""
+        id="{{type|lower}}"
+        placeholder="{{type}}"
+      />
+      {% endfor %}
+      <input type="submit" />
+    </form>
+    <h1>list of subs</h1>
+
+    <div id="table">
+      {% for sub in subjects %}
+      <p>{{sub}}</p>
+      {% endfor %}
+    </div>
+
+    <h1>{{user.date_joined.date}}</h1>
+    <h1>{{user.email}}</h1>
+
+    <form method="post" action="/accounts/logout/" style="margin-top: 10px">
+      {% csrf_token %}
+      <button class="btn btn-dark" type="submit">Sign Out</button>
+    </form>
+
+    <script>
+      $(document).ready(() => {
+        // Gett all the values of rubricks
+        const isvalid = () => {
+          let totalRubicks = [
+            defaulval("#quiz"),
+            defaulval("#performancetask"),
+            defaulval("#prelims"),
+            defaulval("#midterm"),
+            defaulval("#finals"),
+            defaulval("#project"),
+          ];
+
+          // get the total
+          let sum = totalRubicks.reduce(function (a, b) {
+            return Number(a) + Number(b);
+          });
+
+          // apply the condition so it wont submit
+          if (sum > 100) {
+            alert("wrong");
+            return false;
+          } else {
+            return true;
+          }
+        };
+
+        // convert empty inputs to zero( 0 )
+        const defaulval = (str) => {
+          return $(str).val() == "" ? 0 : $(str).val();
+        };
+
+        // get the values after submit
+        $(document).on("submit", "#addSubjectForm", (e) => {
+          e.preventDefault();
+          if (isvalid()) {
+            $.post("/professor/addSub/", {
+              subjectCode: $("#subjectCode").val(),
+              subjectName: $("#subjectName").val(),
+              facultyName: $("#facultyName").val(),
+              units: $("#units").val(),
+              quiz: defaulval("#quiz"),
+              performancetask: defaulval("#performancetask"),
+              prelims: defaulval("#prelims"),
+              midterm: defaulval("#midterm"),
+              finals: defaulval("#finals"),
+              project: defaulval("#project"),
+            }).then((response) => {
+              $("#subjectCode").val("");
+              $("#subjectName").val("");
+              $("#facultyName").val("");
+              $("#units").val("");
+              $("#quiz").val("");
+              $("#performancetask").val("");
+              $("#prelims").val("");
+              $("#midterm").val("");
+              $("#finals").val("");
+              $("#project").val("");
+              $("#table").load(location.href + " #table"); // space is needed
+            });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

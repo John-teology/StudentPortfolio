@@ -1,0 +1,200 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@700&family=Poppins:wght@400;500;600&display=swap');
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+body{
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(#fff, #f7d5da,  #ebb2bb);
+  height: 100vh;
+  overflow: hidden;
+}
+/*for login*/
+.center-form{
+  position: absolute;
+  top: 20%;
+  left: 35%;
+  width: 30%;
+  height: auto;
+  background: #FFF;
+  border-radius: 5px;
+  box-shadow: 1px 3px 5px #666362;
+}
+.center-form h1{
+  text-align: center;
+  padding-top: 30px;
+}
+.center-form form{
+  padding: 30px 40px;
+}
+form .txt_field{
+  position: relative;
+  border: 1px solid #C5312C;
+  margin: 20px 0;
+}
+.txt_field input{
+  width: 100%;
+  padding: 0 5px;
+  height: 40px;
+  font-size: 15px;
+  background: #fff;
+  border-color: #C5312C;
+  outline: none;
+}
+.txt_field label{
+  position: absolute;
+  top: 20%;
+  left: 5px;
+  color: #463E3F;
+  font-size: 16px;
+}
+.forgotpass{
+  margin-left: 50%;
+}
+.forgotpass a{
+  text-decoration: none;
+  color: blue;
+  font-size: .8rem;
+}
+.details{
+  margin:8px;
+  text-align:center;
+}
+.details a{
+  text-decoration: none;
+  color: blue;
+  font-size: 1rem;
+}
+input[type="submit"]{
+  width: 100%;
+  height: 40px;
+  border: 1px solid;
+  background: #C5312C;
+  border-radius: 2px;
+  font-size: 15px;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  outline: none;
+}
+input[type="submit"]:hover{
+  background: #de5f5b;
+  transition: .5s;
+}
+/*for *student form*/
+.form-continer{
+  position: absolute;
+  margin-left: 15%;
+  margin-top: 5%;
+  padding-bottom: 50%;
+  width: 70%; 
+  background: #FFF;
+  border-radius: 5px;
+  box-shadow: 1px 3px 5px #666362;
+}
+.form-continer h1{
+  text-align: center;
+  padding: 20px;
+  margin-top: 20px;
+}
+.txt-container{
+  display: flex;
+}
+.txt-box1{
+  width: 50%;
+  height: 50px;
+  margin: .7rem;
+  border: 3px solid #C5312C;
+  padding-left: 2%;
+}
+.txt-box2{
+  width: 30%;
+  height: 50px;
+  margin: .7rem;
+  border: 3px solid #C5312C;
+  padding-left: 2%;
+}
+.txt-box3{
+  width: 20%;
+  height: 50px;
+  margin: .7rem;
+  border: 3px solid #C5312C;
+  padding-left: 2%;
+}
+.txt-box4{
+  width: 48%;
+  height: 50px;
+  margin: .7rem;
+  border: 3px solid #C5312C;
+  padding-left: 2%;
+}
+.txt-box5{
+  width: 50%;
+  height: 50px;
+  margin: .7rem;
+  border: 3px solid #C5312C;
+  padding-left: 2%;
+}
+.txt-box6{
+  width: 22.5%;
+  height: 50px;
+  margin: .7rem;
+  border: 3px solid #C5312C;
+  padding-left: 2%;
+}
+.txt-box7{
+  width: 22.5%;
+  height: 50px;
+  margin: .7rem;
+  border: 3px solid #C5312C;
+  padding-left: 2%;
+}
+.txt-box8{
+  width: 8%;
+  height: 50px;
+  margin: .7rem;
+  border: 3px solid #C5312C;
+  padding-left: 2%;
+}
+.txt-box9{
+  width: 38.5%;
+  height: 50px;
+  margin: .7rem;
+  border: 3px solid #C5312C;
+  padding-left: 2%;
+}
+.txt-box10{
+  width: 59%;
+  height: 50px;
+  margin: .7rem;
+  border: 3px solid #C5312C;
+  padding-left: 2%;
+}
+.txt-box11{
+  width: 40%;
+  height: 50px;
+  margin: .7rem;
+  border: 3px solid #C5312C;
+  padding-left: 2%;
+}
+.txt-box12{
+  width: 50%;
+  height: 50px;
+  margin: .7rem;
+  border: 3px solid #C5312C;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 2%;
+}
+.txt-box13{
+  width: 50%;
+  height: 50px;
+  margin: .7rem;
+  border: 3px solid #C5312C;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 2%;
+}
