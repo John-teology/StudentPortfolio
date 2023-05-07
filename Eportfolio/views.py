@@ -22,7 +22,7 @@ def index(request):
 
         # return HttpResponseRedirect(reverse('profileForm'))
 
-    return render(request, "landing.html")
+    return render(request, "landing/landing.html")
 
 
 @login_required
@@ -134,27 +134,18 @@ def studentSubject(request, studentID, subjectCode):
     })
 
 
-def adminSite(request):
-    return render(request, 'admin.html')
+def studentEditProfile(request,studentNumber):
 
-# def login(request):
-#     return render(request, 'login.html')
-
-# def landing(request):
-#     return render(request, 'landing.html')
+    return render(request, 'studentEditProfile.html')
 
 
 def about(request):
-    return render(request, 'about.html')
+    return render(request, 'landing/about.html')
 
 
 def overview(request):
-    return render(request, 'overview.html')
+    return render(request, 'landing/overview.html')
 
 
 def contact(request):
-    return render(request, 'contact.html')
-
-
-def dashboard(request):
-    return render(request, 'ePortfolioUI/template/dashboard.html')
+    return render(request, 'landing/contact.html')

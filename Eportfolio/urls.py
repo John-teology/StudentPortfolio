@@ -6,18 +6,25 @@ from . import views
 
 urlpatterns = [
     path("",views.index, name="index"),
+
     path("studentform/",views.demographicForm, name="demographicForm"),
+
     path("studentprofile/<str:studentID>",views.studentProfile,name="studentProfile"),
+
     path("studentprofile/<str:studentID>/<str:subjectCode>",views.studentSubject,name="studentSubject"),
-    path("siteadmin",views.adminSite,name="adminsite"),
+
+    path("editstudentprofile/<str:studentNumber>",views.studentEditProfile,name="editStudentProfile"),
+
+
+
     path("admin/", RedirectView.as_view(url='/admin'),name="admin"),
+
+
+    # landing page
     path("about/", views.about, name= "aboutpage"),
     path("overview/", views.overview, name= "overviewpage"),
     path("contact/", views.contact, name= "contactpage"),   
-    path("dashboard/", views.dashboard, name= "dashboard"),
-    # path("landing/", views.landing, name= "landingpage"),
-    # path("login/", views.login, name="loginpage"),   
-
+  
     
 ]
 if settings.DEBUG:
