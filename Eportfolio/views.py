@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from .models import *
 import re
@@ -84,17 +85,19 @@ def demographicForm(request):
     })
 
 
+@csrf_exempt
 def studentProfile(request, studentID):
     studentprof = Studentprofile.objects.get(studentNumber=studentID)
     subjects = Subject.objects.filter(studentProfileID=studentprof)
     availableSubs = Subject.objects.all()
+
     if request.method == "POST":
         subID = request.POST['addSub']
         sub = Subject.objects.get(pk=subID)
         sub.studentProfileID = studentprof
         sub.save()
-        studentNumber = studentprof.studentNumber
-        return HttpResponseRedirect(reverse("studentProfile", args=(str(studentNumber),)))
+        # studentNumber = studentprof.studentNumber
+        return JsonResponse([{'data': 1}], safe=False)
 
     return render(request, "studentProfile.html", {
         'studentprof': studentprof,
@@ -132,11 +135,6 @@ def studentSubject(request, studentID, subjectCode):
         'types': tasktype,
         'rubricks': rubrik
     })
-
-
-def studentEditProfile(request,studentNumber):
-
-    return render(request, 'studentEditProfile.html')
 
 
 def about(request):

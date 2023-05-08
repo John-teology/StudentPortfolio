@@ -13,8 +13,6 @@ urlpatterns = [
 
     path("studentprofile/<str:studentID>/<str:subjectCode>",views.studentSubject,name="studentSubject"),
 
-    path("editstudentprofile/<str:studentNumber>",views.studentEditProfile,name="editStudentProfile"),
-
 
 
     path("admin/", RedirectView.as_view(url='/admin'),name="admin"),
