@@ -25,7 +25,6 @@
     {% for sub in subjects %}
     <li>
       <a
-        href="{% url 'studentSubject' studentID=studentprof.studentNumber subjectCode=sub.subjectCode   %}"
         >{{sub.subjectName}}</a
       >
     </li>

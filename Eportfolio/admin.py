@@ -21,6 +21,7 @@ admin.site.register(Gender)
 admin.site.register(Studentprofile,studentProfileFilter)
 admin.site.register(Subject)
 admin.site.register(Task)
+admin.site.register(StudentSubject)
 admin.site.register(TaskType)
 admin.site.register(Rubrick,rubrickFilter)
 

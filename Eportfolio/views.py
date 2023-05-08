@@ -88,13 +88,16 @@ def demographicForm(request):
 @csrf_exempt
 def studentProfile(request, studentID):
     studentprof = Studentprofile.objects.get(studentNumber=studentID)
-    subjects = Subject.objects.filter(studentProfileID=studentprof)
+    studentSibjects = StudentSubject.objects.filter(studentProfileID=studentprof)
     availableSubs = Subject.objects.all()
+    ids = [i.subjectID for i in studentSibjects]
+    subjects = Subject.objects.filter(pk__in=ids)
 
+    
     if request.method == "POST":
         subID = request.POST['addSub']
-        sub = Subject.objects.get(pk=subID)
-        sub.studentProfileID = studentprof
+
+        sub = StudentSubject(studentProfileID=studentprof, subjectID=subID)
         sub.save()
         # studentNumber = studentprof.studentNumber
         return JsonResponse([{'data': 1}], safe=False)
