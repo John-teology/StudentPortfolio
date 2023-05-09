@@ -78,6 +78,7 @@ class Subject(models.Model):
 
 
 class Task(models.Model):
+    studentProfileID = models.ForeignKey(Studentprofile, on_delete=CASCADE, related_name="studentTask", null=True)
     task_Type = models.ForeignKey(
         TaskType, on_delete=CASCADE, related_name="TypeofTask", null=True)
     taskSubject = models.ForeignKey(

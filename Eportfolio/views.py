@@ -112,9 +112,10 @@ def studentProfile(request, studentID):
 @login_required
 def studentSubject(request, studentID, subjectCode):
     profile = Studentprofile.objects.get(studentNumber=studentID)
-    subject = Subject.objects.get(
-        studentProfileID=profile, subjectCode=subjectCode)
-    studentTask = Task.objects.filter(taskSubject=subject)
+
+    subject = Subject.objects.get( subjectCode=subjectCode)
+
+    studentTask = Task.objects.filter(studentProfileID=profile)
     tasktype = TaskType.objects.all()
     rubrik = Rubrick.objects.filter(subjectID=subject).filter(~Q(percentage=0))
 

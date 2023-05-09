@@ -52,9 +52,21 @@
       href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"
       rel="stylesheet"
     />
+    <!-- link for datatables -->
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css"/>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+
+
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
+
+    <!-- end of link for datatables -->
 
     <style type="text/css">
       body {
@@ -440,9 +452,8 @@
       }
     </style>
   </head>
+
   <body>
-   
-    
     <div class="container bootstrap snippets bootdey">
       <div class="row">
         <div class="profile-nav col-md-3">
@@ -450,39 +461,27 @@
             <div class="user-heading round">
               <a href="#">
                 <img
-                  src="https://bootdey.com/img/Content/avatar/avatar3.png"
-                  alt=""
-                />
+                  src="/icons/boy.png"
+                  alt=""/>
               </a>
               <h1>{{studentprof.lastName}}, {{studentprof.firstName}}</h1>
-              <p>
-                <form
-                method="post"
-                action="/accounts/logout/"
-                style="margin-top: 10px"
-              >
-                {% csrf_token %}
-                <button class="btn btn-dark" type="submit">Sign Out</button>
-              </form>
-              </p>
             </div>
             <ul class="nav nav-pills nav-stacked">
-              <li class="active" id="activeProfile">
-                <a id="showProfilePage"> <i class="fa fa-user"></i> Profile</a>
-              </li>
-              <li >
-                <a href="#">
-                  <i class="fa fa-calendar"></i> Statistics
-                  </a
-                >
-              </li>
-              <li id="activeEdit">
-                <a id="editProfile"> <i class="fa fa-edit"></i> Edit profile</a>
-              </li>
+                <li class="active" id="activeProfile">
+                    <a id="showProfilePage"> <i class="fa fa-user"></i> Profile</a>
+                </li>
+                <li >
+                    <a href="#">
+                      <i class="fa fa-calendar"></i> Statistics
+                    </a>
+                </li>
+                <li id="activeEdit">
+                  <a id="editProfile"> <i class="fa fa-edit"></i> Edit profile</a>
+                </li>
             </ul>
           </div>
         </div>
-        <div class="profile-info col-md-9" id="profilePage">
+      <div class="profile-info col-md-9" id="profilePage">
          
           <div class="panel">
             <div class="bio-graph-heading">
@@ -534,120 +533,135 @@
           <div>
             <div class="row">
               {% for sub in subjects %}
-              <div class="col-md-6">
-                <div class="panel">
-                  <div class="panel-body">
-                    <div class="bio-chart">
-                     
-                    </div>
-                    <div class="bio-desk">
-                      <h4 class="green">{{sub.subjectCode}}</h4>
-                      <p>{{sub.subjectName}}</p>
-                      <p>{{sub.units}}</p>
+              <a href="{% url 'studentSubject' studentprof.studentNumber sub.subjectCode %}">
+                <div class="col-md-6" >
+                  <div class="panel">
+                    <div class="panel-body">
+                      <div class="bio-chart">
+                      
+                      </div>
+                      <div class="bio-desk">
+                        <h4 class="green">{{sub.subjectCode}}</h4>
+                        <p>{{sub.subjectName}}</p>
+                        <p>{{sub.units}}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </a>
               {% endfor %}
           
             </div>
           </div>
-        </div>
+       </div>
 
-        <div class="profile-info col-md-9" id="editPage">
-         
-          <div class="panel">
-         
+    <div class="profile-info col-md-9" id="editPage">
+        <div class="panel">
             <div class="panel-body bio-graph-info">
-              <h1>Edit Demographic Profile</h1>
-              <div class="row">
-                <div class="bio-row">
-                  <label for="guardianName">Guardian Name:</label>
+                <h1>Edit Demographic Profile</h1>
+                <div class="row">
+
+                  <div class="bio-row">
+                    <label for="guardianName">Guardian Name:</label>
                     <input type="text" class="form-control" id="guardianName" name="guardianName" placeholder="Guardian Name">
-                </div>
-                <div class="bio-row">
-                  <label for="guardianNumber">Guardian Contact Details</label>
+                  </div>
+
+                  <div class="bio-row">
+                    <label for="guardianNumber">Guardian Contact Details</label>
                     <input type="text" class="form-control" id="guardianNumber" name="guardianNumber" placeholder="Guardian Contact Details">
-                </div>
-                <div class="bio-row">
-                  <label for="courseID">Course:</label>
-                  <select class="form-control" id="courseID" name="courseID">
-                    <option>Select Course</option>
-                  </select>
-                </div>
-                <div class="bio-row">
-                  <label for="yearID">Year Level:</label>
-                  <select class="form-control" id="yearID" name="yearID">
-                    <option>Select Year</option>
-                  </select>
-                </div>
-                <div class="bio-row">
-                  <label for="contactNumber">Contact Details</label>
+                  </div>
+
+                  <div class="bio-row">
+                    <label for="courseID">Course:</label>
+                    <select class="form-control" id="courseID" name="courseID">
+                      <option>Select Course</option>
+                    </select>
+                  </div>
+
+                  <div class="bio-row">
+                    <label for="yearID">Year Level:</label>
+                    <select class="form-control" id="yearID" name="yearID">
+                      <option>Select Year</option>
+                    </select>
+                  </div>
+
+                  <div class="bio-row">
+                    <label for="contactNumber">Contact Details</label>
                     <input type="text" class="form-control" id="contactNumber" name="contactNumber" placeholder="Contact Details">
-                </div>
-                <div class="bio-row">
-                  <p>
-                    <label for="formFileDisabled" class="form-label">Upload Image</label>
-                    <input class="form-control" type="file" id="userImage" name="userImage" />
-                </div>
-                <div class="bio-row">
-                  <button type="button" class="btn btn-primary">Save</button>
-                </div>
-                
-              </div>
+                  </div>
+
+                  <div class="bio-row">
+                      <label for="formFileDisabled" class="form-label">Upload Image</label>
+                      <input class="form-control" type="file" id="userImage" name="userImage" />
+                  </div>
+
+                  <div class="bio-row">
+                    <button type="button" class="btn btn-primary">Save</button>
+                    <form
+                      method="post"
+                      action="/accounts/logout/"
+                      style="margin-top: 10px"
+                    >
+                      {% csrf_token %}
+                      <button class="btn btn-dark" type="submit">Sign Out</button>
+                    </form>
+                  </div>
             </div>
-          </div>
-          <div>
-            <div class="panel">
-              <div class="panel-body bio-graph-info">
-                  <table id="example" class="display" style="width:100%">
-                    <thead>
-                      <tr>
-                          <th>Subject Code</th>
-                          <th>Subject Name</th>
-                          <th>Faculty</th>
-                          <th>No. Of Units</th>
-                          <th>Add</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                    {% for sub in availSubs %}
-                    <tr>
-                        <td>{{sub.subjectCode}}</td>
-                        <td>{{sub.subjectName}}</td>
-                        <td>{{sub.facultyName}}</td>
-                        <td>{{sub.units}}</td>
-                        <td><button type="button" class="btn btn-info addSubButton"  value="{{sub.id}}">Add Subject</button></td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-              <div>
-            <div>
-          </div>
         </div>
-        
-        
       </div>
-      
+        <div class="panel-body bio-graph-info">
+            <table id="example" class="display" style="width:100%">
+              <thead>
+                <tr>
+                    <th>Subject Code</th>
+                    <th>Subject Name</th>
+                    <th>Faculty</th>
+                    <th>No. Of Units</th>
+                    <th>Add</th>
+                </tr>
+            </thead>
+            <tbody>
+              {% for sub in availSubs %}
+              <tr>
+                  <td>{{sub.subjectCode}}</td>
+                  <td>{{sub.subjectName}}</td>
+                  <td>{{sub.facultyName}}</td>
+                  <td>{{sub.units}}</td>
+                  <td><button type="button" class="btn btn-info addSubButton"  value="{{sub.id}}">Add Subject</button></td>
+              </tr>
+              {% endfor %}
+              </tbody>
+          </table>
+        </div>
     </div>
 
+
+
    
-    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script >
       $(document).ready(()=>{
 
-
+        //div that need to hide ------------------------
         $('#editPage').hide();
+  
+        //end of div that need to hide -----------------
+
+        // Datatable ------------------------
+        $('#example').DataTable( {
+              dom: 'Bfrtip',
+              buttons: [
+                 'csv', 'excel', 'pdf'
+              ]
+          });
+        // Datatable ------------------------
 
         $('#editProfile').click(() => {
           $('#profilePage').hide();
           $('#editPage').show();
           $('#activeProfile').removeClass();
           $('#activeEdit').addClass("active");
-          $('#example').DataTable();
+          
         })
-
 
 
         $('#showProfilePage').click(() => {
