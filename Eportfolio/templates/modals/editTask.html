@@ -1,0 +1,107 @@
+<!-- Button trigger modal -->
+<button
+type="button"
+class="btn btn-info EditTask"
+data-toggle="modal"
+data-target=".editTask"
+
+>
+Modify
+</button>
+
+<!-- Modal -->
+<div
+  class="modal fade editTask"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLongTitle"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">
+          Modify Me: {{task.title}}
+        </h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="" id="addTask" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <label for="taskTitle">Title:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="taskTitle"
+            name="taskTitle"
+            value="{{task.title}}"
+          />
+          <label for="taskScore">Your Total Score:</label>
+          <input
+            type="number"
+            class="form-control"
+            id="taskScore"
+            name="taskScore"
+            value="{{task.score}}"
+          />
+          <input
+            type="text"
+            id="taskType"
+            name="taskType"
+            value="{{task.task_Type}}"
+            hidden
+          />
+          <input
+          type="number"
+          id="editType"
+          name="editType"
+          value= "{{task.id}}"
+          hidden
+        />
+          <label for="taskTotal">Total Score:</label>
+          <input
+            type="number"
+            class="form-control"
+            id="taskTotal"
+            name="taskTotal"
+            value="{{task.overallscore}}"
+          />
+          <label for="taskDate">Date:</label>
+          <input
+            type="date"
+            class="form-control"
+            id="taskDate"
+            name="taskDate"
+            value="{{task.date | date:'c'}}"
+          />
+          <label for="taskAttachments">Attachments:</label>
+          <input
+            type="file"
+            class="form-control"
+            id="taskAttachments"
+            name="taskAttachments"
+          />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Close
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          value="SUBMIT">
+          SUBMIT
+        </button>
+      </form>
+
+      </div>
+    </div>
+  </div>
+</div>
