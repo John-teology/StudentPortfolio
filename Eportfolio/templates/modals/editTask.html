@@ -3,7 +3,7 @@
 type="button"
 class="btn btn-info EditTask"
 data-toggle="modal"
-data-target=".editTask"
+data-target=".task{{t.id}}"
 
 >
 Modify
@@ -11,7 +11,7 @@ Modify
 
 <!-- Modal -->
 <div
-  class="modal fade editTask"
+  class="modal fade task{{t.id}}"
   tabindex="-1"
   role="dialog"
   aria-labelledby="exampleModalLongTitle"
@@ -41,7 +41,7 @@ Modify
             class="form-control"
             id="taskTitle"
             name="taskTitle"
-            value="{{task.title}}"
+            value="{{t.title}}"
           />
           <label for="taskScore">Your Total Score:</label>
           <input
@@ -49,20 +49,20 @@ Modify
             class="form-control"
             id="taskScore"
             name="taskScore"
-            value="{{task.score}}"
+            value="{{t.score}}"
           />
           <input
             type="text"
             id="taskType"
             name="taskType"
-            value="{{task.task_Type}}"
+            value="{{t.task_Type}}"
             hidden
           />
           <input
           type="number"
           id="editType"
           name="editType"
-          value= "{{task.id}}"
+          value= "{{t.id}}"
           hidden
         />
           <label for="taskTotal">Total Score:</label>
@@ -71,7 +71,7 @@ Modify
             class="form-control"
             id="taskTotal"
             name="taskTotal"
-            value="{{task.overallscore}}"
+            value="{{t.overallscore}}"
           />
           <label for="taskDate">Date:</label>
           <input
@@ -79,7 +79,7 @@ Modify
             class="form-control"
             id="taskDate"
             name="taskDate"
-            value="{{task.date | date:'c'}}"
+            value="{{t.date | date:'c'}}"
           />
           <label for="taskAttachments">Attachments:</label>
           <input

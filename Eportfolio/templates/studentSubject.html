@@ -69,24 +69,24 @@
           <thead>
             <tr>
               <th>Title</th>
-              <th>Overall Score</th>
               <th>My Score</th>
+              <th>Overall Score</th>
               <th>Date</th>
               <th>Attachments</th>
               <th></th>
             </tr>
           </thead>
-          {% for t in tasks %} {% if g.taskTypeID == t.task_Type%}
+          {% for t in tasks %} {% if g.taskTypeID == t.task_Type %}
           <tbody>
             <tr>
               <td>{{t.title}}</td>
-              <td>{{t.overallscore}}</td>
               <td>{{t.score}}</td>
+              <td>{{t.overallscore}}</td>
               <td>{{t.date}}</td>
               <td>
-                <a href="{{t.image.url}}" download>{{t.image}}</a>
-                </td>
-              <td>{% include "modals/editTask.html" with task=t %}</td>
+                <a href="{{t.image.url}}" download>{{t.image.name|slice:"7:"}}</a>
+              </td>
+              <td>{% include "modals/editTask.html" %}</td>
             </tr>
           </tbody>
           {% endif %} {% endfor %}

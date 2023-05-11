@@ -431,8 +431,10 @@
               <li class="active" id="activeProfile">
                 <a id="showProfilePage"> <i class="fa fa-user"></i> Profile</a>
               </li>
-              <li>
-                <a href="#"> <i class="fa fa-calendar"></i> Statistics </a>
+              <li id="activeStat">
+                <a href="#" id="statisticPage">
+                  <i class="fa fa-calendar"></i> Statistics
+                </a>
               </li>
               <li id="activeEdit">
                 <a id="editProfile"> <i class="fa fa-edit"></i> Edit profile</a>
@@ -628,6 +630,18 @@
             </table>
           </div>
         </div>
+
+        <div class="profile-info col-md-9" id="statPage">
+          {% for sub in subjects %}
+          <div class="panel">
+            <div class="panel-body bio-graph-info">
+              <h1>{{sub.subjectCode}}:{{sub.subjectName}}</h1>
+            </div>
+          </div>
+          <br />
+
+          {% endfor %}
+        </div>
       </div>
     </div>
 
@@ -635,7 +649,7 @@
       $(document).ready(() => {
         //div that need to hide ------------------------
         $("#editPage").hide();
-
+        $("#statPage").hide();
         //end of div that need to hide -----------------
 
         // Datatable ------------------------
@@ -645,18 +659,31 @@
         });
         // Datatable ------------------------
 
-        $("#editProfile").click(() => {
-          $("#profilePage").hide();
-          $("#editPage").show();
-          $("#activeProfile").removeClass();
-          $("#activeEdit").addClass("active");
-        });
-
         $("#showProfilePage").click(() => {
           $("#profilePage").show();
           $("#editPage").hide();
+          $("#statPage").hide();
           $("#activeEdit").removeClass();
+          $("#activeStat").removeClass();
           $("#activeProfile").addClass("active");
+        });
+
+        $("#editProfile").click(() => {
+          $("#profilePage").hide();
+          $("#statPage").hide();
+          $("#editPage").show();
+          $("#activeProfile").removeClass();
+          $("#activeEdit").addClass("active");
+          $("#activeStat").removeClass();
+        });
+
+        $("#statisticPage").click(() => {
+          $("#statPage").show();
+          $("#profilePage").hide();
+          $("#editPage").hide();
+          $("#activeStat").addClass("active");
+          $("#activeEdit").removeClass();
+          $("#activeProfile").removeClass();
         });
 
         $(".addSubButton").click((e) => {
