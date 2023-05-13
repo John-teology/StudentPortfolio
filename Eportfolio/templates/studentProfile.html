@@ -636,9 +636,7 @@
           <div class="panel">
             <div class="panel-body bio-graph-info">
               <h1>{{sub.subjectCode}}:{{sub.subjectName}}</h1>
-              {% for task in tasks %} {% if task.taskSubject == sub %}
-              <p>{{task.task_Type}} : {{task.score}}</p>
-              {% endif %} {% endfor %}
+              <div id="{{sub.subjectCode}}: {{sub.subjectName}}"></div>
             </div>
           </div>
           <br />
@@ -648,8 +646,27 @@
       </div>
     </div>
     <script>
-      // const toUser1 = "{{test|safe}}";
+      // getting the object from django template-------------
+      const data = "{{test|safe}}";
+      const validJson = data.replace(/'/g, '"');
 
+      // Parse the string as JSON
+      const obj = JSON.parse(validJson);
+
+      for (const [key, value] of Object.entries(obj)) {
+        let counter = 0;
+
+        const subArray = Object.entries(value).map(([subKey, subValue]) => [
+          subKey,
+          subValue,
+        ]);
+        console.log(key);
+
+        console.log(subArray);
+        graph_it_percentage(subArray, 200, document.getElementById(key));
+      }
+
+      // getting the object from django template -------------------------------
 
       $(document).ready(() => {
         //div that need to hide ------------------------
@@ -702,6 +719,25 @@
           });
         });
       });
+
+      // function that create bar
+
+      function graph_it_percentage(g, g_width, g_element) {
+        let output = '<table border="0" cellspacing="0" cellpadding="8">',
+          calwidth_percentage = 0;
+
+        for (i = 0; i < g.length; i++) {
+          calwidth_percentage = g_width * (parseInt(g[i][1]) / 100);
+          let barColor = "lightcoral";
+          let unfilledBarColor = "lightgrey";
+          let unfilledBarWidth = g_width - calwidth_percentage;
+          output += `<tr><td style="padding-right: 10px;">${g[i][0]}</td><td><svg xmlns="http://www.w3.org/2000/svg" width="${g_width}" height="10"><g class="bar"><rect x="${calwidth_percentage}" width="${unfilledBarWidth}" height="10" fill="${unfilledBarColor}"></rect><rect width="${calwidth_percentage}" height="10" fill="${barColor}"></rect></g></svg> ${g[i][1]}%</td></tr>`;
+        }
+
+        output += "</table>";
+
+        g_element.innerHTML = output;
+      }
     </script>
   </body>
 </html>

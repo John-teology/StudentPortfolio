@@ -1,0 +1,22 @@
+Prof:  Search students
+	add subject and rubricks edit
+	
+
+student: generate graphs
+		pie 
+
+
+view:
+	editProfile:
+		edit mga student profile values (basic forms)
+		add subjects  (datatables)
+
+		add Photo
+
+
+
+
+
+bug:
+
+	need to create new table where users can add multiple subjects

@@ -89,8 +89,9 @@ def demographicForm(request):
 @csrf_exempt
 def studentProfile(request, studentID):
     studentprof = Studentprofile.objects.get(studentNumber=studentID)
-    studentSibjects = StudentSubject.objects.filter(
-        studentProfileID=studentprof)
+
+    studentSibjects = StudentSubject.objects.filter(studentProfileID=studentprof)
+    
     availableSubs = Subject.objects.all()
     ids = [i.subjectID for i in studentSibjects]
     subjects = Subject.objects.filter(pk__in=ids)
@@ -99,36 +100,37 @@ def studentProfile(request, studentID):
 
     percentage = {}
 
+    data = {}
+
     for sub in subjects:
-        sub = {f"{sub}" : {} }
+        sub = {f"{sub}": {}}
         percentage.update(sub)
 
     for sub in subjects:
         rubrik = Rubrick.objects.filter(subjectID=sub).filter(~Q(percentage=0))
         for rub in rubrik:
+            scoreHolder = []
             for task in studentTasks:
-                if (rub.taskTypeID == task.task_Type):
-                    # instead of score we will add the percentage
+                if (rub.taskTypeID == task.task_Type and task.taskSubject == sub):
                     if f"{task.task_Type}" in percentage[f'{sub}']:
-                        percentage[f'{sub}'][f"{task.task_Type}"] += task.score
+                        counter += 1
                     else:
-                        percentage[f'{sub}'].update({f"{task.task_Type}":task.score})
-                    print(sub.subjectName, task.task_Type, task.score, task.overallscore)
+                        percentage[f'{sub}'].update(
+                            {f"{task.task_Type}": task.score})
+                        counter = 1
+                    scoreHolder.append(int(task.score/task.overallscore * 100)/100)
 
+            percent = 100/counter
+            total = 0
+            for score in scoreHolder:
+                total += percent * score
+            if total and scoreHolder:
+                if f'{sub}' in data:
+                    data[f'{sub}'].update({f'{rub.taskTypeID}':total})
+                else:
+                    data[f'{sub}'] = {f'{rub.taskTypeID}':total}
 
-
-    print(percentage)
-
-    # testin = {
-    #     "sub1": {
-    #         "pt": 10,
-    #         "quiz": 10,
-    #     },
-    #     "sub2": {
-    #         "pt": 10,
-    #         "quiz": 10,
-    #     },
-    # }
+    print(data)
 
     if request.method == "POST":
         subID = request.POST['addSub']
@@ -142,8 +144,7 @@ def studentProfile(request, studentID):
         'studentprof': studentprof,
         'subjects': subjects,
         'availSubs': availableSubs,
-        'tasks': studentTasks,
-        # 'test':  testin
+        'test':  data
     })
 
 
