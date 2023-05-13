@@ -109,7 +109,10 @@ def studentProfile(request, studentID):
             for task in studentTasks:
                 if (rub.taskTypeID == task.task_Type):
                     # instead of score we will add the percentage
-                    percentage[f'{sub}'].update({f"{task.task_Type}":f"{task.score}"})
+                    if f"{task.task_Type}" in percentage[f'{sub}']:
+                        percentage[f'{sub}'][f"{task.task_Type}"] += task.score
+                    else:
+                        percentage[f'{sub}'].update({f"{task.task_Type}":task.score})
                     print(sub.subjectName, task.task_Type, task.score, task.overallscore)
 
 
