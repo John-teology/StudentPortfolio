@@ -636,6 +636,9 @@
           <div class="panel">
             <div class="panel-body bio-graph-info">
               <h1>{{sub.subjectCode}}:{{sub.subjectName}}</h1>
+              {% for task in tasks %} {% if task.taskSubject == sub %}
+              <p>{{task.task_Type}} : {{task.score}}</p>
+              {% endif %} {% endfor %}
             </div>
           </div>
           <br />
@@ -644,8 +647,10 @@
         </div>
       </div>
     </div>
-
     <script>
+      // const toUser1 = "{{test|safe}}";
+
+
       $(document).ready(() => {
         //div that need to hide ------------------------
         $("#editPage").hide();

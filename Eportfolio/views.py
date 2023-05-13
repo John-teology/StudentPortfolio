@@ -6,6 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from .models import *
 import re
+import json
 
 # Create your views here.
 
@@ -93,6 +94,38 @@ def studentProfile(request, studentID):
     availableSubs = Subject.objects.all()
     ids = [i.subjectID for i in studentSibjects]
     subjects = Subject.objects.filter(pk__in=ids)
+    studentTasks = Task.objects.filter(
+        studentProfileID=studentprof)
+
+    percentage = {}
+
+    for sub in subjects:
+        sub = {f"{sub}" : {} }
+        percentage.update(sub)
+
+    for sub in subjects:
+        rubrik = Rubrick.objects.filter(subjectID=sub).filter(~Q(percentage=0))
+        for rub in rubrik:
+            for task in studentTasks:
+                if (rub.taskTypeID == task.task_Type):
+                    # instead of score we will add the percentage
+                    percentage[f'{sub}'].update({f"{task.task_Type}":f"{task.score}"})
+                    print(sub.subjectName, task.task_Type, task.score, task.overallscore)
+
+
+
+    print(percentage)
+
+    # testin = {
+    #     "sub1": {
+    #         "pt": 10,
+    #         "quiz": 10,
+    #     },
+    #     "sub2": {
+    #         "pt": 10,
+    #         "quiz": 10,
+    #     },
+    # }
 
     if request.method == "POST":
         subID = request.POST['addSub']
@@ -105,7 +138,9 @@ def studentProfile(request, studentID):
     return render(request, "studentProfile.html", {
         'studentprof': studentprof,
         'subjects': subjects,
-        'availSubs': availableSubs
+        'availSubs': availableSubs,
+        'tasks': studentTasks,
+        # 'test':  testin
     })
 
 
@@ -126,8 +161,7 @@ def studentSubject(request, studentID, subjectCode):
         myScore = request.POST['taskScore']
         totalScore = request.POST['taskTotal']
         date = request.POST['taskDate']
-        image = request.FILES.get('taskAttachments',False)
-        
+        image = request.FILES.get('taskAttachments', False)
 
         tType = TaskType.objects.get(taskType=type)
         if isEdit:
