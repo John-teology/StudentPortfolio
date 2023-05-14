@@ -73,7 +73,7 @@
               <th>Overall Score</th>
               <th>Date</th>
               <th>Attachments</th>
-              <th></th>
+              <th class="editButton" style="display: none">Edit</th>
             </tr>
           </thead>
           {% for t in tasks %} {% if g.taskTypeID == t.task_Type %}
@@ -84,9 +84,14 @@
               <td>{{t.overallscore}}</td>
               <td>{{t.date}}</td>
               <td>
-                <a href="{{t.image.url}}" download>{{t.image.name|slice:"7:"}}</a>
+                <a href="{{t.image.url}}" download
+                  >{{t.image.name|slice:"7:"}}</a
+                >
               </td>
-              <td>{% include "modals/editTask.html" %}</td>
+              <td class="editValues" style="display: none">
+                {% include "modals/editTask.html" %}
+                  <button type="button" class="btn btn-danger" value="{{t.id}}" name="taskDelete">Delete</button>
+              </td>
             </tr>
           </tbody>
           {% endif %} {% endfor %}
@@ -101,11 +106,21 @@
     <script>
       $(document).ready(() => {
         // Datatable ------------------------
-        $(".example").DataTable({
+        var myTable = $(".example").DataTable({
           dom: "Bfrtip",
           buttons: ["excel", "pdf"],
         });
         // Datatable ------------------------
+
+        $(".dt-buttons").append(`
+      <button type="button" class = "editToggle"> Edit </button>`);
+
+        $(".editToggle").click(() => {
+          $(".editValues").toggle();
+
+          $(".editButton").toggle();
+          $(".editButton").css("width", "30%");
+        });
       });
     </script>
   </body>

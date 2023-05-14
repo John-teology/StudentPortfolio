@@ -86,12 +86,15 @@ def demographicForm(request):
     })
 
 
-@csrf_exempt
 def studentProfile(request, studentID):
     studentprof = Studentprofile.objects.get(studentNumber=studentID)
+    gender = Gender.objects.get(pk=1)
+    yearlist = YearLevel.objects.all()
+    courselist = Course.objects.all()
 
-    studentSibjects = StudentSubject.objects.filter(studentProfileID=studentprof)
-    
+    studentSibjects = StudentSubject.objects.filter(
+        studentProfileID=studentprof)
+
     availableSubs = Subject.objects.all()
     ids = [i.subjectID for i in studentSibjects]
     subjects = Subject.objects.filter(pk__in=ids)
@@ -101,42 +104,61 @@ def studentProfile(request, studentID):
     percentage = {}
 
     data = {}
+    if studentTasks:
+        for sub in subjects:
+            sub = {f"{sub}": {}}
+            percentage.update(sub)
 
-    for sub in subjects:
-        sub = {f"{sub}": {}}
-        percentage.update(sub)
+        for sub in subjects:
+            rubrik = Rubrick.objects.filter(
+                subjectID=sub).filter(~Q(percentage=0))
+            for rub in rubrik:
+                scoreHolder = []
+                for task in studentTasks:
+                    if (rub.taskTypeID == task.task_Type and task.taskSubject == sub):
+                        if f"{task.task_Type}" in percentage[f'{sub}']:
+                            counter += 1
+                        else:
+                            percentage[f'{sub}'].update(
+                                {f"{task.task_Type}": task.score})
+                            counter = 1
+                        scoreHolder.append(
+                            int(task.score/task.overallscore * 100)/100)
 
-    for sub in subjects:
-        rubrik = Rubrick.objects.filter(subjectID=sub).filter(~Q(percentage=0))
-        for rub in rubrik:
-            scoreHolder = []
-            for task in studentTasks:
-                if (rub.taskTypeID == task.task_Type and task.taskSubject == sub):
-                    if f"{task.task_Type}" in percentage[f'{sub}']:
-                        counter += 1
+                percent = 100/counter
+                total = 0
+                for score in scoreHolder:
+                    total += percent * score
+                if total and scoreHolder:
+                    if f'{sub}' in data:
+                        data[f'{sub}'].update({f'{rub.taskTypeID}': total})
                     else:
-                        percentage[f'{sub}'].update(
-                            {f"{task.task_Type}": task.score})
-                        counter = 1
-                    scoreHolder.append(int(task.score/task.overallscore * 100)/100)
-
-            percent = 100/counter
-            total = 0
-            for score in scoreHolder:
-                total += percent * score
-            if total and scoreHolder:
-                if f'{sub}' in data:
-                    data[f'{sub}'].update({f'{rub.taskTypeID}':total})
-                else:
-                    data[f'{sub}'] = {f'{rub.taskTypeID}':total}
-
-    print(data)
+                        data[f'{sub}'] = {f'{rub.taskTypeID}': total}
 
     if request.method == "POST":
-        subID = request.POST['addSub']
+        subID = request.POST.get('addSub', 0)
+        # edit profile below
+        isEdit = request.POST.get('editProfile', 0)
+        guardName = request.POST.get('guardianName', 0)
+        guardNumber = request.POST.get('guardianNum', 0)
+        courseName = request.POST.get('courseName', 0)
+        yearName = request.POST.get('yearName', 0)
+        contactD = request.POST.get('contactD', 0)
 
-        sub = StudentSubject(studentProfileID=studentprof, subjectID=subID)
-        sub.save()
+        if isEdit:
+            yearObj = YearLevel.objects.get(yearLevel=yearName)
+            courseObj = Course.objects.get(course=courseName)
+            studentprof.guardianName = guardName
+            studentprof.guardianNumber = guardNumber
+            studentprof.courseID = courseObj
+            studentprof.yearID = yearObj
+            studentprof.contactNumber = contactD
+
+            studentprof.save()
+
+        if subID:
+            sub = StudentSubject(studentProfileID=studentprof, subjectID=subID)
+            sub.save()
         # studentNumber = studentprof.studentNumber
         return JsonResponse([{'data': 1}], safe=False)
 
@@ -144,7 +166,10 @@ def studentProfile(request, studentID):
         'studentprof': studentprof,
         'subjects': subjects,
         'availSubs': availableSubs,
-        'test':  data
+        'test':  data,
+        'yearList':  yearlist,
+        'courseList':  courselist,
+        'male': gender
     })
 
 
@@ -159,6 +184,7 @@ def studentSubject(request, studentID, subjectCode):
     rubrik = Rubrick.objects.filter(subjectID=subject).filter(~Q(percentage=0))
 
     if request.method == "POST":
+        taskDelete = request.POST.get('taskDelete', 0)
         isEdit = request.POST.get('editType', 0)  # this is the ID
         type = request.POST['taskType']
         title = request.POST['taskTitle']
@@ -168,6 +194,9 @@ def studentSubject(request, studentID, subjectCode):
         image = request.FILES.get('taskAttachments', False)
 
         tType = TaskType.objects.get(taskType=type)
+
+        if taskDelete:
+            print(taskDelete)
         if isEdit:
             getTask = Task.objects.get(pk=isEdit)
             getTask.task_Type = tType

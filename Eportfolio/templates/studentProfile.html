@@ -423,9 +423,17 @@
           <div class="panel">
             <div class="user-heading round">
               <a href="#">
+                {% if studentprof.genderID == male %}
                 <img src="/media/icons/boy.png" alt="" />
+                {% else %}
+                <img src="/media/icons/girl.png" alt="" />
+
+                {% endif %}
               </a>
-              <h1>{{studentprof.lastName}}, {{studentprof.firstName}}</h1>
+              <h1>
+                {{studentprof.lastName}}, {{studentprof.firstName}}
+                {{male.gender}}
+              </h1>
             </div>
             <ul class="nav nav-pills nav-stacked">
               <li class="active" id="activeProfile">
@@ -449,7 +457,8 @@
               Aliquam ac magna metus. Nam sed arcu non tellus fringilla
               fringilla ut vel ispum. Aliquam ac magna metus.
             </div>
-            <div class="panel-body bio-graph-info">
+            <div class="panel-body bio-graph-info" id="editProfileHolderReload">
+              {% if studentprof %}
               <h1>Demographic Profile</h1>
               <div class="row">
                 <div class="bio-row">
@@ -493,6 +502,7 @@
                   </p>
                 </div>
               </div>
+              {% endif %}
             </div>
           </div>
           <div>
@@ -531,7 +541,7 @@
                     class="form-control"
                     id="guardianName"
                     name="guardianName"
-                    placeholder="Guardian Name"
+                    value="{{studentprof.guardianName}}"
                   />
                 </div>
 
@@ -542,21 +552,27 @@
                     class="form-control"
                     id="guardianNumber"
                     name="guardianNumber"
-                    placeholder="Guardian Contact Details"
+                    value="{{studentprof.guardianNumber}}"
                   />
                 </div>
 
                 <div class="bio-row">
                   <label for="courseID">Course:</label>
                   <select class="form-control" id="courseID" name="courseID">
-                    <option>Select Course</option>
+                    {% for course in courseList %}
+                    <option value="{{course.course}}">{{course.course}}</option>
+                    {% endfor %}
                   </select>
                 </div>
 
                 <div class="bio-row">
                   <label for="yearID">Year Level:</label>
                   <select class="form-control" id="yearID" name="yearID">
-                    <option>Select Year</option>
+                    {% for year in yearList %}
+                    <option value="{{year.yearLevel}}">
+                      {{year.yearLevel}}
+                    </option>
+                    {% endfor %}
                   </select>
                 </div>
 
@@ -567,29 +583,24 @@
                     class="form-control"
                     id="contactNumber"
                     name="contactNumber"
-                    placeholder="Contact Details"
+                    value="{{studentprof.contactNumber}}"
                   />
                 </div>
 
                 <div class="bio-row">
-                  <label for="formFileDisabled" class="form-label"
-                    >Upload Image</label
-                  >
-                  <input
-                    class="form-control"
-                    type="file"
-                    id="userImage"
-                    name="userImage"
-                  />
+                  <div class="bio-row">
+                    <button
+                      type="button"
+                      id="saveProfile"
+                      class="btn btn-primary"
+                      style="margin-top: 15%"
+                    >
+                      Save
+                    </button>
+                  </div>
                 </div>
-
                 <div class="bio-row">
-                  <button type="button" class="btn btn-primary">Save</button>
-                  <form
-                    method="post"
-                    action="/accounts/logout/"
-                    style="margin-top: 10px"
-                  >
+                  <form method="post" action="/accounts/logout/">
                     {% csrf_token %}
                     <button class="btn btn-dark" type="submit">Sign Out</button>
                   </form>
@@ -645,30 +656,61 @@
         </div>
       </div>
     </div>
+    {% csrf_token %}
     <script>
-      // getting the object from django template-------------
-      const data = "{{test|safe}}";
-      const validJson = data.replace(/'/g, '"');
-
-      // Parse the string as JSON
-      const obj = JSON.parse(validJson);
-
-      for (const [key, value] of Object.entries(obj)) {
-        let counter = 0;
-
-        const subArray = Object.entries(value).map(([subKey, subValue]) => [
-          subKey,
-          subValue,
-        ]);
-        console.log(key);
-
-        console.log(subArray);
-        graph_it_percentage(subArray, 200, document.getElementById(key));
-      }
-
-      // getting the object from django template -------------------------------
-
       $(document).ready(() => {
+        // getting the object from django template-------------
+        const data = "{{test|safe}}";
+
+        const validJson = data.replace(/'/g, '"');
+
+        // Parse the string as JSON
+        const obj = JSON.parse(validJson);
+
+        for (const [key, value] of Object.entries(obj)) {
+          let counter = 0;
+
+          const subArray = Object.entries(value).map(([subKey, subValue]) => [
+            subKey,
+            subValue,
+          ]);
+          graph_it_percentage(subArray, 200, document.getElementById(key));
+        }
+
+        // getting the object from django template -------------------------------
+
+        // edit Profile -----------------------------------------
+        var course = "{{studentprof.courseID}}";
+        var year = "{{studentprof.yearID}}";
+        $("#courseID").val(course);
+        $("#yearID").val(year);
+
+        const csrftoken = document.querySelector(
+          "[name=csrfmiddlewaretoken]"
+        ).value;
+        $("#saveProfile").click(() => {
+          $.ajax({
+            url: "{% url 'studentProfile' studentprof.studentNumber %}",
+            headers: { "X-CSRFToken": csrftoken },
+            data: {
+              editProfile: 1,
+              guardianName: $("#guardianName").val(),
+              guardianNum: $("#guardianNumber").val(),
+              courseName: $("#courseID").val(),
+              yearName: $("#yearID").val(),
+              contactD: $("#contactNumber").val(),
+            },
+            method: "POST",
+            success: (data) => {
+              $("#editProfileHolderReload").load(
+                location.href + " #editProfileHolderReload"
+              );
+            },
+          });
+        });
+
+        // edit Profile -----------------------------------------
+
         //div that need to hide ------------------------
         $("#editPage").hide();
         $("#statPage").hide();
@@ -676,7 +718,6 @@
 
         // Datatable ------------------------
         $("#example").DataTable({
-          dom: "Bfrtip",
           buttons: ["csv", "excel", "pdf"],
         });
         // Datatable ------------------------
@@ -711,7 +752,8 @@
         $(".addSubButton").click((e) => {
           $.ajax({
             url: "{% url 'studentProfile' studentprof.studentNumber %}",
-            data: { addSub: e.target.value },
+            headers: { "X-CSRFToken": csrftoken },
+            data: { addSub: e.currentTarget.value },
             method: "POST",
             success: (data) => {
               $("#listOfSubs").load(location.href + " #listOfSubs");
