@@ -9,6 +9,10 @@
       href="https://netdna.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"
       rel="stylesheet"
     />
+      <!-- Font-style -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet">
     <link
       href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"
       rel="stylesheet"
@@ -35,7 +39,7 @@
       body {
         color: #797979;
         background: #f1f2f7;
-        font-family: "Open Sans", sans-serif;
+        font-family: 'Poppins', sans-serif;
         padding: 0px !important;
         margin: 0px !important;
         font-size: 13px;
@@ -73,9 +77,10 @@
       }
 
       .profile-nav .user-heading h1 {
-        font-size: 22px;
+        font-size: 2.5vh;
         font-weight: 300;
         margin-bottom: 5px;
+        font-weight: 700;
       }
 
       .profile-nav .user-heading p {
@@ -153,17 +158,20 @@
         padding: 40px 110px;
         border-radius: 4px 4px 0 0;
         -webkit-border-radius: 4px 4px 0 0;
-        font-size: 16px;
-        font-weight: 300;
+        font-size: 4.5vh;
+        font-weight: 400;
       }
-
+      .bio-graph-heading h2{
+        font-size:5vh ;
+        font-weight: 700;
+      }
       .bio-graph-info {
         color: #89817e;
       }
 
       .bio-graph-info h1 {
-        font-size: 22px;
-        font-weight: 300;
+        font-size: 3vh;
+        font-weight: 700;
         margin: 0 0 20px;
       }
 
@@ -173,7 +181,10 @@
         margin-bottom: 10px;
         padding: 0 15px;
       }
-
+      .bio-row span{
+        font-weight: 600;
+        font-size: 1.5vh;
+      }
       .bio-row p span {
         width: 100px;
         display: inline-block;
@@ -454,8 +465,7 @@
         <div class="profile-info col-md-9" id="profilePage">
           <div class="panel">
             <div class="bio-graph-heading">
-              Aliquam ac magna metus. Nam sed arcu non tellus fringilla
-              fringilla ut vel ispum. Aliquam ac magna metus.
+              Welcome Back! <h2>{{studentprof.firstName}}</h2>
             </div>
             <div class="panel-body bio-graph-info" id="editProfileHolderReload">
               {% if studentprof %}
@@ -474,7 +484,7 @@
                 </div>
                 <div class="bio-row">
                   <p>
-                    <span>Year and Course</span>: {{studentprof.yearID}}
+                    <span>Year / Course</span>: {{studentprof.yearID}} /
                     {{studentprof.courseID}}
                   </p>
                 </div>
