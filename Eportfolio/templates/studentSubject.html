@@ -59,13 +59,19 @@
 
   <body>
     {% for g in rubricks %}
+
     <div class="card">
       <div class="card text-center">
         <div class="card-header">{{g.taskTypeID}}</div>
       </div>
       {% include "modals/addTask.html" %}
       <div class="card-body">
-        <table class="example" class="display" style="width: 100%">
+        <table
+          class="example"
+          id="{{g.taskTypeID}}"
+          class="display"
+          style="width: 100%"
+        >
           <thead>
             <tr>
               <th>Title</th>
@@ -77,7 +83,10 @@
             </tr>
           </thead>
           {% for t in tasks %} {% if g.taskTypeID == t.task_Type %}
-          <tbody>
+          <tbody
+            class="reloadDIV"
+            data-refresh-url="{% url 'studentSubject' sNumber subject.subjectCode %}"
+          >
             <tr>
               <td>{{t.title}}</td>
               <td>{{t.score}}</td>
@@ -90,7 +99,14 @@
               </td>
               <td class="editValues" style="display: none">
                 {% include "modals/editTask.html" %}
-                  <button type="button" class="btn btn-danger" value="{{t.id}}" name="taskDelete">Delete</button>
+                <button
+                  type="button"
+                  class="btn btn-danger deleteTask"
+                  value="{{t.id}}"
+                  name="taskDelete"
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           </tbody>
@@ -101,19 +117,19 @@
     <br />
     <br />
 
-    {% endfor %}
+    {% endfor %} {% csrf_token %}
 
     <script>
       $(document).ready(() => {
         // Datatable ------------------------
-        var myTable = $(".example").DataTable({
+        $(".example").DataTable({
           dom: "Bfrtip",
           buttons: ["excel", "pdf"],
         });
         // Datatable ------------------------
 
         $(".dt-buttons").append(`
-      <button type="button" class = "editToggle"> Edit </button>`);
+          <button type="button" class = "editToggle"> Edit </button>`);
 
         $(".editToggle").click(() => {
           $(".editValues").toggle();
@@ -121,6 +137,52 @@
           $(".editButton").toggle();
           $(".editButton").css("width", "30%");
         });
+
+        // Delete Function ----------------   ----------------------
+
+        $(document).on("click", ".deleteTask", function (e) {
+          // Get the parent <tr> element
+          var row = $(this).closest("tr");
+          // Remove the row from the table
+          row.remove();
+
+          $.ajax({
+            url: "{% url 'studentSubject' sNumber subject.subjectCode %}",
+            headers: {
+              "X-CSRFToken": "{{ csrf_token }}",
+            },
+            data: {
+              taskDeleteID: e.currentTarget.value,
+            },
+            method: "POST",
+          });
+        });
+
+        // $(".deleteTask").click((e) => {
+        //   e.preventDefault();
+        //   console.log("dete");
+        //   var row = $(this).closest("tr");
+        //   // Remove the row from the table
+        //   row.remove();
+
+        //   $.ajax({
+        //     url: "{% url 'studentSubject' sNumber subject.subjectCode %}",
+        //     headers: {
+        //       "X-CSRFToken": "{{ csrf_token }}",
+        //     },
+        //     data: {
+        //       taskDeleteID: e.currentTarget.value,
+        //     },
+        //     method: "POST",
+        //     success: function (data) {
+        //       var row = $(this).closest("tr");
+        //       // Remove the row from the table
+        //       row.remove();
+        //     },
+        //   });
+
+        //   // Delete Function --------------------------------------
+        // });
       });
     </script>
   </body>

@@ -184,20 +184,23 @@ def studentSubject(request, studentID, subjectCode):
     rubrik = Rubrick.objects.filter(subjectID=subject).filter(~Q(percentage=0))
 
     if request.method == "POST":
-        taskDelete = request.POST.get('taskDelete', 0)
         isEdit = request.POST.get('editType', 0)  # this is the ID
-        type = request.POST['taskType']
-        title = request.POST['taskTitle']
-        myScore = request.POST['taskScore']
-        totalScore = request.POST['taskTotal']
-        date = request.POST['taskDate']
+        type = request.POST.get('taskType', '')
+        title = request.POST.get('taskTitle', '')
+        myScore = request.POST.get('taskScore', 0)
+        totalScore = request.POST.get('taskTotal', 0)
+        date = request.POST.get('taskDate', 0)
         image = request.FILES.get('taskAttachments', False)
+        taskToBeDelete = request.POST.get('taskDeleteID', False)
 
-        tType = TaskType.objects.get(taskType=type)
+        if taskToBeDelete:
+            deleteTask = Task.objects.get(pk=taskToBeDelete)
+            deleteTask.delete()
 
-        if taskDelete:
-            print(taskDelete)
+
+
         if isEdit:
+            tType = TaskType.objects.get(taskType=type)
             getTask = Task.objects.get(pk=isEdit)
             getTask.task_Type = tType
             getTask.title = title
@@ -208,17 +211,14 @@ def studentSubject(request, studentID, subjectCode):
                 getTask.image = image
             getTask.save()
 
-            return render(request, 'studentSubject.html', {
-                'subject': subject,
-                'sNumber': studentID,
-                'rubricks': rubrik,
-                'tasks': studentTasks,
-            })
+            return HttpResponseRedirect(reverse("studentSubject", args=(str(profile.studentNumber), str(subject.subjectCode))))
 
-        uploadedTask = Task(studentProfileID=profile, task_Type=tType, taskSubject=subject, title=title,
-                            overallscore=totalScore, score=myScore, image=image, date=date)
-        uploadedTask.save()
-        return HttpResponseRedirect(reverse("studentSubject", args=(str(profile.studentNumber), str(subject.subjectCode))))
+        if type:
+            tType = TaskType.objects.get(taskType=type)
+            uploadedTask = Task(studentProfileID=profile, task_Type=tType, taskSubject=subject, title=title,
+                                overallscore=totalScore, score=myScore, image=image, date=date)
+            uploadedTask.save()
+            return HttpResponseRedirect(reverse("studentSubject", args=(str(profile.studentNumber), str(subject.subjectCode))))
 
     return render(request, 'studentSubject.html', {
         'subject': subject,
