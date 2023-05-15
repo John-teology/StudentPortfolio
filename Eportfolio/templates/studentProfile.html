@@ -441,10 +441,6 @@
 
                 {% endif %}
               </a>
-              <h1>
-                {{studentprof.lastName}}, {{studentprof.firstName}}
-                {{male.gender}}
-              </h1>
             </div>
             <ul class="nav nav-pills nav-stacked">
               <li class="active" id="activeProfile">
@@ -525,11 +521,8 @@
                   <div class="panel">
                     <div class="panel-body">
                       <div class="bio-chart"></div>
-                      <div class="bio-desk">
-                        <h4 class="green">{{sub.subjectCode}}</h4>
-                        <p>{{sub.subjectName}}</p>
-                        <p>{{sub.units}}</p>
-                      </div>
+                      <h4>{{sub.subjectCode}}</h4>
+                      <p>{{sub.subjectName}}</p>
                     </div>
                   </div>
                 </div>

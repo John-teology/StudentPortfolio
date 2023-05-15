@@ -83,10 +83,7 @@
             </tr>
           </thead>
           {% for t in tasks %} {% if g.taskTypeID == t.task_Type %}
-          <tbody
-            class="reloadDIV"
-            data-refresh-url="{% url 'studentSubject' sNumber subject.subjectCode %}"
-          >
+          <tbody>
             <tr>
               <td>{{t.title}}</td>
               <td>{{t.score}}</td>
@@ -125,6 +122,22 @@
         $(".example").DataTable({
           dom: "Bfrtip",
           buttons: ["excel", "pdf"],
+          columnDefs: [{ targets: "_all", visible: true }],
+          dom: "Bfrtip",
+          buttons: [
+            {
+              extend: "excelHtml5",
+              exportOptions: {
+                columns: [0, 1, 2, 3], // Include only the first 4 columns
+              },
+            },
+            {
+              extend: "pdfHtml5",
+              exportOptions: {
+                columns: [0, 1, 2, 3], // Include only the first 4 columns
+              },
+            },
+          ],
         });
         // Datatable ------------------------
 
@@ -138,7 +151,7 @@
           $(".editButton").css("width", "30%");
         });
 
-        // Delete Function ----------------   ----------------------
+        // Delete Function --------------------------------------
 
         $(document).on("click", ".deleteTask", function (e) {
           // Get the parent <tr> element
@@ -158,31 +171,69 @@
           });
         });
 
-        // $(".deleteTask").click((e) => {
-        //   e.preventDefault();
-        //   console.log("dete");
-        //   var row = $(this).closest("tr");
-        //   // Remove the row from the table
-        //   row.remove();
+        // Delete Function --------------------------------------
 
-        //   $.ajax({
-        //     url: "{% url 'studentSubject' sNumber subject.subjectCode %}",
-        //     headers: {
-        //       "X-CSRFToken": "{{ csrf_token }}",
-        //     },
-        //     data: {
-        //       taskDeleteID: e.currentTarget.value,
-        //     },
-        //     method: "POST",
-        //     success: function (data) {
-        //       var row = $(this).closest("tr");
-        //       // Remove the row from the table
-        //       row.remove();
-        //     },
-        //   });
+        // Add Subject Function ----------------------------------------
 
-        //   // Delete Function --------------------------------------
-        // });
+        $("#addTask").submit((event) => {
+          event.preventDefault();
+          var title = $("#taskTitle").val();
+          var score = $("#taskScore").val();
+          var totalScore = $("#taskTotal").val();
+          var taskType = $("#taskType").val();
+          var date = $("#taskDate").val();
+          var attachments = $("#taskAttachments").val();
+          $.ajax({
+            url: "{% url 'studentSubject' sNumber subject.subjectCode %}",
+            headers: {
+              "X-CSRFToken": "{{ csrf_token }}",
+            },
+            data: {
+              taskTitle: title,
+              taskScore: score,
+              taskTotal: totalScore,
+              taskType: taskType,
+              taskDate: date,
+              taskAttachments: attachments,
+            },
+            method: "POST",
+            success: () => {
+              var title = $("#taskTitle").val();
+              var score = $("#taskScore").val();
+              var totalScore = $("#taskTotal").val();
+              var taskType = $("#taskType").val();
+              var date = $("#taskDate").val();
+              var attachments = $("#taskAttachments").val();
+
+              // Append a new row with the values to the table
+              $(`#${taskType}`).append(
+                "<tr><td>" +
+                  title +
+                  "</td><td>" +
+                  score +
+                  "</td><td>" +
+                  totalScore +
+                  "</td><td>" +
+                  date +
+                  "</td><td>" +
+                  attachments +
+                  "</td><td class='editValues' style='display: none'>" +
+                  ` {% include "modals/editTask.html" %}
+                <button
+                  type="button"
+                  class="btn btn-danger deleteTask"
+                  value="{{t.id}}"
+                  name="taskDelete"
+                >
+                  Delete
+                </button>` +
+                  "</td></tr>"
+              );
+            },
+          });
+        });
+
+        // Add Subject Function ----------------------------------------
       });
     </script>
   </body>
