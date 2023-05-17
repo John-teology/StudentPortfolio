@@ -335,7 +335,9 @@ body {
   font-weight: 700;
 }
 .bio-graph-info {
-  color: #89817e;
+    color: #949695;
+    background: white;
+    border-radius: 10px;
 }
 
 .bio-graph-info h1 {
@@ -592,5 +594,13 @@ ul.summary-list > li:last-child {
 
 .activity-desk .album a:last-child {
   margin-right: 0px;
+}
+.btn-hoverred:hover{
+  background-color: #532323;
+  color:white;
+}
+.btn-hovergreen:hover{
+  background-color: #2c5323;
+  color:white;
 }
 

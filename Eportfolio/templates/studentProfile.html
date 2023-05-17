@@ -206,7 +206,7 @@
                     <button
                       type="button"
                       id="saveProfile"
-                      class="btn btn-primary"
+                      class="btn btn-primary btn-hovergreen"
                       style="margin-top: 15%"
                     >
                       Save
@@ -216,7 +216,7 @@
                 <div class="bio-row">
                   <form method="post" action="/accounts/logout/">
                     {% csrf_token %}
-                    <button class="btn btn-dark" type="submit">Sign Out</button>
+                    <button class="btn btn-dark btn-hoverred" type="submit">Sign Out</button>
                   </form>
                 </div>
               </div>
@@ -230,7 +230,6 @@
                   <th>Subject Name</th>
                   <th>Faculty</th>
                   <th>No. Of Units</th>
-                  <th>Add</th>
                 </tr>
               </thead>
               <tbody>
@@ -240,6 +239,7 @@
                   <td>{{sub.subjectName}}</td>
                   <td>{{sub.facultyName}}</td>
                   <td>{{sub.units}}</td>
+                  <!--
                   <td>
                     <button
                       type="button"
@@ -249,6 +249,7 @@
                       Add Subject
                     </button>
                   </td>
+                  -->
                 </tr>
                 {% endfor %}
               </tbody>
