@@ -20,6 +20,7 @@
       href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="../static/eportfolio/navbar.css" />
     <link rel="stylesheet" href="../static/eportfolio/style.css" />
     <!-- link for datatables -->
 
@@ -41,37 +42,42 @@
   </head>
 
   <body>
+    <div id="wrapper" class="wrapper-content ">
+      <div id="sidebar-wrapper">
+    <ul class="sidebar-nav">
+<li class="sidebar-brand">
+  <a class="no-hovera" href="#">
+    Eportfolio
+      </a>
+      </li>
+      <li class="active" id="activeProfile">
+        <a id="showProfilePage"> <i class="fa fa-user"></i> Profile</a>
+      </li>
+      <li id="activeStat">
+        <a href="#" id="statisticPage">
+          <i class="fa fa-calendar"></i> Statistics
+        </a>
+      </li>
+      <li id="activeSubject">
+        <a id="Subjects"> <i class="fa fa-book"></i>Subjects</a>
+      </li>
+      <li id="activeEdit">
+        <a id="editProfile"> <i class="fa fa-edit"></i> Edit profile</a>
+      </li>
+      <li id="activeSignOut">
+        <a id="Signout"> <i class="fa fa-sign-out"></i> Sign Out</a>
+      </li>
+    </ul>
+    </div>
+    <div class="container-fluid">
+      <button class="btn-menu btn btn-toggle-menu overlay-button" type="button">
+      <i class="fa fa-bars"></i>
+      </button>
+        </div>
     <div class="container bootstrap snippets bootdey overlay">
       <div class="row">
         <div class="profile-nav col-md-3">
-          <div class="panel">
-            <div class="user-heading round">
-              <a href="#">
-                {% if studentprof.genderID == male %}
-                <img src="/media/icons/boy.png" alt="" />
-                {% else %}
-                <img src="/media/icons/girl.png" alt="" />
-
-                {% endif %}
-              </a>
-            </div>
-            <ul class="nav nav-pills nav-stacked">
-              <li class="active" id="activeProfile">
-                <a id="showProfilePage"> <i class="fa fa-user"></i> Profile</a>
-              </li>
-              <li id="activeStat">
-                <a href="#" id="statisticPage">
-                  <i class="fa fa-calendar"></i> Statistics
-                </a>
-              </li>
-              <li id="activeEdit">
-                <a id="editProfile"> <i class="fa fa-edit"></i> Edit profile</a>
-              </li>
-              <li id="activeSignOut">
-                <a id="Signout"> <i class="fa fa-sign-out"></i> Sign Out</a>
-              </li>
-            </ul>
-          </div>
+        
         </div>
 
         <div class="profile-info col-md-9" id="profilePage">
@@ -430,6 +436,13 @@
 
         g_element.innerHTML = output;
       }
+    </script>
+    <script type="text/javascript">
+    $(function(){
+        $(".btn-toggle-menu").click(function() {
+            $("#wrapper").toggleClass("toggled");
+        });
+    })
     </script>
   </body>
 </html>
