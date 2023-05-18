@@ -39,7 +39,7 @@
 
   <body>
     
-    <div class="container bootstrap snippets bootdey">
+    <div class="container bootstrap snippets bootdey overlay">
       <div class="row">
         <div class="profile-nav col-md-3">
           <div class="panel">
@@ -64,6 +64,9 @@
               </li>
               <li id="activeEdit">
                 <a id="editProfile"> <i class="fa fa-edit"></i> Edit profile</a>
+              </li>
+              <li id="activeSignOut">
+                <a id="Signout"> <i class="fa fa-sign-out"></i> Sign Out</a>
               </li>
             </ul>
           </div>
@@ -123,17 +126,20 @@
             </div>
           </div>
           <div>
+            <h2 class="sub-head">Subjects</h2>
             <div class="row" id="listOfSubs">
               {% for sub in subjects %}
               <a
                 href="{% url 'studentSubject' studentprof.studentNumber sub.subjectCode %}"
               >
                 <div class="col-md-6">
-                  <div class="panel">
-                    <div class="panel-body">
+                  <div class="panel sub-wrapper">
+                    <div class="panel-body subject-bg">
                       <div class="bio-chart"></div>
-                      <h4>{{sub.subjectCode}}</h4>
-                      <p>{{sub.subjectName}}</p>
+                      <div class = "sub-textoverlay">
+                      <h4 class="cc-text">{{sub.subjectCode}}</h4>
+                      <p class="sub-text">{{sub.subjectName}}</p>
+                    </div>
                     </div>
                   </div>
                 </div>
