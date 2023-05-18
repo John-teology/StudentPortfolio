@@ -126,19 +126,18 @@
         // Datatable ------------------------
         $(".example").DataTable({
           dom: "Bfrtip",
-          buttons: ["excel", "pdf"],
-          columnDefs: [{ targets: "_all", visible: true }],
-          dom: "Bfrtip",
           buttons: [
             {
               extend: "excelHtml5",
               exportOptions: {
+                orthogonal: "export", // Export all rows
                 columns: [0, 1, 2, 3], // Include only the first 4 columns
               },
             },
             {
               extend: "pdfHtml5",
               exportOptions: {
+                orthogonal: "export", // Export all rows
                 columns: [0, 1, 2, 3], // Include only the first 4 columns
               },
             },
@@ -196,7 +195,7 @@
               success: function (response) {
                 // Handle success response
                 console.log("Form submitted successfully");
-                console.log('print')
+                console.log("print");
                 // Additional actions after form submission
               },
             });
