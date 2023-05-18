@@ -11,6 +11,12 @@
       rel="stylesheet"
     />
     <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
       integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
@@ -58,13 +64,12 @@
   </style>
 
   <body>
-    {% for g in rubricks %}
+    {% include "modals/addTask.html" %} {% for g in rubricks %}
 
     <div class="card">
       <div class="card text-center">
         <div class="card-header">{{g.taskTypeID}}</div>
       </div>
-      {% include "modals/addTask.html" %}
       <div class="card-body">
         <table
           class="example"
@@ -142,7 +147,7 @@
         // Datatable ------------------------
 
         $(".dt-buttons").append(`
-          <button type="button" class = "editToggle"> Edit </button>`);
+                <button type="button" class = "editToggle"> Edit </button>`);
 
         $(".editToggle").click(() => {
           $(".editValues").toggle();
@@ -175,61 +180,26 @@
 
         // Add Subject Function ----------------------------------------
 
-        $("#addTask").submit((event) => {
-          event.preventDefault();
-          var title = $("#taskTitle").val();
-          var score = $("#taskScore").val();
-          var totalScore = $("#taskTotal").val();
-          var taskType = $("#taskType").val();
-          var date = $("#taskDate").val();
-          var attachments = $("#taskAttachments").val();
-          $.ajax({
-            url: "{% url 'studentSubject' sNumber subject.subjectCode %}",
-            headers: {
-              "X-CSRFToken": "{{ csrf_token }}",
-            },
-            data: {
-              taskTitle: title,
-              taskScore: score,
-              taskTotal: totalScore,
-              taskType: taskType,
-              taskDate: date,
-              taskAttachments: attachments,
-            },
-            method: "POST",
-            success: () => {
-              var title = $("#taskTitle").val();
-              var score = $("#taskScore").val();
-              var totalScore = $("#taskTotal").val();
-              var taskType = $("#taskType").val();
-              var date = $("#taskDate").val();
-              var attachments = $("#taskAttachments").val();
+        $(document).ready(function () {
+          $("#addTask").submit(function (event) {
+            event.preventDefault(); // Prevent form submission
 
-              // Append a new row with the values to the table
-              $(`#${taskType}`).append(
-                "<tr><td>" +
-                  title +
-                  "</td><td>" +
-                  score +
-                  "</td><td>" +
-                  totalScore +
-                  "</td><td>" +
-                  date +
-                  "</td><td>" +
-                  attachments +
-                  "</td><td class='editValues' style='display: none'>" +
-                  ` {% include "modals/editTask.html" %}
-                <button
-                  type="button"
-                  class="btn btn-danger deleteTask"
-                  value="{{t.id}}"
-                  name="taskDelete"
-                >
-                  Delete
-                </button>` +
-                  "</td></tr>"
-              );
-            },
+            // Get form data
+            var formData = new FormData(this);
+
+            $.ajax({
+              url: "{% url 'studentSubject' sNumber subject.subjectCode %}", // Replace with your actual submit URL
+              type: "POST",
+              data: formData,
+              processData: false,
+              contentType: false,
+              success: function (response) {
+                // Handle success response
+                console.log("Form submitted successfully");
+                console.log('print')
+                // Additional actions after form submission
+              },
+            });
           });
         });
 

@@ -193,13 +193,11 @@ def studentSubject(request, studentID, subjectCode):
         image = request.FILES.get('taskAttachments', False)
         taskToBeDelete = request.POST.get('taskDeleteID', False)
 
-        print(type,title,myScore,totalScore,date)
+        print(type, title, myScore, totalScore, date)
 
         if taskToBeDelete:
             deleteTask = Task.objects.get(pk=taskToBeDelete)
             deleteTask.delete()
-
-
 
         if isEdit:
             tType = TaskType.objects.get(taskType=type)

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title> Edit Profile </title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  </head>
+  <body>
+    
+
+<form id="updateUserProfile">
+  <label for="usersCodeName">Codename:</label>
+  <input
+    type="text"
+    id="usersCodeName"
+    name="usersCodeName"
+    value="Kodexsasdfa"
+  />
+
+  <label for="college">College:</label>
+
+  <select name="college" id="college" name="college">
+    <option value="1" disabled selected>Select College</option>
+    <option value="College of Science">College Of Science</option>
+    <option value="College of Engr">College of Engr</option>
+  </select>
+
+  <label for="usersYear">Year:</label>
+  <input
+    type="text"
+    id="usersYear"
+    name="usersYear"
+    value="2009"
+  />
+
+  <label for="usersNumber">Student Number:</label>
+  <input
+    type="number"
+    id="sNumber"
+    name="sNumber"
+    value="2399"
+  />
+
+  <input type="submit" value="submit" />
+</form>
+<h1>Edit Profile</h1>
+{&#x27;isPeer&#x27;: False, &#x27;uid&#x27;: &#x27;mNMlClTZ8sabxuVI5NA5KUS9p8q1&#x27;, &#x27;college&#x27;: &#x27;College of Engr&#x27;, &#x27;studNumYear&#x27;: &#x27;2009&#x27;, &#x27;withActiveConsultation&#x27;: False, &#x27;studentNumber&#x27;: &#x27;2399&#x27;, &#x27;codename&#x27;: &#x27;Kodexsasdfa&#x27;, &#x27;pushToken&#x27;: &#x27;&#x27;, &#x27;updatedAt&#x27;: &#x27;&#x27;, &#x27;isCounsellor&#x27;: False, &#x27;img&#x27;: &#x27;&#x27;, &#x27;isDirector&#x27;: False, &#x27;isActive&#x27;: True, &#x27;email&#x27;: &#x27;johncarlowilhelm.teologo@tup.edu.ph&#x27;, &#x27;registered&#x27;: False, &#x27;firstlogin&#x27;: DatetimeWithNanoseconds(2023, 5, 8, 3, 35, 25, 385000, tzinfo=datetime.timezone.utc)}
+
+<script>
+  $(document).ready(() => {
+    $("#college").val("College of Engr");
+    $(document).on("submit", "updateUserProfile", (e) => {
+      e.preventDefault();
+      var formData = new FormData(document.getElementById("updateUserProfile"));
+
+      $.ajax({
+        url: "/editProfile",
+        data: formData,
+        cache: false,
+        processData: false,
+        contentType: false,
+        dataType: "json",
+        method: "POST",
+        success: function (response) {},
+      });
+    });
+  });
+</script>
+
+  </body>
+</html>
