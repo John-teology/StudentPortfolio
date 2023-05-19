@@ -86,18 +86,23 @@ def demographicForm(request):
     })
 
 
+@csrf_exempt
 def studentProfile(request, studentID):
     studentprof = Studentprofile.objects.get(studentNumber=studentID)
     gender = Gender.objects.get(pk=1)
     yearlist = YearLevel.objects.all()
     courselist = Course.objects.all()
 
-    studentSibjects = StudentSubject.objects.filter(
+    studentSubjects = StudentSubject.objects.filter(
+        studentProfileID=studentprof)
+
+    studentTasks = Task.objects.filter(
         studentProfileID=studentprof)
 
     availableSubs = Subject.objects.all()
-    ids = [i.subjectID for i in studentSibjects]
+    ids = [i.subjectID for i in studentSubjects]
     subjects = Subject.objects.filter(pk__in=ids)
+
     studentTasks = Task.objects.filter(
         studentProfileID=studentprof)
 
@@ -145,6 +150,30 @@ def studentProfile(request, studentID):
         yearName = request.POST.get('yearName', 0)
         contactD = request.POST.get('contactD', 0)
 
+        # add task
+        isEdit = request.POST.get('editType', 0)  # this is the ID
+        typeID = request.POST.get('taskType', '')
+        subjectID = request.POST.get('taskSubject', '')
+        title = request.POST.get('taskTitle', '')
+        myScore = request.POST.get('taskScore', 0)
+        totalScore = request.POST.get('taskTotal', 0)
+        date = request.POST.get('taskDate', 0)
+        image = request.FILES.get('taskAttachments', "")
+        taskToBeDelete = request.POST.get('taskDeleteID', False)
+
+        if taskToBeDelete:
+            deleteTask = Task.objects.get(pk=taskToBeDelete)
+            deleteTask.delete()
+
+        if typeID:
+            tType = TaskType.objects.get(pk=typeID)
+            subject = Subject.objects.get(pk=subjectID)
+            uploadedTask = Task(studentProfileID=studentprof, task_Type=tType, taskSubject=subject, title=title,
+                                overallscore=totalScore, score=myScore, image=image, date=date)
+            uploadedTask.save()
+            print('done')
+            return JsonResponse({"title": uploadedTask.title, "myscore": uploadedTask.score, "overallscore": uploadedTask.overallscore, "date": uploadedTask.date, 'type': tType.taskType, 'subject': subject.subjectName, 'attaachment':  uploadedTask.image.url if uploadedTask.image else None}, safe=False)
+
         if isEdit:
             yearObj = YearLevel.objects.get(yearLevel=yearName)
             courseObj = Course.objects.get(course=courseName)
@@ -162,18 +191,20 @@ def studentProfile(request, studentID):
         # studentNumber = studentprof.studentNumber
         return JsonResponse([{'data': 1}], safe=False)
 
-    return render(request, "studentProfile.html", {
+    return render(request, "studentProfile2.html", {
         'studentprof': studentprof,
         'subjects': subjects,
         'availSubs': availableSubs,
         'test':  data,
         'yearList':  yearlist,
         'courseList':  courselist,
-        'male': gender
+        'male': gender,
+        'tasks': studentTasks
     })
 
 
 @login_required
+@csrf_exempt
 def studentSubject(request, studentID, subjectCode):
     profile = Studentprofile.objects.get(studentNumber=studentID)
 
@@ -185,12 +216,13 @@ def studentSubject(request, studentID, subjectCode):
 
     if request.method == "POST":
         isEdit = request.POST.get('editType', 0)  # this is the ID
-        type = request.POST.get('taskType', '')
+        typeID = request.POST.get('taskType', '')
+        subjectID = request.POST.get('taskSubject', '')
         title = request.POST.get('taskTitle', '')
         myScore = request.POST.get('taskScore', 0)
         totalScore = request.POST.get('taskTotal', 0)
         date = request.POST.get('taskDate', 0)
-        image = request.FILES.get('taskAttachments', False)
+        image = request.FILES.get('taskAttachments', "")
         taskToBeDelete = request.POST.get('taskDeleteID', False)
 
         print(type, title, myScore, totalScore, date)
@@ -213,8 +245,10 @@ def studentSubject(request, studentID, subjectCode):
 
             return HttpResponseRedirect(reverse("studentSubject", args=(str(profile.studentNumber), str(subject.subjectCode))))
 
-        if type:
-            tType = TaskType.objects.get(taskType=type)
+        if typeID:
+
+            tType = TaskType.objects.get(pk=typeID)
+            subject = Subject.objects.get(pk=subjectID)
             uploadedTask = Task(studentProfileID=profile, task_Type=tType, taskSubject=subject, title=title,
                                 overallscore=totalScore, score=myScore, image=image, date=date)
             uploadedTask.save()
@@ -227,6 +261,21 @@ def studentSubject(request, studentID, subjectCode):
         'rubricks': rubrik,
         'tasks': studentTasks,
     })
+
+
+def getUserSubject(request):
+    user = Studentprofile.objects.get(emailAddress=request.user.email)
+    studentSubjects = StudentSubject.objects.filter(
+        studentProfileID=user)
+    ids = [i.subjectID for i in studentSubjects]
+    subjects = Subject.objects.filter(pk__in=ids)
+    return JsonResponse([sub.serialize() for sub in subjects], safe=False)
+
+
+def getUserRubrick(request, subjectid):
+    rubricks = Rubrick.objects.filter(
+        subjectID=subjectid).filter(~Q(percentage=0))
+    return JsonResponse([rub.serialize() for rub in rubricks], safe=False)
 
 
 def about(request):

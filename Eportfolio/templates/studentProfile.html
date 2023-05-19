@@ -50,7 +50,7 @@
     Eportfolio
       </a>
       </li>
-      <li class="active" id="activeProfile">
+      <li  id="activeProfile">
         <a id="showProfilePage"> <i class="fa fa-user"></i> Profile</a>
       </li>
       <li id="activeStat">
@@ -58,7 +58,7 @@
           <i class="fa fa-calendar"></i> Statistics
         </a>
       </li>
-      <li id="activeSubject">
+      <li id="activeSubject" class="active">
         <a id="Subjects"> <i class="fa fa-book"></i>Subjects</a>
       </li>
       <li id="activeEdit">
@@ -247,16 +247,17 @@
                   <th>Subject Name</th>
                   <th>Faculty</th>
                   <th>No. Of Units</th>
+                  <th>ADD</th>
                 </tr>
               </thead>
+              {% for sub in availSubs %}
               <tbody>
-                {% for sub in availSubs %}
                 <tr>
                   <td>{{sub.subjectCode}}</td>
                   <td>{{sub.subjectName}}</td>
                   <td>{{sub.facultyName}}</td>
                   <td>{{sub.units}}</td>
-                  <!--
+                  
                   <td>
                     <button
                       type="button"
@@ -266,10 +267,11 @@
                       Add Subject
                     </button>
                   </td>
-                  -->
+                 
                 </tr>
-                {% endfor %}
               </tbody>
+              {% endfor %}
+
             </table>
           </div>
         </div>
@@ -285,6 +287,12 @@
           <br />
 
           {% endfor %}
+        </div>
+
+
+        <div class="profile-info col-md-9" id="subjectPage">
+          <h2>Subjects</h2>
+          
         </div>
       </div>
     </div>
@@ -343,10 +351,7 @@
 
         // edit Profile -----------------------------------------
 
-        //div that need to hide ------------------------
-        $("#editPage").hide();
-        $("#statPage").hide();
-        //end of div that need to hide -----------------
+    
 
         // Datatable ------------------------
         $("#example").DataTable({
@@ -370,6 +375,13 @@
         });
       
         // Datatable ------------------------
+
+
+        //navigation  ------------------------ ------------------------
+        $("#editPage").hide();
+        $("#statPage").hide();
+        $("#profilePage").hide();
+        //end of div that need to hide -----------------
 
         $("#showProfilePage").click(() => {
           $("#profilePage").show();
@@ -397,6 +409,18 @@
           $("#activeEdit").removeClass();
           $("#activeProfile").removeClass();
         });
+
+        $("#showProfilePage").click(() => {
+          $("#profilePage").show();
+          $("#editPage").hide();
+          $("#statPage").hide();
+          $("#activeEdit").removeClass();
+          $("#activeStat").removeClass();
+          $("#activeProfile").addClass("active");
+        });
+        //navigation  ------------------------ ------------------------
+
+
 
         $(".addSubButton").click((e) => {
           $.ajax({

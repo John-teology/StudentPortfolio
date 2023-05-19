@@ -1,11 +1,11 @@
-<button
+<!-- <button
   type="button"
-  class="btn btn-primary"
+  class= "btn btn-outline-info"
   data-toggle="modal"
   data-target="#addTaskModal"
 >
-  ADD TASK
-</button>
+  ADD
+</button> -->
 
 <!-- Modal -->
 <div
@@ -20,7 +20,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLongTitle">
-          Add {{g.taskTypeID}}:
+          Add :
         </h5>
         <button
           type="button"
@@ -32,7 +32,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <form  id="addTask"  enctype="multipart/form-data">
+        <form  id="addTask" enctype="multipart/form-data">
           {% csrf_token %}
           <label for="taskTitle">Title:</label>
           <input
@@ -73,15 +73,18 @@
             required
           />
 
+          <label for="taskSubject">Select Subject:</label>
+          <select name="taskSubject" id="taskSubject" 
+                  class="form-select form-select-mb" 
+                  aria-label=".form-select-lg example" required>
+                  <option value="" selected disabled>Select</option>
+          </select>
 
           <label for="taskType">Select Task Types:</label>
           <select name="taskType" id="taskType" 
                   class="form-select form-select-mb" 
                   aria-label=".form-select-lg example" required>
                   <option value="" selected disabled>Select</option>
-                  {% for g in rubricks %}
-                  <option value="{{g.taskTypeID}}" >{{g.taskTypeID}}</option>
-                  {% endfor %}
           </select>
 
           <label for="taskAttachments">Attachments:</label>
@@ -112,3 +115,61 @@
     </div>
   </div>
 </div>
+
+
+<script>
+  $.ajax({
+    url: "{% url 'getUserSubject' %}",
+    method: "GET",
+    success: (data) =>{
+      for (var i = 0; i <= data.length - 1; i++) {
+              var user_position = new Option(data[i].subjectName, data[i].id);
+              $('#taskSubject').append(user_position);
+            }
+    }
+  })
+
+
+  $(document).on('change', '#taskSubject',(e)=>{
+    var subjectID = e.currentTarget.value;
+    $.ajax({
+      url:`/getrubrick/${subjectID}`,
+      success: (data) => {
+      $('#taskType')
+      .find('option')
+      .remove()
+      .end()
+      .append('<option value="" disabled selected>Select</option>')
+          for (var i = 0; i <= data.length - 1; i++) {
+              var user_position = new Option(data[i].taskName, data[i].taskID);
+              $('#taskType').append(user_position);
+            }
+      }
+    })
+  })
+
+
+   // $(document).ready(function () {
+          $("#addTask").submit(function (event) {
+            event.preventDefault(); // Prevent form submission
+
+            // Get form data
+            var formData = new FormData(this);
+
+            $.ajax({
+              url: "{% url 'studentProfile' studentprof.studentNumber %}", // Replace with your actual submit URL
+              type: "POST",
+              data: formData,
+              processData: false,
+              contentType: false,
+              success: function (response) {
+                // Handle success response
+                console.log("Form submitted successfully");
+                console.log(response);
+               
+                // Additional actions after form submission
+              },
+            });
+          });
+
+</script>

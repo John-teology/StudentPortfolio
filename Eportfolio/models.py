@@ -69,6 +69,7 @@ class Subject(models.Model):
 
     def serialize(self):
         return {
+            "id": self.id,
             "subjectCode": self.subjectCode,
             "subjectName": self.subjectName,
             "facultyName": self.facultyName,
@@ -78,7 +79,8 @@ class Subject(models.Model):
 
 
 class Task(models.Model):
-    studentProfileID = models.ForeignKey(Studentprofile, on_delete=CASCADE, related_name="studentTask", null=True)
+    studentProfileID = models.ForeignKey(
+        Studentprofile, on_delete=CASCADE, related_name="studentTask", null=True)
     task_Type = models.ForeignKey(
         TaskType, on_delete=CASCADE, related_name="TypeofTask", null=True)
     taskSubject = models.ForeignKey(
@@ -99,6 +101,13 @@ class Rubrick(models.Model):
     taskTypeID = models.ForeignKey(
         TaskType, on_delete=CASCADE, related_name='takstypeRubicks')
     percentage = models.IntegerField(null=True)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "taskID": self.taskTypeID_id,
+            "taskName": self.taskTypeID.taskType,
+        }
 
 
 class StudentSubject(models.Model):

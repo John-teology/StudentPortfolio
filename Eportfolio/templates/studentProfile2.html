@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+
+    <title>Student Portfolio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- link for datatables -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css"
+    />
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
+
+    <!-- end of link for datatables -->
+    <style type="text/css">
+      body {
+        background: #f4f3ef;
+      }
+
+      #subjectTable th {
+        background-color: red; /* Set the background color */
+        color: white; /* Set the text color */
+      }
+      #wrapper {
+        padding-left: 0;
+        -webkit-transition: all 0.5s ease;
+        -moz-transition: all 0.5s ease;
+        -o-transition: all 0.5s ease;
+        transition: all 0.5s ease;
+      }
+
+      #wrapper.toggled {
+        padding-left: 250px;
+      }
+
+      #sidebar-wrapper {
+        z-index: 1000;
+        position: fixed;
+        left: 250px;
+        width: 0;
+        height: 100%;
+        margin-left: -250px;
+        overflow-y: auto;
+        background: #fff;
+        -webkit-transition: all 0.5s ease;
+        -moz-transition: all 0.5s ease;
+        -o-transition: all 0.5s ease;
+        transition: all 0.5s ease;
+      }
+
+      #sidebar-wrapper {
+        box-shadow: inset -1px 0px 0px 0px #dddddd;
+      }
+
+      #wrapper.toggled #sidebar-wrapper {
+        width: 250px;
+      }
+
+      #page-content-wrapper {
+        width: 100%;
+        position: absolute;
+        padding: 15px;
+      }
+
+      #wrapper.toggled #page-content-wrapper {
+        position: absolute;
+        margin-right: -250px;
+      }
+
+      /* Sidebar Styles */
+
+      .sidebar-nav {
+        position: absolute;
+        top: 0;
+        width: 250px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .sidebar-nav li {
+        text-indent: 20px;
+        line-height: 40px;
+      }
+
+      .sidebar-nav li a {
+        display: block;
+        text-decoration: none;
+        color: #999999;
+      }
+
+      .sidebar-nav li a:hover {
+        text-decoration: none;
+      }
+
+      .sidebar-nav li a:active,
+      .sidebar-nav li a:focus {
+        text-decoration: none;
+      }
+
+      .sidebar-nav > .sidebar-brand {
+        height: 65px;
+        font-size: 18px;
+        line-height: 60px;
+      }
+
+      .sidebar-nav > .sidebar-brand a {
+        color: #999999;
+      }
+
+      .sidebar-nav > .sidebar-brand a:hover {
+        color: #fff;
+        background: none;
+      }
+
+      @media (min-width: 768px) {
+        #wrapper {
+          padding-left: 250px;
+        }
+
+        #wrapper.toggled {
+          padding-left: 0;
+        }
+
+        #sidebar-wrapper {
+          width: 250px;
+        }
+
+        #wrapper.toggled #sidebar-wrapper {
+          width: 0;
+        }
+
+        #page-content-wrapper {
+          padding: 20px;
+          position: relative;
+        }
+
+        #wrapper.toggled #page-content-wrapper {
+          position: relative;
+          margin-right: 0;
+        }
+      }
+
+      #sidebar-wrapper li.active > a:after {
+        border-right: 17px solid #f4f3ef;
+        border-top: 17px solid transparent;
+        border-bottom: 17px solid transparent;
+        content: "";
+        display: inline-block;
+        position: absolute;
+        right: -1px;
+      }
+
+      .sidebar-brand {
+        border-bottom: 1px solid rgba(102, 97, 91, 0.3);
+      }
+
+      .sidebar-brand {
+        padding: 18px 0px;
+        margin: 0 20px;
+      }
+
+      .navbar .navbar-nav > li > a p {
+        display: inline-block;
+        margin: 0;
+      }
+      p {
+        font-size: 16px;
+        line-height: 1.4em;
+      }
+
+      .navbar-default {
+        background-color: #f4f3ef;
+        border: 0px;
+        border-bottom: 1px solid #dddddd;
+      }
+
+      btn-menu {
+        border-radius: 3px;
+        padding: 4px 12px;
+        margin: 14px 5px 5px 20px;
+        font-size: 14px;
+        float: left;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="wrapper" class="wrapper-content">
+      <div id="sidebar-wrapper">
+        <ul class="sidebar-nav">
+          <li class="sidebar-brand">
+            <a href="#"> Student Profile </a>
+          </li>
+          <li id="activeProfile">
+            <a id="showProfilePage">Profile</a>
+          </li>
+          <li id="activeStat">
+            <a id="statisticPage">Statistics</a>
+          </li>
+          <li id="activeEdit">
+            <a id="editProfile">Edit Profile</a>
+          </li>
+          <li class="active" id="activeSubject">
+            <a id="Subjects">Subjects</a>
+          </li>
+          <li id="activeSignOut">
+            <a id="Signout">Sign Out</a>
+          </li>
+        </ul>
+      </div>
+      <div id="page-content-wrapper">
+        <nav class="navbar navbar-default">
+          <div class="container-fluid">
+            <div class="navbar-header">
+              <button
+                class="btn-menu btn btn-success btn-toggle-menu"
+                type="button"
+              >
+                <i class="fa fa-bars"></i>
+              </button>
+            </div>
+            <div class="collapse navbar-collapse">
+              <ul class="nav navbar-nav navbar-right">
+                <li>
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <i class="ti-panel"></i>
+                    <p>Stats</p>
+                  </a>
+                </li>
+                <li>
+                  <a href="#">
+                    <i class="ti-settings"></i>
+                    <p>Settings</p>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+        <div class="container-fluid" id="subjectPage">
+          {% include "modals/addTask.html" %}
+          <div class="row">
+            <div class="col-lg-12">
+              <h1>Subject Menu {{studentprof.studentNumber}}</h1>
+              <table class="display" style="width: 100%" id="subjectTable">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>My Score</th>
+                    <th>Overall Score</th>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Subject</th>
+                    <th>Attachments</th>
+                    <th class="editButton" style="display: none">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for i in tasks %}
+                  <tr>
+                    <td>{{i.title}}</td>
+                    <td>{{i.score}}</td>
+                    <td>{{i.overallscore}}</td>
+                    <td>{{i.date}}</td>
+                    <td>{{i.task_Type}}</td>
+                    <td>{{i.taskSubject}}</td>
+                    <td>{{i.image}}</td>
+                    <td class="editValues" style="display: none">
+                      <button
+                        type="button"
+                        class="btn btn-danger deleteTask"
+                        value="{{i.id}}"
+                        name="taskDelete"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="container-fluid" id="profilePage">
+          <div class="row">
+            <div class="col-lg-12">
+              <h1>Profile Menu</h1>
+              <p>
+                This template has a responsive menu toggling system. The menu
+                will appear collapsed on smaller screens, and will appear
+                non-collapsed on larger screens.
+              </p>
+              <p>Make sure to keep your content here</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="container-fluid" id="editPage">
+          <div class="row">
+            <div class="col-lg-12">
+              <h1>Edit Menu</h1>
+              <p>
+                This template has a responsive menu toggling system. The menu
+                will appear collapsed on smaller screens, and will appear
+                non-collapsed on larger screens.
+              </p>
+              <p>Make sure to keep your content here</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="container-fluid" id="statPage">
+          <div class="row">
+            <div class="col-lg-12">
+              <h1>Stat Menu</h1>
+              <p>
+                This template has a responsive menu toggling system. The menu
+                will appear collapsed on smaller screens, and will appear
+                non-collapsed on larger screens.
+              </p>
+              <p>Make sure to keep your content here</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      $(function () {
+        $(".btn-toggle-menu").click(function () {
+          $("#wrapper").toggleClass("toggled");
+        });
+      });
+
+      //   datatables config -----------------------------------------------
+      $(document).ready(() => {
+        $(".dt-buttons").append(
+          `<button
+  type="button"
+  class= "btn btn-outline-info"
+  data-toggle="modal"
+  data-target="#addTaskModal"
+>
+  Add
+</button>`
+        );
+      });
+
+      $("#subjectTable").DataTable({
+        responsive: {
+          details: {
+            type: "column",
+            target: "tr",
+          },
+        },
+        dom: "Bfrtip",
+        buttons: [
+          {
+            extend: "excelHtml5",
+            className: "btn btn-outline-success",
+            exportOptions: {
+              orthogonal: "export", // Export all rows
+              columns: [0, 1, 2, 3, 4, 5], // Include only the first 4 columns
+            },
+          },
+          {
+            extend: "pdfHtml5",
+            className: "btn btn-outline-danger",
+            exportOptions: {
+              orthogonal: "export", // Export all rows
+              columns: [0, 1, 2, 3, 4, 5], // Include only the first 4 columns
+            },
+          },
+        ],
+      });
+      //   datatables config -----------------------------------------------
+
+      // edit button in data table
+
+      $(".dt-buttons").append(`
+                <button type="button" class = "btn btn-outline-secondary editToggle" style = "margin-right:3px"> Edit </button>`);
+
+      $(".editToggle").click(() => {
+        $(".editValues").toggle();
+
+        $(".editButton").toggle();
+      });
+
+      //navigation  ------------------------ ------------------------
+      $("#editPage").hide();
+      $("#statPage").hide();
+      $("#profilePage").hide();
+      //end of div that need to hide -----------------
+
+      $("#showProfilePage").click(() => {
+        $("#profilePage").show();
+        $("#subjectPage").hide();
+        $("#editPage").hide();
+        $("#statPage").hide();
+        $("#activeEdit").removeClass();
+        $("#activeStat").removeClass();
+        $("#activeSubject").removeClass();
+        $("#activeProfile").addClass("active");
+      });
+
+      $("#editProfile").click(() => {
+        $("#profilePage").hide();
+        $("#statPage").hide();
+        $("#subjectPage").hide();
+        $("#editPage").show();
+        $("#activeProfile").removeClass();
+        $("#activeStat").removeClass();
+        $("#activeSubject").removeClass();
+        $("#activeEdit").addClass("active");
+      });
+
+      $("#statisticPage").click(() => {
+        $("#statPage").show();
+        $("#subjectPage").hide();
+        $("#profilePage").hide();
+        $("#editPage").hide();
+        $("#activeStat").addClass("active");
+        $("#activeEdit").removeClass();
+        $("#activeProfile").removeClass();
+        $("#activeSubject").removeClass();
+      });
+
+      $("#Subjects").click(() => {
+        $("#subjectPage").show();
+        $("#editPage").hide();
+        $("#statPage").hide();
+        $("#profilePage").hide();
+        $("#activeEdit").removeClass();
+        $("#activeStat").removeClass();
+        $("#activeProfile").removeClass();
+        $("#activeSubject").addClass("active");
+      });
+      //navigation  ------------------------ ------------------------
+
+      // Delete funtion ------------------------------
+      $(document).on("click", ".deleteTask", function (e) {
+        // Get the parent <tr> element
+        var row = $(this).closest("tr");
+        // Remove the row from the table
+        row.remove();
+        console.log('delete')
+
+        $.ajax({
+          url: "{% url 'studentProfile' studentprof.studentNumber %}",
+          data: {
+            taskDeleteID: e.currentTarget.value,
+          },
+          method: "POST",
+        });
+      });
+
+      // Delete funtion ------------------------------
+    </script>
+  </body>
+</html>

@@ -179,28 +179,7 @@
 
         // Add Subject Function ----------------------------------------
 
-        $(document).ready(function () {
-          $("#addTask").submit(function (event) {
-            event.preventDefault(); // Prevent form submission
-
-            // Get form data
-            var formData = new FormData(this);
-
-            $.ajax({
-              url: "{% url 'studentSubject' sNumber subject.subjectCode %}", // Replace with your actual submit URL
-              type: "POST",
-              data: formData,
-              processData: false,
-              contentType: false,
-              success: function (response) {
-                // Handle success response
-                console.log("Form submitted successfully");
-                console.log("print");
-                // Additional actions after form submission
-              },
-            });
-          });
-        });
+       
 
         // Add Subject Function ----------------------------------------
       });
