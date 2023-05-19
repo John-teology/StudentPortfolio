@@ -291,6 +291,7 @@
         </nav>
         <div class="container-fluid" id="subjectPage">
           {% include "modals/addTask.html" %}
+          {% include "modals/editTask.html" %}
           <div class="row">
             <div class="col-lg-12">
               <h1>Subject Menu {{studentprof.studentNumber}}</h1>
@@ -304,6 +305,7 @@
                     <th>Type</th>
                     <th>Subject</th>
                     <th>Attachments</th>
+                    <th id="editButton">Action</th>
                   </tr>
                 </thead>
               </table>
@@ -343,12 +345,15 @@
           <div class="row">
             <div class="col-lg-12">
               <h1>Stat Menu</h1>
-              <p>
-                This template has a responsive menu toggling system. The menu
-                will appear collapsed on smaller screens, and will appear
-                non-collapsed on larger screens.
-              </p>
-              <p>Make sure to keep your content here</p>
+              {% for sub in subjects %}
+              <div class="panel">
+                <div class="panel-body bio-graph-info">
+                  <h1>{{sub.subjectCode}}:{{sub.subjectName}}</h1>
+                  <div id="{{sub.subjectCode}}: {{sub.subjectName}}"></div>
+                </div>
+              </div>
+              <br />
+              {% endfor %}
             </div>
           </div>
         </div>
@@ -362,19 +367,9 @@
       });
 
       //   datatables config -----------------------------------------------
-      $(".dt-buttons").append(
-        `<button
-        type="button"
-        class= "btn btn-outline-info"
-        data-toggle="modal"
-        data-target="#addTaskModal"
-      >
-        Add
-      </button>`
-      );
 
       $(document).ready(() => {
-        $("#subjectTable").DataTable({
+        var subTable = $("#subjectTable").DataTable({
           dom: "Bfrtip",
           columns: [
             { data: "title" },
@@ -384,6 +379,7 @@
             { data: "taskType" },
             { data: "subject" },
             { data: "image" },
+            { data: "action" },
           ],
           ajax: {
             url: "{% url 'getUserTask' %}",
@@ -396,7 +392,7 @@
               text: "Export to Excel",
               className: "btn btn-outline-success",
               exportOptions: {
-                columns: [0, 1, 2, 3, 4, 5, 6], // Include all columns in the export
+                columns: [0, 1, 2, 3, 4, 5], // Include all columns in the export
               },
             },
             {
@@ -404,38 +400,36 @@
               text: "Export to PDF",
               className: "btn btn-outline-danger",
               exportOptions: {
-                columns: [0, 1, 2, 3, 4, 5, 6], // Include all columns in the export
+                columns: [0, 1, 2, 3, 4, 5], // Include all columns in the export
               },
             },
           ],
           initComplete: function () {
             $(".dt-buttons").append(
               `<button
-        type="button"
-        id = "addUserTaskButton"
-        class="btn btn-outline-info"
-        data-toggle="modal"
-        data-target="#addTaskModalOriginal"
-      >
-        Add
-      </button>`
+                type="button"
+                id = "addUserTaskButton"
+                class="btn btn-outline-info"
+                data-toggle="modal"
+                data-target="#addTaskModalOriginal"
+              >
+                Add
+              </button>`
             );
+            $(".dt-buttons").append(`
+               <button type="button" class = "btn btn-outline-secondary " id="editTogglere" > Edit </button>`);
+
+            let num = false;
+            subTable.column(-1).visible(num);
+            $("#editTogglere").click(() => {
+              num = !num;
+              subTable.column(-1).visible(num);
+            });
           },
         });
       });
 
       //   datatables config -----------------------------------------------
-
-      // edit button in data table
-
-      // $(".dt-buttons").append(`
-      //           <button type="button" class = "btn btn-outline-secondary editToggle" style = "margin-right:3px"> Edit </button>`);
-
-      // $(".editToggle").click(() => {
-      //   $(".editValues").toggle();
-
-      //   $(".editButton").toggle();
-      // });
 
       //navigation  ------------------------ ------------------------
       $("#editPage").hide();
@@ -515,6 +509,52 @@
         positionClass: "toast-top-right",
         timeOut: 3000, // Adjust the duration as per your preference
       };
+
+      $(document).ready(() => {
+        // getting the object from django template-------------
+        const data = "{{test|safe}}";
+
+        const validJson = data.replace(/'/g, '"');
+
+        // Parse the string as JSON
+        const obj = JSON.parse(validJson);
+
+        for (const [key, value] of Object.entries(obj)) {
+          let counter = 0;
+
+          const subArray = Object.entries(value).map(([subKey, subValue]) => [
+            subKey,
+            subValue,
+          ]);
+          graph_it_percentage(subArray, 200, document.getElementById(key));
+        }
+      });
+
+      // function that create bar
+      function graph_it_percentage(g, g_width, g_element) {
+        let output = '<table border="0" cellspacing="0" cellpadding="8">',
+          calwidth_percentage = 0;
+        let barColor;
+
+        for (i = 0; i < g.length; i++) {
+          calwidth_percentage = g_width * (parseInt(g[i][1]) / 100);
+
+          if (parseInt(g[i][1]) > 75) {
+            barColor = "green";
+          } else if (parseInt(g[i][1]) < 75 && parseInt(g[i][1]) > 65) {
+            barColor = "orange";
+          } else {
+            barColor = "lightcoral";
+          }
+          let unfilledBarColor = "lightgrey";
+          let unfilledBarWidth = g_width - calwidth_percentage;
+          output += `<tr><td style="padding-right: 10px;">${g[i][0]}</td><td><svg xmlns="http://www.w3.org/2000/svg" width="${g_width}" height="10"><g class="bar"><rect x="${calwidth_percentage}" width="${unfilledBarWidth}" height="10" fill="${unfilledBarColor}"></rect><rect width="${calwidth_percentage}" height="10" fill="${barColor}"></rect></g></svg> ${g[i][1]}%</td></tr>`;
+        }
+
+        output += "</table>";
+
+        g_element.innerHTML = output;
+      }
     </script>
   </body>
 </html>

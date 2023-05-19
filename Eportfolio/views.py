@@ -152,7 +152,6 @@ def studentProfile(request, studentID):
         contactD = request.POST.get('contactD', 0)
 
         # add task
-        isEdit = request.POST.get('editType', 0)  # this is the ID
         typeID = request.POST.get('taskType', '')
         subjectID = request.POST.get('taskSubject', '')
         title = request.POST.get('taskTitle', '')
@@ -161,6 +160,19 @@ def studentProfile(request, studentID):
         date = request.POST.get('taskDate', 0)
         image = request.FILES.get('taskAttachments', "")
         taskToBeDelete = request.POST.get('taskDeleteID', False)
+
+        # edit task
+        isEditType = request.POST.get('taskIdEdit', 0)  # this is the ID
+        typeIDEdit = request.POST.get('taskTypeEdit', '')
+        subjectIDEdit = request.POST.get('taskSubjectEdit', '')
+        titleEdit = request.POST.get('taskTitleEdit', '')
+        myScoreEdit = request.POST.get('taskScoreEdit', 0)
+        totalScoreEdit = request.POST.get('taskTotalEdit', 0)
+        dateEdit = request.POST.get('taskDateEdit', 0)
+        imageEdit = request.FILES.get('taskAttachmentsEdit', "")
+
+        print(isEditType,typeIDEdit,subjectIDEdit,titleEdit,myScoreEdit,totalScoreEdit,dateEdit,imageEdit)
+
 
         if taskToBeDelete:
             deleteTask = Task.objects.get(pk=taskToBeDelete)
@@ -174,6 +186,27 @@ def studentProfile(request, studentID):
             uploadedTask.save()
             print('done')
             return JsonResponse({"title": uploadedTask.title, "myscore": uploadedTask.score, "overallscore": uploadedTask.overallscore, "date": uploadedTask.date, 'type': tType.taskType, 'subject': subject.subjectName, 'attaachment':  uploadedTask.image.url if uploadedTask.image else None}, safe=False)
+        
+
+        if isEditType:
+            try:
+                modifiedTask = Task.objects.get(pk=isEditType)
+                print(modifiedTask.title)
+                tTypeNew = TaskType.objects.get(pk=typeIDEdit)
+                subjectNew = Subject.objects.get(pk=subjectIDEdit)
+                modifiedTask.title = titleEdit
+                modifiedTask.score = myScoreEdit
+                modifiedTask.overallscore = totalScoreEdit
+                modifiedTask.task_Type = tTypeNew
+                modifiedTask.taskSubject = subjectNew
+                modifiedTask.date = dateEdit
+                modifiedTask.image = imageEdit
+                modifiedTask.save()
+                return JsonResponse([{'data': 1}], safe=False)
+            except :
+                return JsonResponse([{'data': 0}], safe=False)
+
+
 
         if isEdit:
             yearObj = YearLevel.objects.get(yearLevel=yearName)

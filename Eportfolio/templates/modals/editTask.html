@@ -1,17 +1,10 @@
 <!-- Button trigger modal -->
-<button
-type="button"
-class="btn btn-info EditTask"
-data-toggle="modal"
-data-target=".task{{t.id}}"
 
->
-Modify
-</button>
 
 <!-- Modal -->
 <div
-  class="modal fade task{{t.id}}"
+  class="modal fade"
+  id="actionModify"
   tabindex="-1"
   role="dialog"
   aria-labelledby="exampleModalLongTitle"
@@ -21,7 +14,7 @@ Modify
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLongTitle">
-          Modify Me: {{task.title}}
+          Modify Me: 
         </h5>
         <button
           type="button"
@@ -33,61 +26,72 @@ Modify
         </button>
       </div>
       <div class="modal-body">
-        <form action="" id="addTask" method="post" enctype="multipart/form-data">
-          {% csrf_token %}
-          <label for="taskTitle">Title:</label>
+        <form id="addTaskEdit" enctype="multipart/form-data">
+
+          <input type="number" id="taskIdEdit" name="taskIdEdit" hidden>
+
+          <label for="taskTitleEdit">Title:</label>
           <input
             type="text"
             class="form-control"
-            id="taskTitle"
-            name="taskTitle"
-            value="{{t.title}}"
+            id="taskTitleEdit"
+            name="taskTitleEdit"
+            placeholder="Title"
+            required
           />
-          <label for="taskScore">Your Total Score:</label>
+          <label for="taskScoreEdit">Your Total Score:</label>
           <input
             type="number"
             class="form-control"
-            id="taskScore"
-            name="taskScore"
-            value="{{t.score}}"
+            id="taskScoreEdit"
+            name="taskScoreEdit"
+            placeholder="Your Score"
+            required
           />
-          <input
-            type="text"
-            id="taskType"
-            name="taskType"
-            value="{{t.task_Type}}"
-            hidden
-          />
-          <input
-          type="number"
-          id="editType"
-          name="editType"
-          value= "{{t.id}}"
-          hidden
-        />
-          <label for="taskTotal">Total Score:</label>
+          
+
+          <label for="taskTotalEdit">Total Score:</label>
           <input
             type="number"
             class="form-control"
-            id="taskTotal"
-            name="taskTotal"
-            value="{{t.overallscore}}"
+            id="taskTotalEdit"
+            name="taskTotalEdit"
+            placeholder="Total"
+            required
           />
-          <label for="taskDate">Date:</label>
+          <label for="taskDateEdit">Date:</label>
           <input
             type="date"
             class="form-control"
-            id="taskDate"
-            name="taskDate"
-            value="{{t.date | date:'c'}}"
+            id="taskDateEdit"
+            name="taskDateEdit"
+            placeholder="Date"
+            required
           />
-          <label for="taskAttachments">Attachments:</label>
+
+          <label for="taskSubjectEdit">Select Subject:</label>
+          <select name="taskSubjectEdit" id="taskSubjectEdit" 
+                  class="form-select form-select-mb" 
+                  aria-label=".form-select-lg example" required>
+                  <option value="" selected disabled>Select</option>
+          </select>
+
+          <label for="taskTypeEdit">Select Task Types:</label>
+          <select name="taskTypeEdit" id="taskTypeEdit" 
+                  class="form-select form-select-mb" 
+                  aria-label=".form-select-lg example" required>
+                  <option value="" selected disabled>Select</option>
+          </select>
+
+          <label for="taskAttachmentsEdit">Attachments:</label>
           <input
             type="file"
             class="form-control"
-            id="taskAttachments"
-            name="taskAttachments"
+            id="taskAttachmentsEdit"
+            name="taskAttachmentsEdit"
+            placeholder="Image"
           />
+
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">
@@ -105,3 +109,97 @@ Modify
     </div>
   </div>
 </div>
+
+<script>
+
+
+$(document).on('click',".EditTask", (event) => {
+
+  $("#taskTitleEdit").val($(event.currentTarget).attr('title'));
+  $("#taskIdEdit").val($(event.currentTarget).attr('id'));
+  $("#taskScoreEdit").val($(event.currentTarget).attr('score'));
+  $("#taskTotalEdit").val($(event.currentTarget).attr('overall'));
+  $("#taskDateEdit").val($(event.currentTarget).attr('date'));
+  $("#taskSubjectEdit").val($(event.currentTarget).attr('subject'));
+
+  var firtValSub =  $(event.currentTarget).attr('subject');
+  console.log(firtValSub)
+  
+  $.ajax({
+      url:`/getrubrick/${firtValSub}`,
+      success: (data) => {
+      $('#taskTypeEdit')
+      .find('option')
+      .remove()
+      .end()
+      .append('<option value="" disabled selected>Select</option>')
+          for (var i = 0; i <= data.length - 1; i++) {
+              var user_position = new Option(data[i].taskName, Number(data[i].taskID));
+              $('#taskTypeEdit').append(user_position);
+            }
+        $("#taskTypeEdit").val($(event.currentTarget).attr('subType'));
+
+      }
+    })
+
+
+})
+
+$.ajax({
+    url: "{% url 'getUserSubject' %}",
+    method: "GET",
+    success: (data) =>{
+      for (var i = 0; i <= data.length - 1; i++) {
+              var user_position = new Option(data[i].subjectName, data[i].id);
+              $('#taskSubjectEdit').append(user_position);
+            }
+    }
+  })
+
+
+  $(document).on('change', '#taskSubjectEdit',(e)=>{
+    var subjectID = e.currentTarget.value;
+    $.ajax({
+      url:`/getrubrick/${subjectID}`,
+      success: (data) => {
+      $('#taskTypeEdit')
+      .find('option')
+      .remove()
+      .end()
+      .append('<option value="" disabled selected>Select</option>')
+          for (var i = 0; i <= data.length - 1; i++) {
+              var user_position = new Option(data[i].taskName, data[i].taskID);
+              $('#taskTypeEdit').append(user_position);
+            }
+      }
+    })
+  })
+
+  $("#addTaskEdit").submit(function (event) {
+        event.preventDefault(); // Prevent form submission
+
+        // Get form data
+        var formData = new FormData(this);
+
+        $.ajax({
+          url: "{% url 'studentProfile' studentprof.studentNumber %}", // Replace with your actual submit URL
+          type: "POST",
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function (response) {
+            // Handle success response
+            $("#addTaskEdit")[0].reset();
+            console.log(response);
+            var dataTable = $("#subjectTable").DataTable();
+            dataTable.ajax.reload(null, false); 
+            $(".EditTask").click();
+            
+            // Additional actions after form submission
+          },
+        });
+      });
+
+
+ 
+</script>
