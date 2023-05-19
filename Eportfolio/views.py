@@ -95,13 +95,14 @@ def studentProfile(request, studentID):
 
     studentSubjects = StudentSubject.objects.filter(
         studentProfileID=studentprof)
+    subjectIDs = [
+        studentSubject.subjectID_id for studentSubject in studentSubjects]
+    subjects = Subject.objects.filter(id__in=subjectIDs)
 
     studentTasks = Task.objects.filter(
         studentProfileID=studentprof)
 
     availableSubs = Subject.objects.all()
-    ids = [i.subjectID for i in studentSubjects]
-    subjects = Subject.objects.filter(pk__in=ids)
 
     studentTasks = Task.objects.filter(
         studentProfileID=studentprof)
@@ -263,19 +264,30 @@ def studentSubject(request, studentID, subjectCode):
     })
 
 
+# below are for ajax ----------------------------
+
 def getUserSubject(request):
     user = Studentprofile.objects.get(emailAddress=request.user.email)
-    studentSubjects = StudentSubject.objects.filter(
-        studentProfileID=user)
-    ids = [i.subjectID for i in studentSubjects]
-    subjects = Subject.objects.filter(pk__in=ids)
-    return JsonResponse([sub.serialize() for sub in subjects], safe=False)
+    studentSubjects = StudentSubject.objects.filter(studentProfileID=user)
+    subjectIDs = [
+        studentSubject.subjectID_id for studentSubject in studentSubjects]
+    subjects = Subject.objects.filter(id__in=subjectIDs)
+    return JsonResponse([subject.serialize() for subject in subjects], safe=False)
 
 
 def getUserRubrick(request, subjectid):
     rubricks = Rubrick.objects.filter(
         subjectID=subjectid).filter(~Q(percentage=0))
     return JsonResponse([rub.serialize() for rub in rubricks], safe=False)
+
+
+@csrf_exempt
+def getUserTask(request):
+    user = Studentprofile.objects.get(emailAddress=request.user.email)
+    studentTasks = Task.objects.filter(
+        studentProfileID=user)
+    task_data = [task.serialize() for task in studentTasks]
+    return JsonResponse(task_data, safe=False)
 
 
 def about(request):

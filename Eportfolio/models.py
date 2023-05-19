@@ -93,6 +93,18 @@ class Task(models.Model):
 
     def __str__(self):
         return f"{self.title}"
+    
+
+    def serialize(self):
+        return {
+            "title" : self.title,
+            "score" : self.score,
+            "overallscore" : self.overallscore,
+            "date" : self.date,
+            "taskType": self.task_Type.taskType,
+            "subject": self.taskSubject.subjectCode+ ": " + self.taskSubject.subjectName,
+            "image": self.image.url if self.image else None,
+        }
 
 
 class Rubrick(models.Model):
@@ -113,7 +125,7 @@ class Rubrick(models.Model):
 class StudentSubject(models.Model):
     studentProfileID = models.ForeignKey(
         Studentprofile, on_delete=CASCADE, related_name="studentSubject", null=True)
-    subjectID = models.IntegerField()
+    subjectID = models.ForeignKey(Subject, on_delete=CASCADE, related_name='StudentSubject',null=True)
     ishide = models.BooleanField(default=False)
 
     def __str__(self):

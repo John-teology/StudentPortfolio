@@ -1,20 +1,11 @@
-<!-- <button
-  type="button"
-  class= "btn btn-outline-info"
-  data-toggle="modal"
-  data-target="#addTaskModal"
->
-  ADD
-</button> -->
-
 <!-- Modal -->
+
 <div
   class="modal fade "
-  id="addTaskModal"
+  id="addTaskModalOriginal"
   tabindex="-1"
   role="dialog"
   aria-labelledby="exampleModalLongTitle"
-  aria-hidden="true"
 >
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -164,8 +155,12 @@
               contentType: false,
               success: function (response) {
                 // Handle success response
-                console.log("Form submitted successfully");
+                $("#addTask")[0].reset();
                 console.log(response);
+                var dataTable = $("#subjectTable").DataTable();
+                dataTable.ajax.reload(null, false); 
+                $("#addUserTaskButton").click();
+
                
                 // Additional actions after form submission
               },
