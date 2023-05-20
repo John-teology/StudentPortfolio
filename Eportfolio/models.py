@@ -130,4 +130,4 @@ class StudentSubject(models.Model):
     ishide = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.subjectID}"
+        return f"{self.studentProfileID.studentNumber}: {self.subjectID.subjectName}"

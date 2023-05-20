@@ -84,7 +84,53 @@
           <div class="panel">
             <div class="bio-graph-heading">
               Welcome Back!
-              <h2>{{studentprof.firstName}}</h2>
+              <h2>{{studentprof.firstName}}</h2><div class="panel-body bio-graph-info" id="editProfileHolderReload">
+              {% if studentprof %}
+              <h1>Demographic Profile</h1>
+              <div class="row">
+                <div class="bio-row">
+                  <p><span>First Name </span>: {{studentprof.firstName}}</p>
+                </div>
+                <div class="bio-row">
+                  <p><span>Last Name </span>: {{studentprof.lastName}}</p>
+                </div>
+                <div class="bio-row">
+                  <p>
+                    <span>Student No. </span>: {{studentprof.studentNumber}}
+                  </p>
+                </div>
+                <div class="bio-row">
+                  <p>
+                    <span>Year / Course</span>: {{studentprof.yearID}} /
+                    {{studentprof.courseID}}
+                  </p>
+                </div>
+                <div class="bio-row">
+                  <p>
+                    <span>Contact Details </span>: {{studentprof.contactNumber}}
+                  </p>
+                </div>
+                <div class="bio-row">
+                  <p>
+                    <span>Email </span>:
+                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__"
+                      >{{studentprof.emailAddress}}</a
+                    >
+                  </p>
+                </div>
+                <div class="bio-row">
+                  <p>
+                    <span>Guardian Name </span>: {{studentprof.guardianName}}
+                  </p>
+                </div>
+                <div class="bio-row">
+                  <p>
+                    <span>Guardian No. </span>: {{studentprof.guardianNumber}}
+                  </p>
+                </div>
+              </div>
+              {% endif %}
+            
             </div>
             <div class="panel-body bio-graph-info" id="editProfileHolderReload">
               {% if studentprof %}
@@ -311,7 +357,7 @@
           let counter = 0;
 
           const subArray = Object.entries(value).map(([subKey, subValue]) => [
-            subKey,
+              ,
             subValue,
           ]);
           graph_it_percentage(subArray, 200, document.getElementById(key));

@@ -35,6 +35,9 @@
       href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"
       rel="stylesheet"
     />
+    <!-- chartjs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <!-- chartjs -->
 
     <!-- toastTR -->
 
@@ -290,8 +293,7 @@
           </div>
         </nav>
         <div class="container-fluid" id="subjectPage">
-          {% include "modals/addTask.html" %}
-          {% include "modals/editTask.html" %}
+          {% include "modals/addTask.html" %} {% include "modals/editTask.html" %}
           <div class="row">
             <div class="col-lg-12">
               <h1>Subject Menu {{studentprof.studentNumber}}</h1>
@@ -349,7 +351,17 @@
               <div class="panel">
                 <div class="panel-body bio-graph-info">
                   <h1>{{sub.subjectCode}}:{{sub.subjectName}}</h1>
-                  <div id="{{sub.subjectCode}}: {{sub.subjectName}}"></div>
+                  <div
+                    id="{{sub.subjectName}}"
+                    class="subjectBarGraph"
+                  ></div>
+                  <!-- <canvas
+                    id="myChart"
+                    style="width: 100%; max-width: 700px"
+                  ></canvas> -->
+                  <div id="dataforbargraph">
+                  {{test|json_script:"dataObject"}}
+                </div>
                 </div>
               </div>
               <br />
@@ -510,42 +522,42 @@
         timeOut: 3000, // Adjust the duration as per your preference
       };
 
-      $(document).ready(() => {
-        // getting the object from django template-------------
-        const data = "{{test|safe}}";
+      // getting the object from django template-------------
 
-        const validJson = data.replace(/'/g, '"');
+      // const validJson = boxName.replace(/'/g, '"');
+      // console.log(validJson)
 
-        // Parse the string as JSON
-        const obj = JSON.parse(validJson);
+      // Parse the string as JSON
+      const createBarGraph = (data) => {
 
-        for (const [key, value] of Object.entries(obj)) {
-          let counter = 0;
+        const obj = JSON.parse(JSON.stringify(data));
 
-          const subArray = Object.entries(value).map(([subKey, subValue]) => [
-            subKey,
-            subValue,
-          ]);
-          graph_it_percentage(subArray, 200, document.getElementById(key));
-        }
-      });
+      for (const [key, value] of Object.entries(obj)) {
+        let counter = 0;
+
+        const subArray = Object.entries(value).map(([subKey, subValue]) => [
+          subKey,
+          subValue,
+        ]);
+        graph_it_percentage(subArray, 200, document.getElementById(key));
+      }
+
+      }
+      const boxName = JSON.parse($("#dataObject").text());
+
+
+      createBarGraph(boxName);
+      
 
       // function that create bar
       function graph_it_percentage(g, g_width, g_element) {
         let output = '<table border="0" cellspacing="0" cellpadding="8">',
           calwidth_percentage = 0;
-        let barColor;
+        let barColor = "red"; // Set the desired color for all bars
 
         for (i = 0; i < g.length; i++) {
           calwidth_percentage = g_width * (parseInt(g[i][1]) / 100);
 
-          if (parseInt(g[i][1]) > 75) {
-            barColor = "green";
-          } else if (parseInt(g[i][1]) < 75 && parseInt(g[i][1]) > 65) {
-            barColor = "orange";
-          } else {
-            barColor = "lightcoral";
-          }
           let unfilledBarColor = "lightgrey";
           let unfilledBarWidth = g_width - calwidth_percentage;
           output += `<tr><td style="padding-right: 10px;">${g[i][0]}</td><td><svg xmlns="http://www.w3.org/2000/svg" width="${g_width}" height="10"><g class="bar"><rect x="${calwidth_percentage}" width="${unfilledBarWidth}" height="10" fill="${unfilledBarColor}"></rect><rect width="${calwidth_percentage}" height="10" fill="${barColor}"></rect></g></svg> ${g[i][1]}%</td></tr>`;
@@ -555,6 +567,23 @@
 
         g_element.innerHTML = output;
       }
+
+      const data = {
+        // labels: ["Red", "Blue"],
+        datasets: [
+          {
+            label: "My First Dataset",
+            data: [40, 60],
+            backgroundColor: ["rgb(54, 162, 235)", "rgb(255, 205, 86)"],
+            hoverOffset: 4,
+          },
+        ],
+      };
+
+      // const myChart = new Chart("myChart", {
+      //   type: "doughnut",
+      //   data: data,
+      // });
     </script>
   </body>
 </html>

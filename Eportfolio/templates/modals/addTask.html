@@ -156,11 +156,12 @@
               success: function (response) {
                 // Handle success response
                 $("#addTask")[0].reset();
-                console.log(response);
+                console.log(response.data);
                 var dataTable = $("#subjectTable").DataTable();
                 dataTable.ajax.reload(null, false); 
                 $("#addUserTaskButton").click();
-
+                // $('#dataforbargrapht').load(location.href + ' #dataforbargraph');
+                createBarGraph(response.data);
                
                 // Additional actions after form submission
               },

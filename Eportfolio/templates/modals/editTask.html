@@ -194,6 +194,8 @@ $.ajax({
             var dataTable = $("#subjectTable").DataTable();
             dataTable.ajax.reload(null, false); 
             $(".EditTask").click();
+            $('.subjectBarGraph').load(location.href + ' .subjectBarGraph');
+
             
             // Additional actions after form submission
           },

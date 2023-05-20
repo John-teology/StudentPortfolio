@@ -23,6 +23,7 @@ urlpatterns = [
     # ajax
     path("getsubjects/", views.getUserSubject, name="getUserSubject"),
     path("gettask/", views.getUserTask, name="getUserTask"),
+    path("getallsubs/", views.getAllSubject, name="getAllSubs"),
     path("getrubrick/<int:subjectid>",
          views.getUserRubrick, name="getUserRubrick"),
 
