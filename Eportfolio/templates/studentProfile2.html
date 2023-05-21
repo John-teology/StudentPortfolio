@@ -35,6 +35,13 @@
       href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"
       rel="stylesheet"
     />
+    <!-- font awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <!-- font awesome -->
+
     <!-- chartjs -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
     <!-- chartjs -->
@@ -72,6 +79,7 @@
         background: #f4f3ef;
       }
 
+      #tasksTable th,
       #subjectTable th {
         background-color: red; /* Set the background color */
         color: white; /* Set the text color */
@@ -250,13 +258,13 @@
             <a id="showProfilePage">Profile</a>
           </li>
           <li id="activeStat">
-            <a id="statisticPage">Statistics</a>
+            <a id="statisticPage">Subjects</a>
           </li>
           <li id="activeEdit">
             <a id="editProfile">Edit Profile</a>
           </li>
           <li class="active" id="activeSubject">
-            <a id="Subjects">Subjects</a>
+            <a id="Subjects">Activities</a>
           </li>
           <li id="activeSignOut">
             <a id="Signout">Sign Out</a>
@@ -292,12 +300,13 @@
             </div>
           </div>
         </nav>
+        {% include "modals/editTask.html" %}
         <div class="container-fluid" id="subjectPage">
-          {% include "modals/addTask.html" %} {% include "modals/editTask.html" %}
+          {% include "modals/addTask.html" %}
           <div class="row">
             <div class="col-lg-12">
-              <h1>Subject Menu {{studentprof.studentNumber}}</h1>
-              <table class="display" style="width: 100%" id="subjectTable">
+              <h1>My Activities</h1>
+              <table class="display" style="width: 100%" id="tasksTable">
                 <thead>
                   <tr>
                     <th>Title</th>
@@ -307,7 +316,7 @@
                     <th>Type</th>
                     <th>Subject</th>
                     <th>Attachments</th>
-                    <th id="editButton">Action</th>
+                    <th id="editButton">Actions</th>
                   </tr>
                 </thead>
               </table>
@@ -318,13 +327,49 @@
         <div class="container-fluid" id="profilePage">
           <div class="row">
             <div class="col-lg-12">
-              <h1>Profile Menu</h1>
-              <p>
-                This template has a responsive menu toggling system. The menu
-                will appear collapsed on smaller screens, and will appear
-                non-collapsed on larger screens.
-              </p>
-              <p>Make sure to keep your content here</p>
+              <h1>Demographic Profile</h1>
+              <div class="row" id="editProfileHolderReload">
+                <div class="bio-row">
+                  <p><span>First Name </span>: {{studentprof.firstName}}</p>
+                </div>
+                <div class="bio-row">
+                  <p><span>Last Name </span>: {{studentprof.lastName}}</p>
+                </div>
+                <div class="bio-row">
+                  <p>
+                    <span>Student No. </span>: {{studentprof.studentNumber}}
+                  </p>
+                </div>
+                <div class="bio-row">
+                  <p>
+                    <span>Year / Course</span>: {{studentprof.yearID}} /
+                    {{studentprof.courseID}}
+                  </p>
+                </div>
+                <div class="bio-row">
+                  <p>
+                    <span>Contact Details </span>: {{studentprof.contactNumber}}
+                  </p>
+                </div>
+                <div class="bio-row">
+                  <p>
+                    <span>Email </span>:
+                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__"
+                      >{{studentprof.emailAddress}}</a
+                    >
+                  </p>
+                </div>
+                <div class="bio-row">
+                  <p>
+                    <span>Guardian Name </span>: {{studentprof.guardianName}}
+                  </p>
+                </div>
+                <div class="bio-row">
+                  <p>
+                    <span>Guardian No. </span>: {{studentprof.guardianNumber}}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -332,36 +377,117 @@
         <div class="container-fluid" id="editPage">
           <div class="row">
             <div class="col-lg-12">
-              <h1>Edit Menu</h1>
-              <p>
-                This template has a responsive menu toggling system. The menu
-                will appear collapsed on smaller screens, and will appear
-                non-collapsed on larger screens.
-              </p>
-              <p>Make sure to keep your content here</p>
+              <h1>Edit Demographic Profile</h1>
+              <form id="editUserProfileForm">
+                <div class="bio-row">
+                  <label for="guardianName">Guardian Name:</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="guardianName"
+                    name="guardianName"
+                    value="{{studentprof.guardianName}}"
+                  />
+                </div>
+                <input
+                  type="number"
+                  name="editProfile"
+                  id="editProfile"
+                  value="1"
+                  hidden
+                />
+                <div class="bio-row">
+                  <label for="guardianNumber">Guardian Contact Details</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="guardianNumber"
+                    name="guardianNumber"
+                    value="{{studentprof.guardianNumber}}"
+                  />
+                </div>
+
+                <div class="bio-row">
+                  <label for="courseID">Course:</label>
+                  <select class="form-control" id="courseID" name="courseID">
+                    {% for course in courseList %}
+                    <option value="{{course.course}}">{{course.course}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <div class="bio-row">
+                  <label for="yearID">Year Level:</label>
+                  <select class="form-control" id="yearID" name="yearID">
+                    {% for year in yearList %}
+                    <option value="{{year.yearLevel}}">
+                      {{year.yearLevel}}
+                    </option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <div class="bio-row">
+                  <label for="contactNumber">Contact Details</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="contactNumber"
+                    name="contactNumber"
+                    value="{{studentprof.contactNumber}}"
+                  />
+                </div>
+
+                <div class="bio-row">
+                  <button
+                    type="submit"
+                    id="saveProfile"
+                    class="btn btn-primary btn-hovergreen"
+                    style="margin-top: 10px"
+                  >
+                    Save
+                  </button>
+                </div>
+              </form>
+              <div>
+                <form method="post" action="/accounts/logout/">
+                  {% csrf_token %}
+                  <button class="btn btn-dark btn-hoverred" type="submit">
+                    Sign Out
+                  </button>
+                </form>
+              </div>
+
+              <table class="display" style="width: 100%" id="subjectTable">
+                <thead>
+                  <tr>
+                    <th>Subject Code</th>
+                    <th>Subject Name</th>
+                    <th>Units</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+              </table>
             </div>
           </div>
         </div>
 
         <div class="container-fluid" id="statPage">
           <div class="row">
-            <div class="col-lg-12">
-              <h1>Stat Menu</h1>
+            <div class="col-lg-12" id="listOfMySubjects">
+              <h1>My Subjects</h1>
               {% for sub in subjects %}
               <div class="panel">
                 <div class="panel-body bio-graph-info">
                   <h1>{{sub.subjectCode}}:{{sub.subjectName}}</h1>
-                  <div
-                    id="{{sub.subjectName}}"
-                    class="subjectBarGraph"
-                  ></div>
+                  <div id="{{sub.subjectName}}"></div>
                   <!-- <canvas
                     id="myChart"
                     style="width: 100%; max-width: 700px"
                   ></canvas> -->
                   <div id="dataforbargraph">
-                  {{test|json_script:"dataObject"}}
-                </div>
+                    {{test|json_script:"dataObject"}}
+                  </div>
                 </div>
               </div>
               <br />
@@ -378,10 +504,10 @@
         });
       });
 
-      //   datatables config -----------------------------------------------
+      //  tasks datatables config -----------------------------------------------
 
       $(document).ready(() => {
-        var subTable = $("#subjectTable").DataTable({
+        var tasksTable = $("#tasksTable").DataTable({
           dom: "Bfrtip",
           columns: [
             { data: "title" },
@@ -390,7 +516,21 @@
             { data: "date" },
             { data: "taskType" },
             { data: "subject" },
-            { data: "image" },
+            {
+              data: "image",
+              render: function (data, type, row, meta) {
+                if (type === "display") {
+                  return (
+                    '<a href="' +
+                    data +
+                    '" download>' +
+                    String(data).slice(14) +
+                    "</a>"
+                  );
+                }
+                return data;
+              },
+            },
             { data: "action" },
           ],
           ajax: {
@@ -425,23 +565,23 @@
                 data-toggle="modal"
                 data-target="#addTaskModalOriginal"
               >
-                Add
+              <i class="fa fa-plus-square"></i>
               </button>`
             );
             $(".dt-buttons").append(`
-               <button type="button" class = "btn btn-outline-secondary " id="editTogglere" > Edit </button>`);
+               <button type="button" class = "btn btn-outline-secondary " id="editTogglere" > <i class="fa fa-edit"></i> </button>`);
 
             let num = false;
-            subTable.column(-1).visible(num);
+            tasksTable.column(-1).visible(num);
             $("#editTogglere").click(() => {
               num = !num;
-              subTable.column(-1).visible(num);
+              tasksTable.column(-1).visible(num);
             });
           },
         });
       });
 
-      //   datatables config -----------------------------------------------
+      // end task  datatables config -----------------------------------------------
 
       //navigation  ------------------------ ------------------------
       $("#editPage").hide();
@@ -496,18 +636,17 @@
 
       // Delete funtion ------------------------------
       $(document).on("click", ".deleteTask", function (e) {
-        // Get the parent <tr> element
-        var row = $(this).closest("tr");
-        // Remove the row from the table
-        row.remove();
-        console.log("delete");
-
         $.ajax({
           url: "{% url 'studentProfile' studentprof.studentNumber %}",
           data: {
             taskDeleteID: e.currentTarget.value,
           },
           method: "POST",
+          success: function (response) {
+            var dataTable = $("#tasksTable").DataTable();
+            dataTable.ajax.reload(null, false);
+            createBarGraph(response.data);
+          },
         });
       });
 
@@ -527,32 +666,26 @@
       // const validJson = boxName.replace(/'/g, '"');
       // console.log(validJson)
 
-      // Parse the string as JSON
       const createBarGraph = (data) => {
-
         const obj = JSON.parse(JSON.stringify(data));
 
-      for (const [key, value] of Object.entries(obj)) {
-        let counter = 0;
+        for (const [key, value] of Object.entries(obj)) {
+          let counter = 0;
 
-        const subArray = Object.entries(value).map(([subKey, subValue]) => [
-          subKey,
-          subValue,
-        ]);
-        graph_it_percentage(subArray, 200, document.getElementById(key));
-      }
-
-      }
+          const subArray = Object.entries(value).map(([subKey, subValue]) => [
+            subKey,
+            subValue,
+          ]);
+          graph_it_percentage(subArray, 200, document.getElementById(key));
+        }
+      };
       const boxName = JSON.parse($("#dataObject").text());
 
-
       createBarGraph(boxName);
-      
 
       // function that create bar
       function graph_it_percentage(g, g_width, g_element) {
-        let output = '<table border="0" cellspacing="0" cellpadding="8">',
-          calwidth_percentage = 0;
+        let output = '<table border="0" cellspacing="0" cellpadding="8">';
         let barColor = "red"; // Set the desired color for all bars
 
         for (i = 0; i < g.length; i++) {
@@ -560,7 +693,7 @@
 
           let unfilledBarColor = "lightgrey";
           let unfilledBarWidth = g_width - calwidth_percentage;
-          output += `<tr><td style="padding-right: 10px;">${g[i][0]}</td><td><svg xmlns="http://www.w3.org/2000/svg" width="${g_width}" height="10"><g class="bar"><rect x="${calwidth_percentage}" width="${unfilledBarWidth}" height="10" fill="${unfilledBarColor}"></rect><rect width="${calwidth_percentage}" height="10" fill="${barColor}"></rect></g></svg> ${g[i][1]}%</td></tr>`;
+          output += `<tr><td style="padding-right: 20px;">${g[i][0]}</td><td><svg xmlns="http://www.w3.org/2000/svg" width="${g_width}" height="20"><g class="bar"><rect x="${calwidth_percentage}" width="${unfilledBarWidth}" height="10" fill="${unfilledBarColor}"></rect><rect width="${calwidth_percentage}" height="10" fill="${barColor}"></rect></g></svg> ${g[i][1]}%</td></tr>`;
         }
 
         output += "</table>";
@@ -568,22 +701,88 @@
         g_element.innerHTML = output;
       }
 
+      // dounut chart -----------------------------
+      var whole = 100;
+      var score = 60;
       const data = {
-        // labels: ["Red", "Blue"],
+        labels: ["Your passing rate", "Blue"],
         datasets: [
           {
             label: "My First Dataset",
-            data: [40, 60],
+            data: [score, whole - score],
             backgroundColor: ["rgb(54, 162, 235)", "rgb(255, 205, 86)"],
             hoverOffset: 4,
           },
         ],
       };
 
-      // const myChart = new Chart("myChart", {
-      //   type: "doughnut",
-      //   data: data,
-      // });
+      const myChart = new Chart("myChart", {
+        type: "doughnut",
+        data: data,
+      });
+
+      // dounut chart -----------------------------
+
+      // edit profile -------------------------
+
+      // editUserProfileForm
+      $("#editUserProfileForm").submit(function (event) {
+        event.preventDefault(); // Prevent form submission
+
+        // Get form data
+        var formData = new FormData(this);
+        $.ajax({
+          url: "{% url 'studentProfile' studentprof.studentNumber %}",
+          data: formData,
+          method: "POST",
+          processData: false,
+          contentType: false,
+          success: (data) => {
+            $("#editProfileHolderReload").load(
+              location.href + " #editProfileHolderReload"
+            );
+          },
+        });
+      });
+
+      // edit profile -------------------------
+
+      // table for list of subjects --------------
+
+      var subTable = $("#subjectTable").DataTable({
+        resonsive: true,
+        columns: [
+          { data: "subjectCode" },
+          { data: "subjectName" },
+          { data: "units" },
+          { data: "action" },
+        ],
+        ajax: {
+          url: "{% url 'getAllSubs' %}",
+          type: "POST",
+          dataSrc: "",
+        },
+      });
+
+      // table for list of subjects --------------
+
+      // add new subject ------------------
+      $(document).ready(() => {
+        $(".addSubButton").click(function (e) {
+          $.ajax({
+            url: "{% url 'studentProfile' studentprof.studentNumber %}",
+            data: { addSub: e.currentTarget.value },
+            method: "POST",
+            success: (response) => {
+              console.log(response)
+              $('#listOfMySubjects').load(location.href, ' #listOfMySubjects');
+              // createBarGraph(response.data);
+            },
+          });
+        });
+      });
+
+      // add new subject ------------------
     </script>
   </body>
 </html>

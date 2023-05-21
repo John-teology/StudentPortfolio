@@ -123,7 +123,6 @@ $(document).on('click',".EditTask", (event) => {
   $("#taskSubjectEdit").val($(event.currentTarget).attr('subject'));
 
   var firtValSub =  $(event.currentTarget).attr('subject');
-  console.log(firtValSub)
   
   $.ajax({
       url:`/getrubrick/${firtValSub}`,
@@ -190,11 +189,11 @@ $.ajax({
           success: function (response) {
             // Handle success response
             $("#addTaskEdit")[0].reset();
-            console.log(response);
-            var dataTable = $("#subjectTable").DataTable();
+            console.log(response.data);
+            var dataTable = $("#tasksTable").DataTable();
             dataTable.ajax.reload(null, false); 
             $(".EditTask").click();
-            $('.subjectBarGraph').load(location.href + ' .subjectBarGraph');
+            createBarGraph(response.graphdata);
 
             
             // Additional actions after form submission

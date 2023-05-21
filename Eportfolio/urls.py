@@ -12,8 +12,8 @@ urlpatterns = [
     path("studentprofile/<str:studentID>",
          views.studentProfile, name="studentProfile"),
 
-    path("studentprofile/<str:studentID>/<str:subjectCode>",
-         views.studentSubject, name="studentSubject"),
+#     path("studentprofile/<str:studentID>/<str:subjectCode>",
+#          views.studentSubject, name="studentSubject"),
 
 
 

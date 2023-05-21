@@ -114,10 +114,12 @@ def studentProfile(request, studentID):
         # edit profile below
         isEdit = request.POST.get('editProfile', 0)
         guardName = request.POST.get('guardianName', 0)
-        guardNumber = request.POST.get('guardianNum', 0)
-        courseName = request.POST.get('courseName', 0)
-        yearName = request.POST.get('yearName', 0)
-        contactD = request.POST.get('contactD', 0)
+        guardNumber = request.POST.get('guardianNumber', 0)
+        courseName = request.POST.get('courseID', 0)
+        yearName = request.POST.get('yearID', 0)
+        contactD = request.POST.get('contactNumber', 0)
+
+        print(isEdit, guardName, guardNumber, courseName, yearName, contactD)
 
         # add task
         typeID = request.POST.get('taskType', '')
@@ -145,6 +147,12 @@ def studentProfile(request, studentID):
         if taskToBeDelete:
             deleteTask = Task.objects.get(pk=taskToBeDelete)
             deleteTask.delete()
+            subjects = Subject.objects.filter(id__in=subjectIDs)
+
+            studentTasks = Task.objects.filter(
+                studentProfileID=studentprof)
+            data = dataForGraph(subjects, studentTasks)
+            return JsonResponse({'data': data}, safe=False)
 
         if typeID:
             tType = TaskType.objects.get(pk=typeID)
@@ -158,7 +166,7 @@ def studentProfile(request, studentID):
                 studentProfileID=studentprof)
             data = dataForGraph(subjects, studentTasks)
 
-            return JsonResponse({"title": uploadedTask.title, "myscore": uploadedTask.score, "overallscore": uploadedTask.overallscore, "date": uploadedTask.date, 'type': tType.taskType, 'subject': subject.subjectName, 'attaachment':  uploadedTask.image.url if uploadedTask.image else None, "data":data}, safe=False)
+            return JsonResponse({"title": uploadedTask.title, "myscore": uploadedTask.score, "overallscore": uploadedTask.overallscore, "date": uploadedTask.date, 'type': tType.taskType, 'subject': subject.subjectName, 'attaachment':  uploadedTask.image.url if uploadedTask.image else None, "data": data}, safe=False)
 
         if isEditType:
             try:
@@ -174,9 +182,15 @@ def studentProfile(request, studentID):
                 modifiedTask.date = dateEdit
                 modifiedTask.image = imageEdit
                 modifiedTask.save()
-                return JsonResponse([{'data': 1}], safe=False)
+
+                subjects = Subject.objects.filter(id__in=subjectIDs)
+                studentTasks = Task.objects.filter(
+                    studentProfileID=studentprof)
+                data = dataForGraph(subjects, studentTasks)
+
+                return JsonResponse({'data': 1, 'graphdata': data}, safe=False)
             except:
-                return JsonResponse([{'data': 0}], safe=False)
+                return JsonResponse({'data': 0}, safe=False)
 
         if isEdit:
             yearObj = YearLevel.objects.get(yearLevel=yearName)
@@ -190,10 +204,19 @@ def studentProfile(request, studentID):
             studentprof.save()
 
         if subID:
-            sub = StudentSubject(studentProfileID=studentprof, subjectID=subID)
+            addedSubject = Subject.objects.get(pk=subID)
+            sub = StudentSubject(
+                studentProfileID=studentprof, subjectID=addedSubject)
             sub.save()
-        # studentNumber = studentprof.studentNumber
-        return JsonResponse([{'data': 1}], safe=False)
+            studentSubjects = StudentSubject.objects.filter(
+            studentProfileID=studentprof)
+            subjectIDs = [
+                studentSubject.subjectID_id for studentSubject in studentSubjects]
+            subjects = Subject.objects.filter(id__in=subjectIDs)
+            studentTasks = Task.objects.filter(
+                studentProfileID=studentprof)
+            data = dataForGraph(subjects, studentTasks)
+            return JsonResponse({'data': data}, safe=False)
 
     return render(request, "studentProfile2.html", {
         'studentprof': studentprof,
@@ -207,64 +230,64 @@ def studentProfile(request, studentID):
     })
 
 
-@login_required
-@csrf_exempt
-def studentSubject(request, studentID, subjectCode):
-    profile = Studentprofile.objects.get(studentNumber=studentID)
+# @login_required
+# @csrf_exempt
+# def studentSubject(request, studentID, subjectCode):
+#     profile = Studentprofile.objects.get(studentNumber=studentID)
 
-    subject = Subject.objects.get(subjectCode=subjectCode)
+#     subject = Subject.objects.get(subjectCode=subjectCode)
 
-    studentTasks = Task.objects.filter(
-        studentProfileID=profile, taskSubject=subject)
-    rubrik = Rubrick.objects.filter(subjectID=subject).filter(~Q(percentage=0))
+#     studentTasks = Task.objects.filter(
+#         studentProfileID=profile, taskSubject=subject)
+#     rubrik = Rubrick.objects.filter(subjectID=subject).filter(~Q(percentage=0))
 
-    if request.method == "POST":
-        isEdit = request.POST.get('editType', 0)  # this is the ID
-        typeID = request.POST.get('taskType', '')
-        subjectID = request.POST.get('taskSubject', '')
-        title = request.POST.get('taskTitle', '')
-        myScore = request.POST.get('taskScore', 0)
-        totalScore = request.POST.get('taskTotal', 0)
-        date = request.POST.get('taskDate', 0)
-        image = request.FILES.get('taskAttachments', "")
-        taskToBeDelete = request.POST.get('taskDeleteID', False)
+#     if request.method == "POST":
+#         isEdit = request.POST.get('editType', 0)  # this is the ID
+#         typeID = request.POST.get('taskType', '')
+#         subjectID = request.POST.get('taskSubject', '')
+#         title = request.POST.get('taskTitle', '')
+#         myScore = request.POST.get('taskScore', 0)
+#         totalScore = request.POST.get('taskTotal', 0)
+#         date = request.POST.get('taskDate', 0)
+#         image = request.FILES.get('taskAttachments', "")
+#         taskToBeDelete = request.POST.get('taskDeleteID', False)
 
-        print(type, title, myScore, totalScore, date)
+#         print(type, title, myScore, totalScore, date)
 
-        if taskToBeDelete:
-            deleteTask = Task.objects.get(pk=taskToBeDelete)
-            deleteTask.delete()
+#         if taskToBeDelete:
+#             deleteTask = Task.objects.get(pk=taskToBeDelete)
+#             deleteTask.delete()
 
-        if isEdit:
-            tType = TaskType.objects.get(taskType=type)
-            getTask = Task.objects.get(pk=isEdit)
-            getTask.task_Type = tType
-            getTask.title = title
-            getTask.score = myScore
-            getTask.overallscore = totalScore
-            getTask.date = date
-            if image:
-                getTask.image = image
-            getTask.save()
+#         if isEdit:
+#             tType = TaskType.objects.get(taskType=type)
+#             getTask = Task.objects.get(pk=isEdit)
+#             getTask.task_Type = tType
+#             getTask.title = title
+#             getTask.score = myScore
+#             getTask.overallscore = totalScore
+#             getTask.date = date
+#             if image:
+#                 getTask.image = image
+#             getTask.save()
 
-            return HttpResponseRedirect(reverse("studentSubject", args=(str(profile.studentNumber), str(subject.subjectCode))))
+#             return HttpResponseRedirect(reverse("studentSubject", args=(str(profile.studentNumber), str(subject.subjectCode))))
 
-        if typeID:
+#         if typeID:
 
-            tType = TaskType.objects.get(pk=typeID)
-            subject = Subject.objects.get(pk=subjectID)
-            uploadedTask = Task(studentProfileID=profile, task_Type=tType, taskSubject=subject, title=title,
-                                overallscore=totalScore, score=myScore, image=image, date=date)
-            uploadedTask.save()
-            print('done')
-            return HttpResponseRedirect(reverse("studentSubject", args=(str(profile.studentNumber), str(subject.subjectCode))))
+#             tType = TaskType.objects.get(pk=typeID)
+#             subject = Subject.objects.get(pk=subjectID)
+#             uploadedTask = Task(studentProfileID=profile, task_Type=tType, taskSubject=subject, title=title,
+#                                 overallscore=totalScore, score=myScore, image=image, date=date)
+#             uploadedTask.save()
+#             print('done')
+#             return HttpResponseRedirect(reverse("studentSubject", args=(str(profile.studentNumber), str(subject.subjectCode))))
 
-    return render(request, 'studentSubject.html', {
-        'subject': subject,
-        'sNumber': studentID,
-        'rubricks': rubrik,
-        'tasks': studentTasks,
-    })
+#     return render(request, 'studentSubject.html', {
+#         'subject': subject,
+#         'sNumber': studentID,
+#         'rubricks': rubrik,
+#         'tasks': studentTasks,
+#     })
 
 
 # below are for ajax ----------------------------

@@ -157,7 +157,7 @@
                 // Handle success response
                 $("#addTask")[0].reset();
                 console.log(response.data);
-                var dataTable = $("#subjectTable").DataTable();
+                var dataTable = $("#tasksTable").DataTable();
                 dataTable.ajax.reload(null, false); 
                 $("#addUserTaskButton").click();
                 // $('#dataforbargrapht').load(location.href + ' #dataforbargraph');

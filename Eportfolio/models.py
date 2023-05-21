@@ -74,6 +74,7 @@ class Subject(models.Model):
             "subjectName": self.subjectName,
             "facultyName": self.facultyName,
             "units": self.units,
+            "action" : f'<button type="button" class="btn btn-info addSubButton" value="{self.id}"> Add Subject </button>'
 
         }
 
@@ -103,7 +104,7 @@ class Task(models.Model):
             "taskType": self.task_Type.taskType,
             "subject": self.taskSubject.subjectCode + ": " + self.taskSubject.subjectName,
             "image": self.image.url if self.image else None,
-            "action": f'<button type="button" class="btn btn-danger deleteTask" value="{self.id}" name="taskDelete" > Delete </button> <button type="button" class="btn btn-info EditTask" data-toggle="modal" data-target="#actionModify" title="{self.title}" score="{self.score}" overall="{self.overallscore}" date="{self.date}" subject={self.taskSubject_id} subType={self.task_Type_id} id = {self.pk} > Modify </button>'
+            "action": f'<button type="button" class="btn btn-danger deleteTask" value="{self.id}" name="taskDelete" > <i class="fa fa-trash"></i> </button> <button type="button" class="btn btn-info EditTask" data-toggle="modal" data-target="#actionModify" title="{self.title}" score="{self.score}" overall="{self.overallscore}" date="{self.date}" subject={self.taskSubject_id} subType={self.task_Type_id} id = {self.pk} > <i class="fa fa-edit"></i> </button>'
         }
 
 
