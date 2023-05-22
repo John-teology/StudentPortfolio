@@ -208,6 +208,7 @@ def studentProfile(request, studentID):
             sub = StudentSubject(
                 studentProfileID=studentprof, subjectID=addedSubject)
             sub.save()
+
             studentSubjects = StudentSubject.objects.filter(
             studentProfileID=studentprof)
             subjectIDs = [
@@ -216,7 +217,7 @@ def studentProfile(request, studentID):
             studentTasks = Task.objects.filter(
                 studentProfileID=studentprof)
             data = dataForGraph(subjects, studentTasks)
-            return JsonResponse({'data': data}, safe=False)
+            return JsonResponse({'data': data,'subjectCode':addedSubject.subjectCode,'subjectName':addedSubject.subjectName}, safe=False)
 
     return render(request, "studentProfile2.html", {
         'studentprof': studentprof,

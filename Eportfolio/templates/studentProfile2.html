@@ -485,9 +485,6 @@
                     id="myChart"
                     style="width: 100%; max-width: 700px"
                   ></canvas> -->
-                  <div id="dataforbargraph">
-                    {{test|json_script:"dataObject"}}
-                  </div>
                 </div>
               </div>
               <br />
@@ -497,6 +494,8 @@
         </div>
       </div>
     </div>
+    {{test|json_script:"dataObject"}}
+
     <script type="text/javascript">
       $(function () {
         $(".btn-toggle-menu").click(function () {
@@ -769,14 +768,63 @@
       // add new subject ------------------
       $(document).ready(() => {
         $(".addSubButton").click(function (e) {
+          console.log("asdf");
           $.ajax({
             url: "{% url 'studentProfile' studentprof.studentNumber %}",
-            data: { addSub: e.currentTarget.value },
+            data: { addSub: $(e.currentTarget).val() },
             method: "POST",
             success: (response) => {
-              console.log(response)
-              $('#listOfMySubjects').load(location.href, ' #listOfMySubjects');
-              // createBarGraph(response.data);
+              alert('added Subject!');
+              $("#listOfMySubjects").append(`<div>
+                <div class="panel">
+                <div class="panel-body bio-graph-info" >
+                  <h1>${response.subjectCode}:${response.subjectName}</h1>
+                  <div id="${response.subjectName}"></div>
+                  <!-- <canvas
+                    id="myChart"
+                    style="width: 100%; max-width: 700px"
+                  ></canvas> -->
+                </div>
+              </div>
+                </div>`);
+              createBarGraph(response.data);
+              $("#taskSubjectEdit")
+                .find("option")
+                .remove()
+                .end()
+                .append('<option value="" disabled selected>Select</option>');
+              $.ajax({
+                url: "{% url 'getUserSubject' %}",
+                method: "GET",
+                success: (data) => {
+                  for (var i = 0; i <= data.length - 1; i++) {
+                    var user_position = new Option(
+                      data[i].subjectName,
+                      data[i].id
+                    );
+                    $("#taskSubjectEdit").append(user_position);
+                  }
+                },
+              });
+
+              $("#taskSubject")
+                .find("option")
+                .remove()
+                .end()
+                .append('<option value="" disabled selected>Select</option>');
+              $.ajax({
+                url: "{% url 'getUserSubject' %}",
+                method: "GET",
+                success: (data) => {
+                  for (var i = 0; i <= data.length - 1; i++) {
+                    var user_position = new Option(
+                      data[i].subjectName,
+                      data[i].id
+                    );
+                    $("#taskSubject").append(user_position);
+                  }
+                },
+              });
             },
           });
         });
