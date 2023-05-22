@@ -438,27 +438,30 @@
                   />
                 </div>
 
-                <div class="bio-row">
-                  <button
-                    type="submit"
-                    id="saveProfile"
-                    class="btn btn-primary btn-hovergreen"
-                    style="margin-top: 10px"
-                  >
-                    Save
-                  </button>
+                <div class="bio-row" style="margin: 20px 20px">
+                  <div style="display: flex; float: right; margin-bottom: 20px;">
+                    <div style="margin-right: 10px">
+                      <button
+                        type="submit"
+                        id="saveProfile"
+                        class="btn btn-primary btn-hovergreen"
+                      >
+                        Save
+                      </button>
+                    </div>
+                    <div>
+                      <form method="post" action="/accounts/logout/">
+                        {% csrf_token %}
+                        <button class="btn btn-dark btn-hoverred" type="submit">
+                          Sign Out
+                        </button>
+                      </form>
+                    </div>
+                  </div>
                 </div>
               </form>
-              <div>
-                <form method="post" action="/accounts/logout/">
-                  {% csrf_token %}
-                  <button class="btn btn-dark btn-hoverred" type="submit">
-                    Sign Out
-                  </button>
-                </form>
-              </div>
-
-              <table class="display" style="width: 100%" id="subjectTable">
+              <div class="bio-row">
+              <table class="display" style="width: 100%;" id="subjectTable">
                 <thead>
                   <tr>
                     <th>Subject Code</th>
@@ -469,6 +472,7 @@
                 </thead>
               </table>
             </div>
+          </div>
           </div>
         </div>
 
@@ -774,7 +778,7 @@
             data: { addSub: $(e.currentTarget).val() },
             method: "POST",
             success: (response) => {
-              alert('added Subject!');
+              alert("added Subject!");
               $("#listOfMySubjects").append(`<div>
                 <div class="panel">
                 <div class="panel-body bio-graph-info" >

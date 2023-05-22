@@ -299,7 +299,7 @@ def getUserSubject(request):
     subjectIDs = [
         studentSubject.subjectID_id for studentSubject in studentSubjects]
     subjects = Subject.objects.filter(id__in=subjectIDs)
-    return JsonResponse([subject.serialize() for subject in subjects], safe=False)
+    return JsonResponse([subject.serialize(user) for subject in subjects], safe=False)
 
 
 def getUserRubrick(request, subjectid):
@@ -319,8 +319,9 @@ def getUserTask(request):
 
 @csrf_exempt
 def getAllSubject(request):
+    user = Studentprofile.objects.get(emailAddress = request.user.email)
     availableSubs = Subject.objects.all()
-    return JsonResponse([subject.serialize() for subject in availableSubs], safe=False)
+    return JsonResponse([subject.serialize(user) for subject in availableSubs], safe=False)
 
 
 def dataForGraph(subjects, studentTasks):
