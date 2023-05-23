@@ -522,14 +522,22 @@
 
       createBarGraph(boxName);
 
-      // function that create bar
+      // function that create bar ******
       function graph_it_percentage(g, g_width, g_element) {
         let output = '<table border="0" cellspacing="0" cellpadding="8">';
-        let barColor = "red"; // Set the desired color for all bars
-
+        let barColor; // Set the desired color for all bars
+          
         for (i = 0; i < g.length; i++) {
           calwidth_percentage = g_width * (parseInt(g[i][1]) / 100);
 
+          if (parseInt(g[i][1]) > 75) {
+            barColor = "green";
+          } else if (parseInt(g[i][1]) < 75 && parseInt(g[i][1]) > 65) {
+            barColor = "orange";
+          } else {
+            barColor = "lightcoral";
+          }
+          
           let unfilledBarColor = "lightgrey";
           let unfilledBarWidth = g_width - calwidth_percentage;
           output += `<tr><td style="padding-right: 20px;">${g[i][0]}</td><td><svg xmlns="http://www.w3.org/2000/svg" width="${g_width}" height="20"><g class="bar"><rect x="${calwidth_percentage}" width="${unfilledBarWidth}" height="10" fill="${unfilledBarColor}"></rect><rect width="${calwidth_percentage}" height="10" fill="${barColor}"></rect></g></svg> ${g[i][1]}%</td></tr>`;
