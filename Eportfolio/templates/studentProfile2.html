@@ -532,12 +532,14 @@
 
           if (parseInt(g[i][1]) > 75) {
             barColor = "green";
-          } else if (parseInt(g[i][1]) < 75 && parseInt(g[i][1]) > 65) {
+          } 
+          else if (parseInt(g[i][1]) < 75 && parseInt(g[i][1]) > 65) {
             barColor = "orange";
-          } else {
+          } 
+          else {
             barColor = "lightcoral";
           }
-          
+      
           let unfilledBarColor = "lightgrey";
           let unfilledBarWidth = g_width - calwidth_percentage;
           output += `<tr><td style="padding-right: 20px;">${g[i][0]}</td><td><svg xmlns="http://www.w3.org/2000/svg" width="${g_width}" height="20"><g class="bar"><rect x="${calwidth_percentage}" width="${unfilledBarWidth}" height="10" fill="${unfilledBarColor}"></rect><rect width="${calwidth_percentage}" height="10" fill="${barColor}"></rect></g></svg> ${g[i][1]}%</td></tr>`;
