@@ -5,7 +5,7 @@
 
     <title>Student Portfolio</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="../static/eportfolio/studentform.css">
+    <link rel="stylesheet" href="../static/eportfolio/studentform.css" />
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -82,21 +82,18 @@
           <li class="sidebar-brand">
             <a href="#"> Student Profile </a>
           </li>
-          <li id="activeProfile">
+          <li class="active" id="activeProfile">
             <a id="showProfilePage">Profile</a>
-          </li>
-          <li id="activeStat">
-            <a id="statisticPage">Subjects</a>
           </li>
           <li id="activeEdit">
             <a id="editProfile">Edit Profile</a>
           </li>
-          <li class="active" id="activeSubject">
+          <li  id="activeSubject">
             <a id="Subjects">Activities</a>
           </li>
-          <li id="activeSignOut">
+          <!-- <li id="activeSignOut">
             <a id="Signout">Sign Out</a>
-          </li>
+          </li> -->
         </ul>
       </div>
       <div id="page-content-wrapper">
@@ -152,60 +149,90 @@
           </div>
         </div>
 
-        <div class="container-fluid cardwrapper" id="profilePage">
-          <div class="row">
+        <div id="profilePage">
+          <div class="container-fluid cardwrapper row">
             <div class="col-lg-12">
-              <h1 class="title-text"> My Profile</h1>
+              <h1 class="title-text">My Profile</h1>
               <div class="row" id="editProfileHolderReload">
                 <div class="col-lg-6 description-profile">
-                <div class="bio-row">
-                  <p><span class="sub-heading">First Name </span>: {{studentprof.firstName}}</p>
+                  <div class="bio-row">
+                    <p>
+                      <span class="sub-heading">First Name </span>:
+                      {{studentprof.firstName}}
+                    </p>
+                  </div>
+                  <div class="bio-row">
+                    <p>
+                      <span class="sub-heading">Last Name </span>:
+                      {{studentprof.lastName}}
+                    </p>
+                  </div>
+                  <div class="bio-row">
+                    <p>
+                      <span class="sub-heading">Student No. </span>:
+                      {{studentprof.studentNumber}}
+                    </p>
+                  </div>
+                  <div class="bio-row">
+                    <p>
+                      <span class="sub-heading">Year</span>:
+                      {{studentprof.yearID}}
+                    </p>
+                  </div>
+                  <div class="bio-row">
+                    <p>
+                      <span class="sub-heading">Course</span
+                      >:{{studentprof.courseID}}
+                    </p>
+                  </div>
                 </div>
-                <div class="bio-row">
-                  <p><span class="sub-heading">Last Name </span>: {{studentprof.lastName}}</p>
-                </div>
-                <div class="bio-row">
-                  <p>
-                    <span class="sub-heading">Student No. </span>: {{studentprof.studentNumber}}
-                  </p>
-                </div>
-                <div class="bio-row">
-                  <p>
-                    <span class="sub-heading">Year</span>: {{studentprof.yearID}}
-                  </p>
-                </div>
-                <div class="bio-row">
-                  <p>
-                    <span class="sub-heading">Course</span>:{{studentprof.courseID}}
-                  </p>
+                <div class="col-lg-6 description-profile">
+                  <div class="bio-row">
+                    <p>
+                      <span class="sub-heading">Contact Details </span>:
+                      {{studentprof.contactNumber}}
+                    </p>
+                  </div>
+                  <div class="bio-row">
+                    <p>
+                      <span class="sub-heading">Email </span>:
+                      <a href="/cdn-cgi/l/email-protection" class="__cf_email__"
+                        >{{studentprof.emailAddress}}</a
+                      >
+                    </p>
+                  </div>
+                  <div class="bio-row">
+                    <p>
+                      <span class="sub-heading">Guardian Name </span>:
+                      {{studentprof.guardianName}}
+                    </p>
+                  </div>
+                  <div class="bio-row">
+                    <p>
+                      <span class="sub-heading">Guardian No. </span>:
+                      {{studentprof.guardianNumber}}
+                    </p>
+                  </div>
                 </div>
               </div>
-              <div class="col-lg-6 description-profile">
-                <div class="bio-row">
-                  <p>
-                    <span class="sub-heading">Contact Details </span>: {{studentprof.contactNumber}}
-                  </p>
-                </div>
-                <div class="bio-row">
-                  <p>
-                    <span class="sub-heading">Email </span>:
-                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__"
-                      >{{studentprof.emailAddress}}</a
-                    >
-                  </p>
-                </div>
-                <div class="bio-row">
-                  <p>
-                    <span class="sub-heading">Guardian Name </span>: {{studentprof.guardianName}}
-                  </p>
-                </div>
-                <div class="bio-row">
-                  <p>
-                    <span class="sub-heading">Guardian No. </span>: {{studentprof.guardianNumber}}
-                  </p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12" id="listOfMySubjects">
+              <h1 class="title-text">My Subjects</h1>
+              {% for sub in subjects %}
+              <div class="panel">
+                <div class="panel-body bio-graph-info">
+                  <h1>{{sub.subjectCode}}:{{sub.subjectName}}</h1>
+                  <div id="{{sub.subjectName}}"></div>
+                  <!-- <canvas
+                    id="myChart"
+                    style="width: 100%; max-width: 700px"
+                  ></canvas> -->
                 </div>
               </div>
-              </div>
+              <br />
+              {% endfor %}
             </div>
           </div>
         </div>
@@ -213,7 +240,7 @@
         <div class="container-fluid" id="editPage">
           <div class="row">
             <div class="col-lg-12">
-              <h1 class ="title-text">Edit Demographic Profile</h1>
+              <h1 class="title-text">Edit Demographic Profile</h1>
               <form id="editUserProfileForm">
                 <div class="bio-row">
                   <label for="guardianName">Guardian Name:</label>
@@ -275,7 +302,7 @@
                 </div>
 
                 <div class="bio-row" style="margin: 20px 20px">
-                  <div style="display: flex; float: right; margin-bottom: 20px;">
+                  <div style="display: flex; float: right; margin-bottom: 20px">
                     <div style="margin-right: 10px">
                       <button
                         type="submit"
@@ -297,38 +324,17 @@
                 </div>
               </form>
               <div class="bio-row">
-              <table class="display" style="width: 100%;" id="subjectTable">
-                <thead>
-                  <tr>
-                    <th>Subject Code</th>
-                    <th>Subject Name</th>
-                    <th>Units</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-              </table>
-            </div>
-          </div>
-          </div>
-        </div>
-
-        <div class="container-fluid" id="statPage">
-          <div class="row">
-            <div class="col-lg-12" id="listOfMySubjects">
-              <h1 class="title-text">My Subjects</h1>
-              {% for sub in subjects %}
-              <div class="panel">
-                <div class="panel-body bio-graph-info">
-                  <h1>{{sub.subjectCode}}:{{sub.subjectName}}</h1>
-                  <div id="{{sub.subjectName}}"></div>
-                  <!-- <canvas
-                    id="myChart"
-                    style="width: 100%; max-width: 700px"
-                  ></canvas> -->
-                </div>
+                <table class="display" style="width: 100%" id="subjectTable">
+                  <thead>
+                    <tr>
+                      <th>Subject Code</th>
+                      <th>Subject Name</th>
+                      <th>Units</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                </table>
               </div>
-              <br />
-              {% endfor %}
             </div>
           </div>
         </div>
@@ -424,15 +430,13 @@
 
       //navigation  ------------------------ ------------------------
       $("#editPage").hide();
-      $("#statPage").hide();
-      $("#profilePage").hide();
+      $("#subjectPage").hide();
       //end of div that need to hide -----------------
 
       $("#showProfilePage").click(() => {
         $("#profilePage").show();
         $("#subjectPage").hide();
         $("#editPage").hide();
-        $("#statPage").hide();
         $("#activeEdit").removeClass();
         $("#activeStat").removeClass();
         $("#activeSubject").removeClass();
@@ -441,7 +445,6 @@
 
       $("#editProfile").click(() => {
         $("#profilePage").hide();
-        $("#statPage").hide();
         $("#subjectPage").hide();
         $("#editPage").show();
         $("#activeProfile").removeClass();
@@ -450,21 +453,10 @@
         $("#activeEdit").addClass("active");
       });
 
-      $("#statisticPage").click(() => {
-        $("#statPage").show();
-        $("#subjectPage").hide();
-        $("#profilePage").hide();
-        $("#editPage").hide();
-        $("#activeStat").addClass("active");
-        $("#activeEdit").removeClass();
-        $("#activeProfile").removeClass();
-        $("#activeSubject").removeClass();
-      });
-
+   
       $("#Subjects").click(() => {
         $("#subjectPage").show();
         $("#editPage").hide();
-        $("#statPage").hide();
         $("#profilePage").hide();
         $("#activeEdit").removeClass();
         $("#activeStat").removeClass();
@@ -526,20 +518,18 @@
       function graph_it_percentage(g, g_width, g_element) {
         let output = '<table border="0" cellspacing="0" cellpadding="8">';
         let barColor; // Set the desired color for all bars
-          
+
         for (i = 0; i < g.length; i++) {
           calwidth_percentage = g_width * (parseInt(g[i][1]) / 100);
 
           if (parseInt(g[i][1]) > 75) {
             barColor = "green";
-          } 
-          else if (parseInt(g[i][1]) < 75 && parseInt(g[i][1]) > 65) {
+          } else if (parseInt(g[i][1]) < 75 && parseInt(g[i][1]) > 65) {
             barColor = "orange";
-          } 
-          else {
+          } else {
             barColor = "lightcoral";
           }
-      
+
           let unfilledBarColor = "lightgrey";
           let unfilledBarWidth = g_width - calwidth_percentage;
           output += `<tr><td style="padding-right: 20px;">${g[i][0]}</td><td><svg xmlns="http://www.w3.org/2000/svg" width="${g_width}" height="20"><g class="bar"><rect x="${calwidth_percentage}" width="${unfilledBarWidth}" height="10" fill="${unfilledBarColor}"></rect><rect width="${calwidth_percentage}" height="10" fill="${barColor}"></rect></g></svg> ${g[i][1]}%</td></tr>`;
@@ -617,11 +607,11 @@
 
       // add new subject ------------------
       $(document).ready(() => {
-        $(".addSubButton").click(function (e) {
+        $(document).on("click", ".subAddButton", function (e) {
           console.log("asdf");
           $.ajax({
             url: "{% url 'studentProfile' studentprof.studentNumber %}",
-            data: { addSub: $(e.currentTarget).val() },
+            data: { addSub: $(e.target).val() },
             method: "POST",
             success: (response) => {
               alert("added Subject!");

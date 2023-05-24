@@ -69,7 +69,7 @@ class Subject(models.Model):
 
     def serialize(self, user):
         is_subject_added = StudentSubject.objects.filter(studentProfileID=user, subjectID=self).exists()
-        action_button = f'<button type="button" class="btn btn-info addSubButton" value="{self.id}"'
+        action_button = f'<button type="button" class="btn btn-info subAddButton" value="{self.id}"'
         
         if is_subject_added:
             action_button += ' disabled>Already Added</button>'
