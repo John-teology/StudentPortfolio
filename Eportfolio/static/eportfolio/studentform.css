@@ -4,7 +4,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
+  font-family: "Poppins", sans-serif ;
 }
 body {
     background: #f4f3ef;
@@ -86,12 +86,18 @@ body {
   .sidebar-nav li a:hover {
     text-decoration: none;
   }
+  .sidebar-hoverable li a:hover{
+    background-color: #999999;
+    color:white !important;
+    border-left: 5px solid lightcoral;
+  }
+  
 
-  .sidebar-nav li a:active,
-  .sidebar-nav li a:focus {
+  .sidebar-brand li a:active,
+  .sidebar-brand li a:focus {
     text-decoration: none;
   }
-
+ 
   .sidebar-nav > .sidebar-brand {
     height: 65px;
     font-size: 18px;
@@ -100,11 +106,6 @@ body {
 
   .sidebar-nav > .sidebar-brand a {
     color: #999999;
-  }
-
-  .sidebar-nav > .sidebar-brand a:hover {
-    color: #fff;
-    background: none;
   }
 
   @media (min-width: 768px) {
@@ -136,7 +137,7 @@ body {
   }
 
   #sidebar-wrapper li.active > a:after {
-    border-right: 17px solid #f4f3ef;
+    border-right: 17px solid #333333;
     border-top: 17px solid transparent;
     border-bottom: 17px solid transparent;
     content: "";
@@ -197,4 +198,10 @@ body {
  }
  .sub-heading{
     font-weight: 600;
+ }
+ .pop{
+  font-weight: 300;
+ }
+ .dataTables_wrapper{
+  overflow: auto;
  }

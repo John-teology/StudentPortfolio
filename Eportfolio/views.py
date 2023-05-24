@@ -210,14 +210,14 @@ def studentProfile(request, studentID):
             sub.save()
 
             studentSubjects = StudentSubject.objects.filter(
-            studentProfileID=studentprof)
+                studentProfileID=studentprof)
             subjectIDs = [
                 studentSubject.subjectID_id for studentSubject in studentSubjects]
             subjects = Subject.objects.filter(id__in=subjectIDs)
             studentTasks = Task.objects.filter(
                 studentProfileID=studentprof)
             data = dataForGraph(subjects, studentTasks)
-            return JsonResponse({'data': data,'subjectCode':addedSubject.subjectCode,'subjectName':addedSubject.subjectName}, safe=False)
+            return JsonResponse({'data': data, 'subjectCode': addedSubject.subjectCode, 'subjectName': addedSubject.subjectName}, safe=False)
 
     return render(request, "studentProfile2.html", {
         'studentprof': studentprof,
@@ -319,7 +319,7 @@ def getUserTask(request):
 
 @csrf_exempt
 def getAllSubject(request):
-    user = Studentprofile.objects.get(emailAddress = request.user.email)
+    user = Studentprofile.objects.get(emailAddress=request.user.email)
     availableSubs = Subject.objects.all()
     return JsonResponse([subject.serialize(user) for subject in availableSubs], safe=False)
 
@@ -349,6 +349,7 @@ def dataForGraph(subjects, studentTasks):
                     scoreHolder.append(
                         int(task.score/task.overallscore * 100)/100)
 
+            print(rub.percentage, rub.taskTypeID, rub.subjectID)
             percent = 100/counter
             total = 0
             for score in scoreHolder:

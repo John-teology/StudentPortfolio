@@ -80,20 +80,25 @@
       <div id="sidebar-wrapper">
         <ul class="sidebar-nav">
           <li class="sidebar-brand">
-            <a href="#"> Student Profile </a>
+            <a href="#">E-portfolio</a>
           </li>
-          <li class="active" id="activeProfile">
-            <a id="showProfilePage">Profile</a>
-          </li>
-          <li id="activeEdit">
-            <a id="editProfile">Edit Profile</a>
-          </li>
-          <li  id="activeSubject">
-            <a id="Subjects">Activities</a>
-          </li>
-          <!-- <li id="activeSignOut">
+          <div class="sidebar-hoverable">
+            <li id="activeProfile" class="active">
+              <a id="showProfilePage">Profile</a>
+            </li>
+            <!-- <li id="activeStat">
+            <a id="statisticPage">Subjects</a>
+          </li> -->
+            <li id="activeEdit">
+              <a id="editProfile">Edit Profile</a>
+            </li>
+            <li id="activeSubject">
+              <a id="Subjects">Activities</a>
+            </li>
+            <!-- <li id="activeSignOut">
             <a id="Signout">Sign Out</a>
           </li> -->
+          </div>
         </ul>
       </div>
       <div id="page-content-wrapper">
@@ -128,7 +133,7 @@
         {% include "modals/editTask.html" %}
         <div class="container-fluid" id="subjectPage">
           {% include "modals/addTask.html" %}
-          <div class="row">
+          <div class="row cardwrapper">
             <div class="col-lg-12">
               <h1 class="title-text">My Activities</h1>
               <table class="display" style="width: 100%" id="tasksTable">
@@ -149,8 +154,8 @@
           </div>
         </div>
 
-        <div id="profilePage">
-          <div class="container-fluid cardwrapper row">
+        <div class="container-fluid" id="profilePage">
+          <div class="row cardwrapper">
             <div class="col-lg-12">
               <h1 class="title-text">My Profile</h1>
               <div class="row" id="editProfileHolderReload">
@@ -225,10 +230,10 @@
                 <div class="panel-body bio-graph-info">
                   <h1>{{sub.subjectCode}}:{{sub.subjectName}}</h1>
                   <div id="{{sub.subjectName}}"></div>
-                  <!-- <canvas
+                  <canvas
                     id="myChart"
                     style="width: 100%; max-width: 700px"
-                  ></canvas> -->
+                  ></canvas>
                 </div>
               </div>
               <br />
@@ -237,7 +242,7 @@
           </div>
         </div>
 
-        <div class="container-fluid" id="editPage">
+        <div class="container-fluid cardwrapper" id="editPage">
           <div class="row">
             <div class="col-lg-12">
               <h1 class="title-text">Edit Demographic Profile</h1>
@@ -330,7 +335,7 @@
                       <th>Subject Code</th>
                       <th>Subject Name</th>
                       <th>Units</th>
-                      <th>Action</th>
+                      <th>Professor Name</th>
                     </tr>
                   </thead>
                 </table>
@@ -338,6 +343,27 @@
             </div>
           </div>
         </div>
+
+        <!-- <div class="container-fluid" id="statPage">
+          <div class="row  cardwrapper">
+            <div class="col-lg-12" id="listOfMySubjects">
+              <h1 class="title-text">My Subjects</h1>
+              {% for sub in subjects %}
+              <div class="panel">
+                <div class="panel-body bio-graph-info">
+                  <h1>{{sub.subjectCode}}:{{sub.subjectName}}</h1>
+                  <div id="{{sub.subjectName}}"></div>
+                  <canvas
+                    id="myChart"
+                    style="width: 100%; max-width: 700px"
+                  ></canvas>
+                </div>
+              </div>
+              <br />
+              {% endfor %}
+            </div>
+          </div>
+        </div> -->
       </div>
     </div>
     {{test|json_script:"dataObject"}}
@@ -410,11 +436,11 @@
                 data-toggle="modal"
                 data-target="#addTaskModalOriginal"
               >
-              <i class="fa fa-plus-square"> Add Item </i>
+              <i class="fa fa-plus-square"></i> Add Item 
               </button>`
             );
             $(".dt-buttons").append(`
-               <button type="button" class = "btn btn-outline-secondary " id="editTogglere" > <i class="fa fa-edit"></i> </button>`);
+               <button type="button" class = "btn btn-outline-secondary " id="editTogglere" > <i class="fa fa-edit"></i>Edit Item </button>`);
 
             let num = false;
             tasksTable.column(-1).visible(num);
@@ -453,7 +479,6 @@
         $("#activeEdit").addClass("active");
       });
 
-   
       $("#Subjects").click(() => {
         $("#subjectPage").show();
         $("#editPage").hide();
@@ -544,13 +569,13 @@
       var whole = 100;
       var score = 60;
       const data = {
-        labels: ["Your passing rate", "Blue"],
+        labels: ["Your passing rate"],
         datasets: [
           {
             label: "My First Dataset",
             data: [score, whole - score],
             backgroundColor: ["rgb(54, 162, 235)", "rgb(255, 205, 86)"],
-            hoverOffset: 4,
+            hoverOffset: 1,
           },
         ],
       };
@@ -606,14 +631,17 @@
       // table for list of subjects --------------
 
       // add new subject ------------------
+
       $(document).ready(() => {
-        $(document).on("click", ".subAddButton", function (e) {
+        $(document).on("click", ".addSubButton", function (e) {
           console.log("asdf");
           $.ajax({
             url: "{% url 'studentProfile' studentprof.studentNumber %}",
             data: { addSub: $(e.target).val() },
             method: "POST",
             success: (response) => {
+              var dataTable = $("#subjectTable").DataTable();
+              dataTable.ajax.reload(null, false);
               alert("added Subject!");
               $("#listOfMySubjects").append(`<div>
                 <div class="panel">
