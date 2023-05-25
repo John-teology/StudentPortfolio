@@ -108,6 +108,8 @@ def studentProfile(request, studentID):
         studentProfileID=studentprof)
 
     data = dataForGraph(subjects, studentTasks)
+    dataD = dataForGraph(subjects, studentTasks,isrubick=1)
+
 
     if request.method == "POST":
         subID = request.POST.get('addSub', 0)
@@ -152,7 +154,9 @@ def studentProfile(request, studentID):
             studentTasks = Task.objects.filter(
                 studentProfileID=studentprof)
             data = dataForGraph(subjects, studentTasks)
-            return JsonResponse({'data': data}, safe=False)
+            dataD = dataForGraph(subjects, studentTasks,isrubick=1)
+
+            return JsonResponse({'data': data,'dounut' : dataD}, safe=False)
 
         if typeID:
             tType = TaskType.objects.get(pk=typeID)
@@ -165,8 +169,10 @@ def studentProfile(request, studentID):
             studentTasks = Task.objects.filter(
                 studentProfileID=studentprof)
             data = dataForGraph(subjects, studentTasks)
+            dataD = dataForGraph(subjects, studentTasks,isrubick=1)
 
-            return JsonResponse({"title": uploadedTask.title, "myscore": uploadedTask.score, "overallscore": uploadedTask.overallscore, "date": uploadedTask.date, 'type': tType.taskType, 'subject': subject.subjectName, 'attaachment':  uploadedTask.image.url if uploadedTask.image else None, "data": data}, safe=False)
+
+            return JsonResponse({"title": uploadedTask.title, "myscore": uploadedTask.score, "overallscore": uploadedTask.overallscore, "date": uploadedTask.date, 'type': tType.taskType, 'subject': subject.subjectName, 'attaachment':  uploadedTask.image.url if uploadedTask.image else None, "data": data,'dounut' : dataD}, safe=False)
 
         if isEditType:
             try:
@@ -187,8 +193,10 @@ def studentProfile(request, studentID):
                 studentTasks = Task.objects.filter(
                     studentProfileID=studentprof)
                 data = dataForGraph(subjects, studentTasks)
+                dataD = dataForGraph(subjects, studentTasks,isrubick=1)
 
-                return JsonResponse({'data': 1, 'graphdata': data}, safe=False)
+
+                return JsonResponse({'data': 1, 'graphdata': data ,'dounut' : dataD}, safe=False)
             except:
                 return JsonResponse({'data': 0}, safe=False)
 
@@ -217,7 +225,8 @@ def studentProfile(request, studentID):
             studentTasks = Task.objects.filter(
                 studentProfileID=studentprof)
             data = dataForGraph(subjects, studentTasks)
-            return JsonResponse({'data': data, 'subjectCode': addedSubject.subjectCode, 'subjectName': addedSubject.subjectName}, safe=False)
+            dataD = dataForGraph(subjects, studentTasks,isrubick=1)
+            return JsonResponse({'data': data, 'subjectCode': addedSubject.subjectCode, 'subjectName': addedSubject.subjectName,'dounut' : dataD}, safe=False)
 
     return render(request, "studentProfile2.html", {
         'studentprof': studentprof,
@@ -227,7 +236,8 @@ def studentProfile(request, studentID):
         'yearList':  yearlist,
         'courseList':  courselist,
         'male': gender,
-        'tasks': studentTasks
+        'tasks': studentTasks,
+        'dounut' : dataD
     })
 
 
@@ -324,13 +334,14 @@ def getAllSubject(request):
     return JsonResponse([subject.serialize(user) for subject in availableSubs], safe=False)
 
 
-def dataForGraph(subjects, studentTasks):
+def dataForGraph(subjects, studentTasks, isrubick=0):
     percentage = {}
-
+    rubricksTotal = {}
     data = {}
     for sub in subjects:
-        sub = {f"{sub.subjectName}": {}}
-        percentage.update(sub)
+        subd = {f"{sub.subjectName}": {}}
+        percentage.update(subd)
+        rubricksTotal.update({f"{sub.subjectCode}": 0})
 
     for sub in subjects:
         rubrik = Rubrick.objects.filter(
@@ -349,11 +360,16 @@ def dataForGraph(subjects, studentTasks):
                     scoreHolder.append(
                         int(task.score/task.overallscore * 100)/100)
 
-            print(rub.percentage, rub.taskTypeID, rub.subjectID)
             percent = 100/counter
             total = 0
             for score in scoreHolder:
                 total += percent * score if score else 0
+            # if isrubick:
+            if f'{sub.subjectCode}' in rubricksTotal:
+                rubricksTotal[f'{sub.subjectCode}'] += total * (float(rub.percentage/100))
+            else:
+                rubricksTotal[f'{sub.subjectCode}'] = total * (float(rub.percentage/100))
+            # else:
             if f'{sub.subjectName}' in data:
                 data[f'{sub.subjectName}'].update(
                     {f'{rub.taskTypeID}': total if total else 0})
@@ -361,7 +377,10 @@ def dataForGraph(subjects, studentTasks):
                 data[f'{sub.subjectName}'] = {
                     f'{rub.taskTypeID}': total if total else 0}
 
-    return data
+    if isrubick:
+        return rubricksTotal
+    else:
+        return data
 
 
 def about(request):

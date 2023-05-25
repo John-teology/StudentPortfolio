@@ -231,7 +231,7 @@
                   <h1>{{sub.subjectCode}}:{{sub.subjectName}}</h1>
                   <div id="{{sub.subjectName}}"></div>
                   <canvas
-                    id="myChart"
+                    id="{{sub.subjectCode}}"
                     style="width: 100%; max-width: 700px"
                   ></canvas>
                 </div>
@@ -366,7 +366,7 @@
         </div> -->
       </div>
     </div>
-    {{test|json_script:"dataObject"}}
+    {{test|json_script:"dataObject"}} {{dounut|json_script:"dounutObject"}}
 
     <script type="text/javascript">
       $(function () {
@@ -535,9 +535,9 @@
           graph_it_percentage(subArray, 200, document.getElementById(key));
         }
       };
-      const boxName = JSON.parse($("#dataObject").text());
+      const bars = JSON.parse($("#dataObject").text());
 
-      createBarGraph(boxName);
+      createBarGraph(bars);
 
       // function that create bar ******
       function graph_it_percentage(g, g_width, g_element) {
@@ -566,24 +566,35 @@
       }
 
       // dounut chart -----------------------------
-      var whole = 100;
-      var score = 60;
-      const data = {
-        labels: ["Your passing rate"],
-        datasets: [
-          {
-            label: "My First Dataset",
-            data: [score, whole - score],
-            backgroundColor: ["rgb(54, 162, 235)", "rgb(255, 205, 86)"],
-            hoverOffset: 1,
-          },
-        ],
-      };
 
-      const myChart = new Chart("myChart", {
-        type: "doughnut",
-        data: data,
-      });
+      const dounuts = JSON.parse($("#dounutObject").text());
+
+      function createChart(whole, score, chartId) {
+        const passingRate = `${score}%`;
+
+        const data = {
+          labels: [`Your passing rate ${passingRate}`],
+          datasets: [
+            {
+              label: "My First Dataset",
+              data: [score, whole - score],
+              backgroundColor: ["rgb(255, 0, 0)", "rgb(211, 211, 211)"],
+              hoverOffset: 1,
+            },
+          ],
+        };
+
+        const myChart = new Chart(chartId, {
+          type: "doughnut",
+          data: data,
+        });
+      }
+
+      // Usage example
+
+      for (var key in dounuts) {
+        createChart(100, dounuts[key], key);
+      }
 
       // dounut chart -----------------------------
 
@@ -648,10 +659,10 @@
                 <div class="panel-body bio-graph-info" >
                   <h1>${response.subjectCode}:${response.subjectName}</h1>
                   <div id="${response.subjectName}"></div>
-                  <!-- <canvas
-                    id="myChart"
+                  <canvas
+                    class="myChart"
                     style="width: 100%; max-width: 700px"
-                  ></canvas> -->
+                  ></canvas> 
                 </div>
               </div>
                 </div>`);
