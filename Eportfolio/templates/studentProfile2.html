@@ -168,8 +168,8 @@
                   </div>
                   <div class="bio-row">
                     <p>
-                      <span class="sub-heading">Last Name </span>:
-                      {{studentprof.lastName}}
+                      <span class="sub-heading">Year</span>:
+                      {{studentprof.yearID}}
                     </p>
                   </div>
                   <div class="bio-row">
@@ -178,10 +178,12 @@
                       {{studentprof.studentNumber}}
                     </p>
                   </div>
+                </div>
+                <div class="col-lg-6 description-profile">
                   <div class="bio-row">
                     <p>
-                      <span class="sub-heading">Year</span>:
-                      {{studentprof.yearID}}
+                      <span class="sub-heading">Last Name </span>:
+                      {{studentprof.lastName}}
                     </p>
                   </div>
                   <div class="bio-row">
@@ -189,33 +191,11 @@
                       <span class="sub-heading">Course</span
                       >:{{studentprof.courseID}}
                     </p>
-                  </div>
-                </div>
-                <div class="col-lg-6 description-profile">
-                  <div class="bio-row">
-                    <p>
-                      <span class="sub-heading">Contact Details </span>:
-                      {{studentprof.contactNumber}}
-                    </p>
-                  </div>
-                  <div class="bio-row">
                     <p>
                       <span class="sub-heading">Email </span>:
                       <a href="/cdn-cgi/l/email-protection" class="__cf_email__"
                         >{{studentprof.emailAddress}}</a
                       >
-                    </p>
-                  </div>
-                  <div class="bio-row">
-                    <p>
-                      <span class="sub-heading">Guardian Name </span>:
-                      {{studentprof.guardianName}}
-                    </p>
-                  </div>
-                  <div class="bio-row">
-                    <p>
-                      <span class="sub-heading">Guardian No. </span>:
-                      {{studentprof.guardianNumber}}
                     </p>
                   </div>
                 </div>
@@ -502,6 +482,9 @@
             var dataTable = $("#tasksTable").DataTable();
             dataTable.ajax.reload(null, false);
             createBarGraph(response.data);
+            for (var key in response.dounut) {
+              createChart(response.dounut[key], key);
+            }
           },
         });
       });
@@ -524,6 +507,7 @@
 
       const createBarGraph = (data) => {
         const obj = JSON.parse(JSON.stringify(data));
+        console.log(obj);
 
         for (const [key, value] of Object.entries(obj)) {
           let counter = 0;
@@ -542,20 +526,12 @@
       // function that create bar ******
       function graph_it_percentage(g, g_width, g_element) {
         let output = '<table border="0" cellspacing="0" cellpadding="8">';
-        let barColor; // Set the desired color for all bars
+        let barColor = "pink"; // Set the desired color for all bars
+        let unfilledBarColor = "lightgrey"; // Set the color for empty bars
 
         for (i = 0; i < g.length; i++) {
           calwidth_percentage = g_width * (parseInt(g[i][1]) / 100);
 
-          if (parseInt(g[i][1]) > 75) {
-            barColor = "green";
-          } else if (parseInt(g[i][1]) < 75 && parseInt(g[i][1]) > 65) {
-            barColor = "orange";
-          } else {
-            barColor = "lightcoral";
-          }
-
-          let unfilledBarColor = "lightgrey";
           let unfilledBarWidth = g_width - calwidth_percentage;
           output += `<tr><td style="padding-right: 20px;">${g[i][0]}</td><td><svg xmlns="http://www.w3.org/2000/svg" width="${g_width}" height="20"><g class="bar"><rect x="${calwidth_percentage}" width="${unfilledBarWidth}" height="10" fill="${unfilledBarColor}"></rect><rect width="${calwidth_percentage}" height="10" fill="${barColor}"></rect></g></svg> ${g[i][1]}%</td></tr>`;
         }
@@ -569,17 +545,17 @@
 
       const dounuts = JSON.parse($("#dounutObject").text());
 
-      function createChart(whole, score, chartId) {
-        const passingRate = `${score}%`;
+      function createChart(score, chartId) {
+        const passingRate = `${score.toFixed(2)}%`;
 
         const data = {
-          labels: [`Your passing rate ${passingRate}`],
+          labels: [`${score.toFixed(2)}%`],
           datasets: [
             {
               label: "My First Dataset",
-              data: [score, whole - score],
+              data: [score.toFixed(2), (100 - score).toFixed(2)],
               backgroundColor: ["rgb(255, 0, 0)", "rgb(211, 211, 211)"],
-              hoverOffset: 1,
+              hoverOffset: 4,
             },
           ],
         };
@@ -593,7 +569,7 @@
       // Usage example
 
       for (var key in dounuts) {
-        createChart(100, dounuts[key], key);
+        createChart(dounuts[key], key);
       }
 
       // dounut chart -----------------------------
@@ -653,20 +629,23 @@
             success: (response) => {
               var dataTable = $("#subjectTable").DataTable();
               dataTable.ajax.reload(null, false);
+              console.log(response);
               alert("added Subject!");
-              $("#listOfMySubjects").append(`<div>
-                <div class="panel">
-                <div class="panel-body bio-graph-info" >
+              $("#listOfMySubjects").append(`<div class="panel">
+                <div class="panel-body bio-graph-info">
                   <h1>${response.subjectCode}:${response.subjectName}</h1>
                   <div id="${response.subjectName}"></div>
                   <canvas
-                    class="myChart"
+                    id="${response.subjectCode}"
                     style="width: 100%; max-width: 700px"
-                  ></canvas> 
+                  ></canvas>
                 </div>
               </div>
-                </div>`);
+              <br />`);
               createBarGraph(response.data);
+              for (var key in response.dounut) {
+                createChart(response.dounut[key], key);
+              }
               $("#taskSubjectEdit")
                 .find("option")
                 .remove()

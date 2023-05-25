@@ -189,11 +189,14 @@ $.ajax({
           success: function (response) {
             // Handle success response
             $("#addTaskEdit")[0].reset();
-            console.log(response.data);
+            console.log(response);
             var dataTable = $("#tasksTable").DataTable();
             dataTable.ajax.reload(null, false); 
             $(".EditTask").click();
             createBarGraph(response.graphdata);
+            for (var key in response.dounut) {
+              createChart(response.dounut[key], key);
+            }
 
             
             // Additional actions after form submission

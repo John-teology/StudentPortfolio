@@ -19,8 +19,8 @@ class subjectFilter(admin.ModelAdmin):
     search_fields = ['subjectCode']
 
 class tasksFilter(admin.ModelAdmin):
-    list_display=['id','studentProfileID','task_Type','taskSubject','title','overallscore','score','date','image']
-    list_editable=['studentProfileID','task_Type','taskSubject','title','overallscore','score','date','image']
+    list_display=['id','studentProfileID','task_Type','subjectStudent','taskSubject','title','overallscore','score','date','image']
+    list_editable=['studentProfileID','task_Type','taskSubject','subjectStudent','title','overallscore','score','date','image']
     search_fields = ['title']
 
 

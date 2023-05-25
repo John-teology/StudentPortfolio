@@ -162,7 +162,9 @@
                 $("#addUserTaskButton").click();
                 // $('#dataforbargrapht').load(location.href + ' #dataforbargraph');
                 createBarGraph(response.data);
-               
+                for (var key in response.dounut) {
+                  createChart(response.dounut[key], key);
+                }
                 // Additional actions after form submission
               },
             });

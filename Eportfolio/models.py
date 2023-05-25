@@ -86,35 +86,6 @@ class Subject(models.Model):
         }
 
 
-class Task(models.Model):
-    studentProfileID = models.ForeignKey(
-        Studentprofile, on_delete=CASCADE, related_name="studentTask", null=True)
-    task_Type = models.ForeignKey(
-        TaskType, on_delete=CASCADE, related_name="TypeofTask", null=True)
-    taskSubject = models.ForeignKey(
-        Subject, on_delete=CASCADE, related_name="subjectTask")
-    title = models.CharField(max_length=100)
-    overallscore = models.IntegerField()
-    score = models.IntegerField()
-    date = models.DateField(blank=True)
-    image = models.ImageField(null=True, blank=True, upload_to='images/')
-
-    def __str__(self):
-        return f"{self.title}"
-
-    def serialize(self):
-        return {
-            "title": self.title,
-            "score": self.score,
-            "overallscore": self.overallscore,
-            "date": self.date,
-            "taskType": self.task_Type.taskType,
-            "subject": self.taskSubject.subjectCode + ": " + self.taskSubject.subjectName,
-            "image": self.image.url if self.image else None,
-            "action": f'<button type="button" class="btn btn-danger deleteTask" value="{self.id}" name="taskDelete" > <i class="fa fa-trash"></i> </button> <button type="button" class="btn btn-info EditTask" data-toggle="modal" data-target="#actionModify" title="{self.title}" score="{self.score}" overall="{self.overallscore}" date="{self.date}" subject={self.taskSubject_id} subType={self.task_Type_id} id = {self.pk} > <i class="fa fa-edit"></i> </button>'
-        }
-
-
 class Rubrick(models.Model):
     subjectID = models.ForeignKey(
         Subject, on_delete=CASCADE, related_name='subjectRubicks')
@@ -139,3 +110,35 @@ class StudentSubject(models.Model):
 
     def __str__(self):
         return f"{self.studentProfileID.studentNumber}: {self.subjectID.subjectName}"
+    
+
+
+
+class Task(models.Model):
+    studentProfileID = models.ForeignKey(
+        Studentprofile, on_delete=CASCADE, related_name="studentTask", null=True)
+    task_Type = models.ForeignKey(
+        TaskType, on_delete=CASCADE, related_name="TypeofTask", null=True)
+    taskSubject = models.ForeignKey(
+        Subject, on_delete=CASCADE, related_name="subjectTask")
+    subjectStudent = models.ForeignKey(StudentSubject, on_delete=CASCADE,related_name='StudentSubject',null=True)
+    title = models.CharField(max_length=100)
+    overallscore = models.IntegerField()
+    score = models.IntegerField()
+    date = models.DateField(blank=True)
+    image = models.ImageField(null=True, blank=True, upload_to='images/')
+
+    def __str__(self):
+        return f"{self.title}"
+
+    def serialize(self):
+        return {
+            "title": self.title,
+            "score": self.score,
+            "overallscore": self.overallscore,
+            "date": self.date,
+            "taskType": self.task_Type.taskType,
+            "subject": self.taskSubject.subjectCode + ": " + self.taskSubject.subjectName,
+            "image": self.image.url if self.image else None,
+            "action": f'<button type="button" class="btn btn-danger deleteTask" value="{self.id}" name="taskDelete" > <i class="fa fa-trash"></i> </button> <button type="button" class="btn btn-info EditTask" data-toggle="modal" data-target="#actionModify" title="{self.title}" score="{self.score}" overall="{self.overallscore}" date="{self.date}" subject={self.taskSubject_id} subType={self.task_Type_id} id = {self.pk} > <i class="fa fa-edit"></i> </button>'
+        }

@@ -94,7 +94,7 @@ def studentProfile(request, studentID):
     courselist = Course.objects.all()
 
     studentSubjects = StudentSubject.objects.filter(
-        studentProfileID=studentprof)
+        studentProfileID=studentprof, ishide=False)
     subjectIDs = [
         studentSubject.subjectID_id for studentSubject in studentSubjects]
     subjects = Subject.objects.filter(id__in=subjectIDs)
@@ -108,8 +108,7 @@ def studentProfile(request, studentID):
         studentProfileID=studentprof)
 
     data = dataForGraph(subjects, studentTasks)
-    dataD = dataForGraph(subjects, studentTasks,isrubick=1)
-
+    dataD = dataForGraph(subjects, studentTasks, isrubick=1)
 
     if request.method == "POST":
         subID = request.POST.get('addSub', 0)
@@ -120,8 +119,6 @@ def studentProfile(request, studentID):
         courseName = request.POST.get('courseID', 0)
         yearName = request.POST.get('yearID', 0)
         contactD = request.POST.get('contactNumber', 0)
-
-        print(isEdit, guardName, guardNumber, courseName, yearName, contactD)
 
         # add task
         typeID = request.POST.get('taskType', '')
@@ -143,9 +140,6 @@ def studentProfile(request, studentID):
         dateEdit = request.POST.get('taskDateEdit', 0)
         imageEdit = request.FILES.get('taskAttachmentsEdit', "")
 
-        print(isEditType, typeIDEdit, subjectIDEdit, titleEdit,
-              myScoreEdit, totalScoreEdit, dateEdit, imageEdit)
-
         if taskToBeDelete:
             deleteTask = Task.objects.get(pk=taskToBeDelete)
             deleteTask.delete()
@@ -154,25 +148,26 @@ def studentProfile(request, studentID):
             studentTasks = Task.objects.filter(
                 studentProfileID=studentprof)
             data = dataForGraph(subjects, studentTasks)
-            dataD = dataForGraph(subjects, studentTasks,isrubick=1)
+            dataD = dataForGraph(subjects, studentTasks, isrubick=1)
 
-            return JsonResponse({'data': data,'dounut' : dataD}, safe=False)
+            return JsonResponse({'data': data, 'dounut': dataD}, safe=False)
 
         if typeID:
             tType = TaskType.objects.get(pk=typeID)
             subject = Subject.objects.get(pk=subjectID)
+            studentSub = StudentSubject.objects.get(
+                studentProfileID=studentprof, subjectID=subject)
             uploadedTask = Task(studentProfileID=studentprof, task_Type=tType, taskSubject=subject, title=title,
-                                overallscore=totalScore, score=myScore, image=image, date=date)
+                                overallscore=totalScore, score=myScore, image=image, date=date, subjectStudent=studentSub)
             uploadedTask.save()
             subjects = Subject.objects.filter(id__in=subjectIDs)
 
             studentTasks = Task.objects.filter(
                 studentProfileID=studentprof)
             data = dataForGraph(subjects, studentTasks)
-            dataD = dataForGraph(subjects, studentTasks,isrubick=1)
+            dataD = dataForGraph(subjects, studentTasks, isrubick=1)
 
-
-            return JsonResponse({"title": uploadedTask.title, "myscore": uploadedTask.score, "overallscore": uploadedTask.overallscore, "date": uploadedTask.date, 'type': tType.taskType, 'subject': subject.subjectName, 'attaachment':  uploadedTask.image.url if uploadedTask.image else None, "data": data,'dounut' : dataD}, safe=False)
+            return JsonResponse({"title": uploadedTask.title, "myscore": uploadedTask.score, "overallscore": uploadedTask.overallscore, "date": uploadedTask.date, 'type': tType.taskType, 'subject': subject.subjectName, 'attaachment':  uploadedTask.image.url if uploadedTask.image else None, "data": data, 'dounut': dataD}, safe=False)
 
         if isEditType:
             try:
@@ -180,12 +175,15 @@ def studentProfile(request, studentID):
                 print(modifiedTask.title)
                 tTypeNew = TaskType.objects.get(pk=typeIDEdit)
                 subjectNew = Subject.objects.get(pk=subjectIDEdit)
+                studentSub = StudentSubject.objects.get(
+                    studentProfileID=studentprof, subjectID=subjectNew)
                 modifiedTask.title = titleEdit
                 modifiedTask.score = myScoreEdit
                 modifiedTask.overallscore = totalScoreEdit
                 modifiedTask.task_Type = tTypeNew
                 modifiedTask.taskSubject = subjectNew
                 modifiedTask.date = dateEdit
+                modifiedTask.subjectStudent = studentSub
                 modifiedTask.image = imageEdit
                 modifiedTask.save()
 
@@ -193,10 +191,9 @@ def studentProfile(request, studentID):
                 studentTasks = Task.objects.filter(
                     studentProfileID=studentprof)
                 data = dataForGraph(subjects, studentTasks)
-                dataD = dataForGraph(subjects, studentTasks,isrubick=1)
+                dataD = dataForGraph(subjects, studentTasks, isrubick=1)
 
-
-                return JsonResponse({'data': 1, 'graphdata': data ,'dounut' : dataD}, safe=False)
+                return JsonResponse({'data': 1, 'graphdata': data, 'dounut': dataD}, safe=False)
             except:
                 return JsonResponse({'data': 0}, safe=False)
 
@@ -218,15 +215,15 @@ def studentProfile(request, studentID):
             sub.save()
 
             studentSubjects = StudentSubject.objects.filter(
-                studentProfileID=studentprof)
+                studentProfileID=studentprof,ishide = False)
             subjectIDs = [
                 studentSubject.subjectID_id for studentSubject in studentSubjects]
             subjects = Subject.objects.filter(id__in=subjectIDs)
             studentTasks = Task.objects.filter(
                 studentProfileID=studentprof)
             data = dataForGraph(subjects, studentTasks)
-            dataD = dataForGraph(subjects, studentTasks,isrubick=1)
-            return JsonResponse({'data': data, 'subjectCode': addedSubject.subjectCode, 'subjectName': addedSubject.subjectName,'dounut' : dataD}, safe=False)
+            dataD = dataForGraph(subjects, studentTasks, isrubick=1)
+            return JsonResponse({'data': data, 'subjectCode': addedSubject.subjectCode, 'subjectName': addedSubject.subjectName, 'dounut': dataD}, safe=False)
 
     return render(request, "studentProfile2.html", {
         'studentprof': studentprof,
@@ -237,7 +234,7 @@ def studentProfile(request, studentID):
         'courseList':  courselist,
         'male': gender,
         'tasks': studentTasks,
-        'dounut' : dataD
+        'dounut': dataD
     })
 
 
@@ -305,7 +302,7 @@ def studentProfile(request, studentID):
 
 def getUserSubject(request):
     user = Studentprofile.objects.get(emailAddress=request.user.email)
-    studentSubjects = StudentSubject.objects.filter(studentProfileID=user)
+    studentSubjects = StudentSubject.objects.filter(studentProfileID=user,ishide=False)
     subjectIDs = [
         studentSubject.subjectID_id for studentSubject in studentSubjects]
     subjects = Subject.objects.filter(id__in=subjectIDs)
@@ -366,9 +363,11 @@ def dataForGraph(subjects, studentTasks, isrubick=0):
                 total += percent * score if score else 0
             # if isrubick:
             if f'{sub.subjectCode}' in rubricksTotal:
-                rubricksTotal[f'{sub.subjectCode}'] += total * (float(rub.percentage/100))
+                rubricksTotal[f'{sub.subjectCode}'] += total * \
+                    (float(rub.percentage/100))
             else:
-                rubricksTotal[f'{sub.subjectCode}'] = total * (float(rub.percentage/100))
+                rubricksTotal[f'{sub.subjectCode}'] = total * \
+                    (float(rub.percentage/100))
             # else:
             if f'{sub.subjectName}' in data:
                 data[f'{sub.subjectName}'].update(
@@ -377,10 +376,7 @@ def dataForGraph(subjects, studentTasks, isrubick=0):
                 data[f'{sub.subjectName}'] = {
                     f'{rub.taskTypeID}': total if total else 0}
 
-    if isrubick:
-        return rubricksTotal
-    else:
-        return data
+    return rubricksTotal if isrubick else data
 
 
 def about(request):
