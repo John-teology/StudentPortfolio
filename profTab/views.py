@@ -23,7 +23,6 @@ def index(request):
             return redirect('index')
     subjects = Subject.objects.all()
     taskT = TaskType.objects.all()
-    t_id = TaskType.objects.get(taskType = "Quiz")
     
     return render(request, "professor/prof.html",{
         'subjects' : subjects,
@@ -35,13 +34,14 @@ def index(request):
 def subject(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)
-    print(request.POST)
-    
+
+
     # data = json.loads(request.body)
     subjectCode = request.POST.get('subjectCode',"")
     subName = request.POST.get('subjectName',"")
     fName = request.POST.get('facultyName',"")
     units = request.POST.get('units',0)
+    
     
     # rubricks
     quiz = request.POST.get('quiz',0)

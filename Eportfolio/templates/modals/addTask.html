@@ -165,7 +165,8 @@
                 for (var key in response.dounut) {
                   createChart(response.dounut[key], key);
                 }
-                // Additional actions after form submission
+                barGraphProfile(response.dounut);
+
               },
             });
           });

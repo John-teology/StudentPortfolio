@@ -197,6 +197,8 @@ $.ajax({
             for (var key in response.dounut) {
               createChart(response.dounut[key], key);
             }
+            barGraphProfile(response.dounut);
+  
 
             
             // Additional actions after form submission

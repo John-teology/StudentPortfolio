@@ -87,7 +87,7 @@
               <a id="showProfilePage">Profile</a>
             </li>
             <!-- <li id="activeStat">
-            <a id="statisticPage">Subjects</a>
+            <a id="statisticPage">Analytics</a>
           </li> -->
             <li id="activeEdit">
               <a id="editProfile">Edit Profile</a>
@@ -152,6 +152,32 @@
               </table>
             </div>
           </div>
+          <div class="row">
+            <div class="col-lg-12" id="listOfMySubjects" style="margin-top: 5%">
+              <!-- <h1 class="title-text">Analytics</h1> -->
+              {% for sub in subjects %}
+              <div class="panel">
+                <div class="panel-body bio-graph-info">
+                  <div class="col"></div>
+                  <h1 id="{{sub.subjectCode}}:{{sub.subjectName}}">
+                    {{sub.subjectCode}}:{{sub.subjectName}}
+                  </h1>
+                  <div id="{{sub.subjectName}}"></div>
+                  <br />
+                  <br />
+                  <center>
+                    <canvas
+                      id="{{sub.subjectCode}}"
+                      style="width: 100%; max-width: 700px; margin-left: 1%"
+                    ></canvas>
+                  </center>
+                </div>
+              </div>
+              <br />
+              <br />
+              {% endfor %}
+            </div>
+          </div>
         </div>
 
         <div class="container-fluid" id="profilePage">
@@ -202,24 +228,7 @@
               </div>
             </div>
           </div>
-          <div class="row">
-            <div class="col-lg-12" id="listOfMySubjects">
-              <h1 class="title-text">My Subjects</h1>
-              {% for sub in subjects %}
-              <div class="panel">
-                <div class="panel-body bio-graph-info">
-                  <h1>{{sub.subjectCode}}:{{sub.subjectName}}</h1>
-                  <div id="{{sub.subjectName}}"></div>
-                  <canvas
-                    id="{{sub.subjectCode}}"
-                    style="width: 100%; max-width: 700px"
-                  ></canvas>
-                </div>
-              </div>
-              <br />
-              {% endfor %}
-            </div>
-          </div>
+          <canvas id="dataBars" style="margin-top: 5%"></canvas>
         </div>
 
         <div class="container-fluid cardwrapper" id="editPage">
@@ -286,28 +295,31 @@
                   />
                 </div>
 
-                <div class="bio-row" style="margin: 20px 20px">
-                  <div style="display: flex; float: right; margin-bottom: 20px">
-                    <div style="margin-right: 10px">
-                      <button
-                        type="submit"
-                        id="saveProfile"
-                        class="btn btn-primary btn-hovergreen"
-                      >
-                        Save
-                      </button>
-                    </div>
-                    <div>
-                      <form method="post" action="/accounts/logout/">
-                        {% csrf_token %}
-                        <button class="btn btn-dark btn-hoverred" type="submit">
-                          Sign Out
+                  <div class="bio-row" style="margin: 20px 20px">
+                    <div style="display: flex; float: right; margin-bottom: 20px">
+                      <div style="margin-right: 10px">
+                        <button
+                          type="submit"
+                          id="saveProfile"
+                          class="btn btn-primary btn-hovergreen"
+                        >
+                          Save
                         </button>
-                      </form>
+                      </div>
+                      <div>
+                </form>
+                          <form method="post" action="/accounts/logout/">
+                            {% csrf_token %}
+                            <button
+                              class="btn btn-dark btn-hoverred"
+                              type="submit"
+                            >
+                              Sign Out
+                            </button>
+                          </form>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </form>
               <div class="bio-row">
                 <table class="display" style="width: 100%" id="subjectTable">
                   <thead>
@@ -315,7 +327,7 @@
                       <th>Subject Code</th>
                       <th>Subject Name</th>
                       <th>Units</th>
-                      <th>Professor Name</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
                 </table>
@@ -325,7 +337,7 @@
         </div>
 
         <!-- <div class="container-fluid" id="statPage">
-          <div class="row  cardwrapper">
+          <div class="row">
             <div class="col-lg-12" id="listOfMySubjects">
               <h1 class="title-text">My Subjects</h1>
               {% for sub in subjects %}
@@ -334,7 +346,7 @@
                   <h1>{{sub.subjectCode}}:{{sub.subjectName}}</h1>
                   <div id="{{sub.subjectName}}"></div>
                   <canvas
-                    id="myChart"
+                    id="{{sub.subjectCode}}"
                     style="width: 100%; max-width: 700px"
                   ></canvas>
                 </div>
@@ -366,7 +378,17 @@
             { data: "overallscore" },
             { data: "date" },
             { data: "taskType" },
-            { data: "subject" },
+            {
+              data: "subject",
+              render: function (data, type, row, meta) {
+                if (type === "display") {
+                  return (
+                    '<a href="#' + data.replace(" ", "") + '">' + data + "</a>"
+                  );
+                }
+                return data;
+              },
+            },
             {
               data: "image",
               render: function (data, type, row, meta) {
@@ -437,6 +459,7 @@
       //navigation  ------------------------ ------------------------
       $("#editPage").hide();
       $("#subjectPage").hide();
+      $("#subjectPage").hide();
       //end of div that need to hide -----------------
 
       $("#showProfilePage").click(() => {
@@ -482,6 +505,7 @@
             var dataTable = $("#tasksTable").DataTable();
             dataTable.ajax.reload(null, false);
             createBarGraph(response.data);
+            barGraphProfile(response.dounut);
             for (var key in response.dounut) {
               createChart(response.dounut[key], key);
             }
@@ -507,7 +531,6 @@
 
       const createBarGraph = (data) => {
         const obj = JSON.parse(JSON.stringify(data));
-        console.log(obj);
 
         for (const [key, value] of Object.entries(obj)) {
           let counter = 0;
@@ -539,6 +562,9 @@
         output += "</table>";
 
         g_element.innerHTML = output;
+        g_element.style.display = "flex";
+        g_element.style.justifyContent = "center";
+        g_element.style.alignItems = "center";
       }
 
       // dounut chart -----------------------------
@@ -573,6 +599,44 @@
       }
 
       // dounut chart -----------------------------
+
+      // bar for all chart -----------------------------
+
+      const barGraphProfile = (obj) => {
+        const data = {
+          labels: Object.keys(obj),
+          datasets: [
+            {
+              label: "My Subjects Passing Rate",
+              data: Object.values(obj),
+              backgroundColor: "rgba(255, 99, 132, 0.2)",
+              borderColor: "rgb(255, 99, 132)",
+              borderWidth: 2,
+            },
+          ],
+        };
+
+        new Chart("dataBars", {
+          type: "bar",
+          data: data,
+          options: {
+            scales: {
+              yAxes: [
+                {
+                  scaleLabel: {
+                    display: true,
+                    labelString: "Passing Rate (%) ",
+                  },
+                },
+              ],
+            },
+          },
+        });
+      };
+
+      barGraphProfile(dounuts);
+
+      // bar for all chart -----------------------------
 
       // edit profile -------------------------
 
@@ -621,7 +685,6 @@
 
       $(document).ready(() => {
         $(document).on("click", ".addSubButton", function (e) {
-          console.log("asdf");
           $.ajax({
             url: "{% url 'studentProfile' studentprof.studentNumber %}",
             data: { addSub: $(e.target).val() },
@@ -629,20 +692,28 @@
             success: (response) => {
               var dataTable = $("#subjectTable").DataTable();
               dataTable.ajax.reload(null, false);
-              console.log(response);
               alert("added Subject!");
               $("#listOfMySubjects").append(`<div class="panel">
                 <div class="panel-body bio-graph-info">
-                  <h1>${response.subjectCode}:${response.subjectName}</h1>
+                  <div class="col"></div>
+                  <h1 id="{{sub.subjectCode}}:{{sub.subjectName}}">
+                    ${response.subjectCode}:${response.subjectName}
+                  </h1>
                   <div id="${response.subjectName}"></div>
-                  <canvas
-                    id="${response.subjectCode}"
-                    style="width: 100%; max-width: 700px"
-                  ></canvas>
+                  <br />
+                  <br />
+                  <center>
+                    <canvas
+                      id="${response.subjectCode}"
+                      style="width: 100%; max-width: 700px; margin-left: 1%"
+                    ></canvas>
+                  </center>
                 </div>
               </div>
+              <br />
               <br />`);
               createBarGraph(response.data);
+              barGraphProfile(response.dounut);
               for (var key in response.dounut) {
                 createChart(response.dounut[key], key);
               }

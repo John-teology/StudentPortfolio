@@ -6,104 +6,117 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Professor's Page</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <!-- link for datatables -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css"
+    />
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.7.0/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.70/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.70/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.print.min.js"></script>
+
+    <!-- end of link for datatables -->
   </head>
   <body>
+    <!-- NavBar -->
+    <nav class="navbar navbar-light bg-light justify-content-between">
+      <a class="navbar-brand">Faculty Page</a>
+      {% include 'modals/addSubject_modal.html' %}
+
+      <form method="post" action="/accounts/logout/" style="margin-top: 10px">
+        {% csrf_token %}
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+          Signout
+        </button>
+      </form>
+    </nav>
+    <!-- End of NavBar -->
+    <table id="subjectTable">
+      <thead style="background-color: red; color: white">
+        <tr>
+          <th>Subject Code</th>
+          <th>Subject Name</th>
+          <th>Units</th>
+        </tr>
+      </thead>
+    </table>
+
     <h1>prof page</h1>
     <h1>Add Subject</h1>
-    <form id="addSubjectForm">
-      <input type="text" id="subjectCode" placeholder="Subject Code" />
-      <input type="text" id="subjectName" placeholder="subject Name" />
-      <input type="text" id="facultyName" placeholder="faculty Name" />
-      <input type="number" id="units" placeholder="No. of Units" />
-      <br />
-      <h1>Rubricks</h1>
-      {% for type in tasksT %}
-      <input
-        type="number"
-        value=""
-        id="{{type|lower}}"
-        placeholder="{{type}}"
-      />
-      {% endfor %}
-      <input type="submit" />
-    </form>
-    <h1>list of subs</h1>
-
-    <div id="table">
-      {% for sub in subjects %}
-      <p>{{sub}}</p>
-      {% endfor %}
-    </div>
-
-    <form method="post" action="/accounts/logout/" style="margin-top: 10px">
-      {% csrf_token %}
-      <button class="btn btn-dark" type="submit">Sign Out</button>
-    </form>
 
     <script>
       $(document).ready(() => {
-        // Gett all the values of rubricks
-        const isvalid = () => {
-          let totalRubicks = [
-            defaulval("#quiz"),
-            defaulval("#performancetask"),
-            defaulval("#prelims"),
-            defaulval("#midterm"),
-            defaulval("#finals"),
-            defaulval("#project"),
-          ];
-
-          // get the total
-          let sum = totalRubicks.reduce(function (a, b) {
-            return Number(a) + Number(b);
-          });
-
-          // apply the condition so it wont submit
-          if (sum > 100) {
-            alert("wrong");
-            return false;
-          } else {
-            return true;
-          }
-        };
-
-        // convert empty inputs to zero( 0 )
-        const defaulval = (str) => {
-          return $(str).val() == "" ? 0 : $(str).val();
-        };
-
-        // get the values after submit
-        $(document).on("submit", "#addSubjectForm", (e) => {
-          e.preventDefault();
-          if (isvalid()) {
-            $.post("/professor/addSub/", {
-              subjectCode: $("#subjectCode").val(),
-              subjectName: $("#subjectName").val(),
-              facultyName: $("#facultyName").val(),
-              units: $("#units").val(),
-              quiz: defaulval("#quiz"),
-              performancetask: defaulval("#performancetask"),
-              prelims: defaulval("#prelims"),
-              midterm: defaulval("#midterm"),
-              finals: defaulval("#finals"),
-              project: defaulval("#project"),
-            }).then((response) => {
-              $("#subjectCode").val("");
-              $("#subjectName").val("");
-              $("#facultyName").val("");
-              $("#units").val("");
-              $("#quiz").val("");
-              $("#performancetask").val("");
-              $("#prelims").val("");
-              $("#midterm").val("");
-              $("#finals").val("");
-              $("#project").val("");
-              $("#table").load(location.href + " #table"); // space is needed
-            });
-          }
+        var addButton = `<button
+                type="button"
+                style = "margin-left: 5px;"
+                id = "addProfSubjectButton"
+                class="btn btn-outline-info"
+                data-toggle="modal"
+                data-dismiss = "modal"
+              data-target="#exampleModalCenter"
+              >
+              <i class="fa fa-plus-square"></i> Add Subject
+              </button>`;
+        $(document).ready(() => {
+          $("#subjectTable_length").append(addButton);
         });
+        $("#addProfSubjectButton").click(() => {
+          console.log("asdf");
+        });
+      });
+
+      // dataTables
+      var subTable = $("#subjectTable").DataTable({
+        resonsive: true,
+        columns: [
+          { data: "subjectCode" },
+          { data: "subjectName" },
+          { data: "units" },
+        ],
+        ajax: {
+          url: "{% url 'getAllSubs' %}",
+          type: "POST",
+          dataSrc: "",
+        },
+      });
+
+      $("#subjectTable_wrapper").css({
+        width: "95%",
+        margin: "15px auto",
       });
     </script>
   </body>

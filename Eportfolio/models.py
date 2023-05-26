@@ -67,24 +67,32 @@ class Subject(models.Model):
     def __str__(self):
         return f"{self.subjectCode}: {self.subjectName}"
 
-    def serialize(self, user):
-        is_subject_added = StudentSubject.objects.filter(studentProfileID=user, subjectID=self).exists()
-        action_button = f'<button type="button" class="btn btn-info addSubButton" value="{self.id}"'
-        
-        if is_subject_added:
-            action_button += ' disabled>Already Added</button>'
+    def serialize(self, user=False):
+        if user:
+            is_subject_added = StudentSubject.objects.filter(studentProfileID=user, subjectID=self).exists()
+            action_button = f'<button type="button" class="btn btn-info addSubButton" value="{self.id}"'
+            
+            if is_subject_added:
+                action_button += ' disabled>Already Added</button>'
+            else:
+                action_button += '>Add Subject</button>'
+            
+            return {
+                "id": self.id,
+                "subjectCode": self.subjectCode,
+                "subjectName": self.subjectName,
+                "facultyName": self.facultyName,
+                "units": self.units,
+                "action": action_button
+            }
         else:
-            action_button += '>Add Subject</button>'
-        
-        return {
-            "id": self.id,
-            "subjectCode": self.subjectCode,
-            "subjectName": self.subjectName,
-            "facultyName": self.facultyName,
-            "units": self.units,
-            "action": action_button
-        }
-
+            return {
+                "id": self.id,
+                "subjectCode": self.subjectCode,
+                "subjectName": self.subjectName,
+                "facultyName": self.facultyName,
+                "units": self.units,
+            }
 
 class Rubrick(models.Model):
     subjectID = models.ForeignKey(

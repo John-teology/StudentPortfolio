@@ -1,0 +1,150 @@
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="exampleModalCenter"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Add Subject</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="addSubjectForm">
+          <label for="subjectCode">Subject Code:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="subjectCode"
+            placeholder="Subject Code"
+            required
+          />
+          <label for="subjectName">Subject Name:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="subjectName"
+            placeholder="Subject Name"
+            required
+          />
+
+          <label for="facultyName">Faculty Name:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="facultyName"
+            placeholder="Faculty Name"
+            required
+          />
+
+          <label for="units">Units:</label>
+          <input
+            type="number"
+            class="form-control"
+            id="units"
+            placeholder="No. of Units"
+            required
+          />
+          <h3>Rubricks</h3>
+
+          <div class="row">
+            {% for type in tasksT %}
+            <div class="col-md-6">
+              <label for="{{type|lower}}">{{type}}:</label>
+              <input
+                type="number"
+                class="form-control"
+                value=""
+                id="{{type|lower}}"
+                placeholder="{{type}}"
+              />
+            </div>
+            {% endfor %}
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary btn-hoverred"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="submit" class="btn btn-primary btn-hovergreen">
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(() => {
+    // get the values after submit
+    const isvalid = () => {
+      let totalRubicks = [
+        defaulval("#quiz"),
+        defaulval("#performancetask"),
+        defaulval("#prelims"),
+        defaulval("#midterm"),
+        defaulval("#finals"),
+        defaulval("#project"),
+      ];
+
+      // get the total
+      let sum = totalRubicks.reduce(function (a, b) {
+        return Number(a) + Number(b);
+      });
+
+      // apply the condition so it wont submit
+      if (sum > 100) {
+        alert("wrong");
+        return false;
+      } else {
+        return true;
+      }
+    };
+
+    // convert empty inputs to zero( 0 )
+    const defaulval = (str) => {
+      return $(str).val() == "" ? 0 : $(str).val();
+    };
+
+    $(document).on("submit", "#addSubjectForm", (e) => {
+      e.preventDefault();
+      console.log("submit");
+      if (isvalid()) {
+        $.post("{% url 'addsubject' %}", {
+          subjectCode: $("#subjectCode").val(),
+          subjectName: $("#subjectName").val(),
+          facultyName: $("#facultyName").val(),
+          units: $("#units").val(),
+          quiz: defaulval("#quiz"),
+          performancetask: defaulval("#performancetask"),
+          prelims: defaulval("#prelims"),
+          midterm: defaulval("#midterm"),
+          finals: defaulval("#finals"),
+          project: defaulval("#project"),
+        }).then((response) => {
+          $("#addProfSubjectButton").click();
+          $("#addSubjectForm")[0].reset();
+          var dataTable = $("#subjectTable").DataTable();
+          dataTable.ajax.reload(null, false);
+        });
+      }
+    });
+  });
+</script>

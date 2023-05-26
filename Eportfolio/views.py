@@ -326,9 +326,13 @@ def getUserTask(request):
 
 @csrf_exempt
 def getAllSubject(request):
-    user = Studentprofile.objects.get(emailAddress=request.user.email)
-    availableSubs = Subject.objects.all()
-    return JsonResponse([subject.serialize(user) for subject in availableSubs], safe=False)
+    try:
+        user = Studentprofile.objects.get(emailAddress=request.user.email)
+        availableSubs = Subject.objects.all()
+        return JsonResponse([subject.serialize(user) for subject in availableSubs], safe=False)
+    except:
+        availableSubs = Subject.objects.all()
+        return JsonResponse([subject.serialize() for subject in availableSubs], safe=False)
 
 
 def dataForGraph(subjects, studentTasks, isrubick=0):
