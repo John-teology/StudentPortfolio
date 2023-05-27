@@ -44,8 +44,8 @@
             type="text"
             class="form-control"
             id="facultyName"
-            placeholder="Faculty Name"
-            required
+            placeholder="{{request.user.first_name}}"
+            disabled
           />
 
           <label for="units">Units:</label>
@@ -90,6 +90,7 @@
     </div>
   </div>
 </div>
+{{request.user.id|json_script:"facultyID"}} 
 
 <script>
   $(document).ready(() => {
@@ -123,6 +124,8 @@
       return $(str).val() == "" ? 0 : $(str).val();
     };
 
+    const facultyID = JSON.parse($("#facultyID").text());
+
     $(document).on("submit", "#addSubjectForm", (e) => {
       e.preventDefault();
       console.log("submit");
@@ -130,7 +133,7 @@
         $.post("{% url 'addsubject' %}", {
           subjectCode: $("#subjectCode").val(),
           subjectName: $("#subjectName").val(),
-          facultyName: $("#facultyName").val(),
+          facultyName: facultyID,
           units: $("#units").val(),
           quiz: defaulval("#quiz"),
           performancetask: defaulval("#performancetask"),

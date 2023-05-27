@@ -51,7 +51,8 @@ def subject(request):
     finals = request.POST.get('finals',0)
     project = request.POST.get('project',0)
     
-    studentSubject = Subject(subjectCode = subjectCode,subjectName = subName, facultyName= fName,units=units)
+    facultyUser = User.objects.get(pk=fName)
+    studentSubject = Subject(subjectCode = subjectCode,subjectName = subName, facultyName= facultyUser,units=units)
     studentSubject.save()
     
     

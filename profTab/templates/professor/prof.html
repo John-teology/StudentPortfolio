@@ -53,10 +53,10 @@
   </head>
   <body>
     <!-- NavBar -->
-    <nav class="navbar navbar-light bg-light justify-content-between">
+    <nav class="navbar navbar-light bg-light justify-content-between" >
       <a class="navbar-brand">Faculty Page</a>
       {% include 'modals/addSubject_modal.html' %}
-
+      
       <form method="post" action="/accounts/logout/" style="margin-top: 10px">
         {% csrf_token %}
         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
@@ -74,10 +74,6 @@
         </tr>
       </thead>
     </table>
-
-    <h1>prof page</h1>
-    <h1>Add Subject</h1>
-
     <script>
       $(document).ready(() => {
         var addButton = `<button
@@ -108,7 +104,7 @@
           { data: "units" },
         ],
         ajax: {
-          url: "{% url 'getAllSubs' %}",
+          url: "{% url 'getAllProfSubs' %}",
           type: "POST",
           dataSrc: "",
         },

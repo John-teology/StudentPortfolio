@@ -61,13 +61,13 @@ class Studentprofile(models.Model):
 class Subject(models.Model):
     subjectCode = models.CharField(max_length=100, unique=True)
     subjectName = models.CharField(max_length=100)
-    facultyName = models.CharField(max_length=100)
+    facultyName = models.ForeignKey(User,on_delete=CASCADE,related_name='profSubject')
     units = models.IntegerField()
 
     def __str__(self):
         return f"{self.subjectCode}: {self.subjectName}"
 
-    def serialize(self, user=False):
+    def serialize(self, user=False): 
         if user:
             is_subject_added = StudentSubject.objects.filter(studentProfileID=user, subjectID=self).exists()
             action_button = f'<button type="button" class="btn btn-info addSubButton" value="{self.id}"'
@@ -81,7 +81,7 @@ class Subject(models.Model):
                 "id": self.id,
                 "subjectCode": self.subjectCode,
                 "subjectName": self.subjectName,
-                "facultyName": self.facultyName,
+                "facultyName": self.facultyName.first_name,
                 "units": self.units,
                 "action": action_button
             }
@@ -90,7 +90,7 @@ class Subject(models.Model):
                 "id": self.id,
                 "subjectCode": self.subjectCode,
                 "subjectName": self.subjectName,
-                "facultyName": self.facultyName,
+                "facultyName": self.facultyName.first_name,
                 "units": self.units,
             }
 

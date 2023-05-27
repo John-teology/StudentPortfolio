@@ -326,13 +326,17 @@ def getUserTask(request):
 
 @csrf_exempt
 def getAllSubject(request):
-    try:
-        user = Studentprofile.objects.get(emailAddress=request.user.email)
-        availableSubs = Subject.objects.all()
-        return JsonResponse([subject.serialize(user) for subject in availableSubs], safe=False)
-    except:
-        availableSubs = Subject.objects.all()
-        return JsonResponse([subject.serialize() for subject in availableSubs], safe=False)
+    user = Studentprofile.objects.get(emailAddress=request.user.email)
+    availableSubs = Subject.objects.all()
+    return JsonResponse([subject.serialize(user) for subject in availableSubs], safe=False)
+    
+
+@login_required
+@csrf_exempt
+def getAllProfSubject(request):
+    userFaculty = User.objects.get(pk=request.user.id)
+    availableSubs = Subject.objects.filter(facultyName = userFaculty)
+    return JsonResponse([subject.serialize() for subject in availableSubs], safe=False)
 
 
 def dataForGraph(subjects, studentTasks, isrubick=0):
@@ -340,9 +344,9 @@ def dataForGraph(subjects, studentTasks, isrubick=0):
     rubricksTotal = {}
     data = {}
     for sub in subjects:
-        subd = {f"{sub.subjectName}": {}}
+        subd = {f"{sub.subjectCode}": {}}
         percentage.update(subd)
-        rubricksTotal.update({f"{sub.subjectCode}": 0})
+        rubricksTotal.update({f"{sub.subjectName}": 0})
 
     for sub in subjects:
         rubrik = Rubrick.objects.filter(
@@ -352,10 +356,10 @@ def dataForGraph(subjects, studentTasks, isrubick=0):
             counter = 1
             for task in studentTasks:
                 if (rub.taskTypeID == task.task_Type and task.taskSubject == sub):
-                    if f"{task.task_Type}" in percentage[f'{sub.subjectName}']:
+                    if f"{task.task_Type}" in percentage[f'{sub.subjectCode}']:
                         counter += 1
                     else:
-                        percentage[f'{sub.subjectName}'].update(
+                        percentage[f'{sub.subjectCode}'].update(
                             {f"{task.task_Type}": task.score})
                         counter = 1
                     scoreHolder.append(
@@ -366,18 +370,18 @@ def dataForGraph(subjects, studentTasks, isrubick=0):
             for score in scoreHolder:
                 total += percent * score if score else 0
             # if isrubick:
-            if f'{sub.subjectCode}' in rubricksTotal:
-                rubricksTotal[f'{sub.subjectCode}'] += total * \
+            if f'{sub.subjectName}' in rubricksTotal:
+                rubricksTotal[f'{sub.subjectName}'] += total * \
                     (float(rub.percentage/100))
             else:
-                rubricksTotal[f'{sub.subjectCode}'] = total * \
+                rubricksTotal[f'{sub.subjectName}'] = total * \
                     (float(rub.percentage/100))
             # else:
-            if f'{sub.subjectName}' in data:
-                data[f'{sub.subjectName}'].update(
+            if f'{sub.subjectCode}' in data:
+                data[f'{sub.subjectCode}'].update(
                     {f'{rub.taskTypeID}': total if total else 0})
             else:
-                data[f'{sub.subjectName}'] = {
+                data[f'{sub.subjectCode}'] = {
                     f'{rub.taskTypeID}': total if total else 0}
 
     return rubricksTotal if isrubick else data

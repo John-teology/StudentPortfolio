@@ -24,8 +24,8 @@ urlpatterns = [
     path("getsubjects/", views.getUserSubject, name="getUserSubject"),
     path("gettask/", views.getUserTask, name="getUserTask"),
     path("getallsubs/", views.getAllSubject, name="getAllSubs"),
-    path("getrubrick/<int:subjectid>",
-         views.getUserRubrick, name="getUserRubrick"),
+    path("getallprofsubs/", views.getAllProfSubject, name="getAllProfSubs"),
+    path("getrubrick/<int:subjectid>",views.getUserRubrick, name="getUserRubrick"),
 
 
 

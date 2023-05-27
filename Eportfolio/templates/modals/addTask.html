@@ -162,6 +162,7 @@
                 $("#addUserTaskButton").click();
                 // $('#dataforbargrapht').load(location.href + ' #dataforbargraph');
                 createBarGraph(response.data);
+                barGraphProfile(response.dounut);
                 for (var key in response.dounut) {
                   createChart(response.dounut[key], key);
                 }

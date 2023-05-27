@@ -44,6 +44,7 @@
 
     <!-- chartjs -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+
     <!-- chartjs -->
 
     <!-- toastTR -->
@@ -162,12 +163,12 @@
                   <h1 id="{{sub.subjectCode}}:{{sub.subjectName}}">
                     {{sub.subjectCode}}:{{sub.subjectName}}
                   </h1>
-                  <div id="{{sub.subjectName}}"></div>
+                  <div id="{{sub.subjectCode}}"></div>
                   <br />
                   <br />
                   <center>
                     <canvas
-                      id="{{sub.subjectCode}}"
+                      id="{{sub.subjectName}}"
                       style="width: 100%; max-width: 700px; margin-left: 1%"
                     ></canvas>
                   </center>
@@ -228,7 +229,7 @@
               </div>
             </div>
           </div>
-          <canvas id="dataBars" style="margin-top: 5%"></canvas>
+          <canvas id="dataBars" style="width:100%; margin-top: 3%;">></canvas>
         </div>
 
         <div class="container-fluid cardwrapper" id="editPage">
@@ -603,6 +604,14 @@
       // bar for all chart -----------------------------
 
       const barGraphProfile = (obj) => {
+        const canvas = document.getElementById("dataBars");
+        const context = canvas.getContext("2d");
+
+        // Check if the canvas already has a graph
+        if (context.chart) {
+          context.chart.destroy(); // Destroy the existing chart
+        }
+        canvas.style.height = '400px';
         const data = {
           labels: Object.keys(obj),
           datasets: [
@@ -616,7 +625,7 @@
           ],
         };
 
-        new Chart("dataBars", {
+        new Chart(context, {
           type: "bar",
           data: data,
           options: {
@@ -625,7 +634,10 @@
                 {
                   scaleLabel: {
                     display: true,
-                    labelString: "Passing Rate (%) ",
+                    labelString: "Passing Rate (%)",
+                  },
+                  ticks: {
+                    beginAtZero: true,
                   },
                 },
               ],
@@ -634,7 +646,10 @@
         });
       };
 
-      barGraphProfile(dounuts);
+      $(document).ready(() => {
+        barGraphProfile(dounuts);
+      })
+
 
       // bar for all chart -----------------------------
 
