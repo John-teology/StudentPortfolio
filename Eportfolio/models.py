@@ -59,7 +59,7 @@ class Studentprofile(models.Model):
 
 
 class Subject(models.Model):
-    subjectCode = models.CharField(max_length=100, unique=True)
+    subjectCode = models.CharField(max_length=100)
     subjectName = models.CharField(max_length=100)
     facultyName = models.ForeignKey(User,on_delete=CASCADE,related_name='profSubject')
     units = models.IntegerField()
@@ -74,6 +74,7 @@ class Subject(models.Model):
             
             if is_subject_added:
                 action_button += ' disabled>Already Added</button>'
+                action_button += f'<button type="button" class="btn btn-danger deleteMySubject" value="{self.id}" name="taskDelete" style="margin-left: 5px;"> <i class="fa fa-trash"></i> </button>'
             else:
                 action_button += '>Add Subject</button>'
             
@@ -92,6 +93,7 @@ class Subject(models.Model):
                 "subjectName": self.subjectName,
                 "facultyName": self.facultyName.first_name,
                 "units": self.units,
+                "action": f'<button type="button" class="btn btn-danger deleteMySub" value="{self.id}" name="taskDelete" > <i class="fa fa-trash"></i> </button> <button type="button" class="btn btn-info editSub" data-toggle="modal" data-target="#editSubjetModal" id = {self.pk} subjectcode= "{self.subjectCode}" subjectname = "{self.subjectName}" units= {self.units} > <i class="fa fa-edit"></i> </button>'
             }
 
 class Rubrick(models.Model):
@@ -101,12 +103,21 @@ class Rubrick(models.Model):
         TaskType, on_delete=CASCADE, related_name='takstypeRubicks')
     percentage = models.IntegerField(null=True)
 
-    def serialize(self):
+    def serialize(self,isprof=0):
+        if isprof:
+            return{
+                "id": self.id,
+                "taskID": self.taskTypeID_id,
+                "taskName": self.taskTypeID.taskType.lower()+"Edit",
+                "percentage":self.percentage
+
+            }
         return {
             "id": self.id,
             "taskID": self.taskTypeID_id,
             "taskName": self.taskTypeID.taskType,
         }
+
 
 
 class StudentSubject(models.Model):

@@ -327,7 +327,7 @@
                     <tr>
                       <th>Subject Code</th>
                       <th>Subject Name</th>
-                      <th>Units</th>
+                      <th>Faculty Name</th>
                       <th>Action</th>
                     </tr>
                   </thead>
@@ -610,6 +610,8 @@
         // Check if the canvas already has a graph
         if (context.chart) {
           context.chart.destroy(); // Destroy the existing chart
+        // context.clearRect(0, 0, canvas.width, canvas.height);
+
         }
         canvas.style.height = '400px';
         const data = {
@@ -645,10 +647,7 @@
           },
         });
       };
-
-      $(document).ready(() => {
-        barGraphProfile(dounuts);
-      })
+      barGraphProfile(dounuts);
 
 
       // bar for all chart -----------------------------
@@ -684,7 +683,7 @@
         columns: [
           { data: "subjectCode" },
           { data: "subjectName" },
-          { data: "units" },
+          { data: "facultyName" },
           { data: "action" },
         ],
         ajax: {
@@ -714,12 +713,12 @@
                   <h1 id="{{sub.subjectCode}}:{{sub.subjectName}}">
                     ${response.subjectCode}:${response.subjectName}
                   </h1>
-                  <div id="${response.subjectName}"></div>
+                  <div id="${response.subjectCode}"></div>
                   <br />
                   <br />
                   <center>
                     <canvas
-                      id="${response.subjectCode}"
+                      id="${response.subjectName}"
                       style="width: 100%; max-width: 700px; margin-left: 1%"
                     ></canvas>
                   </center>
@@ -775,6 +774,64 @@
       });
 
       // add new subject ------------------
+
+      // delete my subject ----------------------------
+        $(document).on('click','.deleteMySubject', function (e) {
+          $.ajax({
+            url: "{% url 'studentProfile' studentprof.studentNumber %}",
+            data: {deleteSubId: $(e.currentTarget).val()},
+            method: "POST",
+            success: function (response) {
+              console.log(response)
+              var dataTable = $("#subjectTable").DataTable();
+              dataTable.ajax.reload(null, false);
+              barGraphProfile(response.dounut);
+             
+              $("#taskSubjectEdit")
+                .find("option")
+                .remove()
+                .end()
+                .append('<option value="" disabled selected>Select</option>');
+              $.ajax({
+                url: "{% url 'getUserSubject' %}",
+                method: "GET",
+                success: (data) => {
+                  for (var i = 0; i <= data.length - 1; i++) {
+                    var user_position = new Option(
+                      data[i].subjectName,
+                      data[i].id
+                    );
+                    $("#taskSubjectEdit").append(user_position);
+                  }
+                },
+              });
+
+              $("#taskSubject")
+                .find("option")
+                .remove()
+                .end()
+                .append('<option value="" disabled selected>Select</option>');
+              $.ajax({
+                url: "{% url 'getUserSubject' %}",
+                method: "GET",
+                success: (data) => {
+                  for (var i = 0; i <= data.length - 1; i++) {
+                    var user_position = new Option(
+                      data[i].subjectName,
+                      data[i].id
+                    );
+                    $("#taskSubject").append(user_position);
+                  }
+                },
+              });
+            }
+          })
+
+        })
+
+
+
+      // delete my subject ----------------------------
     </script>
   </body>
 </html>

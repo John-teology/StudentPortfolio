@@ -111,7 +111,10 @@ def studentProfile(request, studentID):
     dataD = dataForGraph(subjects, studentTasks, isrubick=1)
 
     if request.method == "POST":
+
+        #user subject ids
         subID = request.POST.get('addSub', 0)
+        deleteSubId = request.POST.get('deleteSubId', 0)
         # edit profile below
         isEdit = request.POST.get('editProfile', 0)
         guardName = request.POST.get('guardianName', 0)
@@ -210,9 +213,28 @@ def studentProfile(request, studentID):
 
         if subID:
             addedSubject = Subject.objects.get(pk=subID)
-            sub = StudentSubject(
-                studentProfileID=studentprof, subjectID=addedSubject)
-            sub.save()
+            subjectCode = addedSubject.subjectCode
+            subjectName = addedSubject.subjectName
+            facultyName = addedSubject.facultyName
+            studentprof = studentprof 
+              # Get the student profile instance
+            # Check if there is an existing subject in StudentSubject with the same subjectCode and subjectName but different facultyName
+            existing_subject = StudentSubject.objects.filter(
+                Q(subjectID__subjectCode=subjectCode) &
+                Q(subjectID__subjectName=subjectName) &
+                ~Q(subjectID__facultyName__username=facultyName) &
+                Q(studentProfileID=studentprof)
+            ).first()
+
+            if existing_subject:
+                return JsonResponse({'isAlreadyAdded': 0 }, safe=False)
+            else:
+                # Subject does not exist in StudentSubject with the same subjectCode, subjectName, and different facultyName
+                # Create and save the new StudentSubject instance
+                addedSubject = Subject.objects.get(subjectCode=subjectCode, subjectName=subjectName, facultyName__username=facultyName)
+                sub = StudentSubject(studentProfileID=studentprof, subjectID=addedSubject)
+                sub.save()
+
 
             studentSubjects = StudentSubject.objects.filter(
                 studentProfileID=studentprof,ishide = False)
@@ -224,7 +246,23 @@ def studentProfile(request, studentID):
             data = dataForGraph(subjects, studentTasks)
             dataD = dataForGraph(subjects, studentTasks, isrubick=1)
             return JsonResponse({'data': data, 'subjectCode': addedSubject.subjectCode, 'subjectName': addedSubject.subjectName, 'dounut': dataD}, safe=False)
-
+        
+        if deleteSubId:
+            deletedSub = Subject.objects.get(pk=deleteSubId)
+            toBeDeleteSubject = StudentSubject.objects.get(studentProfileID = studentprof,subjectID = deleteSubId)
+            toBeDeleteSubject.delete()
+            
+            studentSubjects = StudentSubject.objects.filter(
+                studentProfileID=studentprof,ishide = False)
+            subjectIDs = [
+                studentSubject.subjectID_id for studentSubject in studentSubjects]
+            subjects = Subject.objects.filter(id__in=subjectIDs)
+            studentTasks = Task.objects.filter(
+                studentProfileID=studentprof)
+            data = dataForGraph(subjects, studentTasks)
+            dataD = dataForGraph(subjects, studentTasks, isrubick=1)
+            return JsonResponse({'data': data, 'subjectCode': deletedSub.subjectCode, 'subjectName': deletedSub.subjectName, 'dounut': dataD}, safe=False)
+        
     return render(request, "studentProfile2.html", {
         'studentprof': studentprof,
         'subjects': subjects,

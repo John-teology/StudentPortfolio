@@ -53,10 +53,11 @@
   </head>
   <body>
     <!-- NavBar -->
-    <nav class="navbar navbar-light bg-light justify-content-between" >
+    <nav class="navbar navbar-light bg-light justify-content-between">
       <a class="navbar-brand">Faculty Page</a>
-      {% include 'modals/addSubject_modal.html' %}
-      
+      {% include 'modals/addSubject_modal.html' %} 
+      {% include 'modals/editSubject_modal.html' %}
+
       <form method="post" action="/accounts/logout/" style="margin-top: 10px">
         {% csrf_token %}
         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
@@ -71,6 +72,7 @@
           <th>Subject Code</th>
           <th>Subject Name</th>
           <th>Units</th>
+          <th>Action</th>
         </tr>
       </thead>
     </table>
@@ -86,7 +88,7 @@
               data-target="#exampleModalCenter"
               >
               <i class="fa fa-plus-square"></i> Add Subject
-              </button>`;
+              </button> <button type="button" class = "btn btn-outline-secondary " id="editToggle" > <i class="fa fa-edit"></i>Edit Item </button>`;
         $(document).ready(() => {
           $("#subjectTable_length").append(addButton);
         });
@@ -102,17 +104,41 @@
           { data: "subjectCode" },
           { data: "subjectName" },
           { data: "units" },
+          { data: "action" },
         ],
         ajax: {
           url: "{% url 'getAllProfSubs' %}",
           type: "POST",
           dataSrc: "",
         },
+        initComplete: function () {
+          let num = false;
+          subTable.column(-1).visible(num);
+          $(document).on("click", "#editToggle", function () {
+            num = !num;
+            subTable.column(-1).visible(num);
+          });
+        },
       });
 
       $("#subjectTable_wrapper").css({
         width: "95%",
         margin: "15px auto",
+      });
+
+      // delete
+      $(document).on("click", ".deleteMySub", function (e) {
+        $.ajax({
+          url: "{% url 'addsubject' %}",
+          data: {
+            subDeleteID: e.currentTarget.value,
+          },
+          method: "POST",
+          success: function (response) {
+            var dataTable = $("#subjectTable").DataTable();
+            dataTable.ajax.reload(null, false);
+          },
+        });
       });
     </script>
   </body>
