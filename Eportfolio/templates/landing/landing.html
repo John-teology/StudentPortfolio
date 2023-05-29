@@ -13,50 +13,151 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-     <title>Landing Page</title>
+     <title>Eportfolio</title>
     <link rel="stylesheet" href="{% static 'eportfolio/landing.css' %}" />
   </head>
 
   <body>
-  
-<section>
-  <nav class="navbar navbar-expand-lg navbar-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
       <div class="container-fluid">
-          <a href="" class="navbar-brand text-danger">SMARTUP</a>
+        <div class="img-logo">
+           <img src="../../media/images/logo-portfolio.png" alt="ep-logo">
+           <a href="" class="navbar-brand text-danger-nav">EPortfolio</a>
+          </div>       
           <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
               <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
               <div class="navbar-nav navli">
                   <!-- <a href="" class=" text-danger nav-item nav-link active">Home</a> -->
-                  <a href="{% url 'overviewpage' %}" class=" text-danger nav-item nav-link">Overview</a>
-                  <a href="{% url 'aboutpage' %}" class=" text-danger nav-item nav-link">About</a>
-                  <a href="{% url 'contactpage' %}" class=" text-danger nav-item nav-link">Contact</a>
+                  <a href="#overview" class=" text-danger-nav nav-item nav-link">Overview</a>
+                  <a href="#about-us" class=" text-danger-nav nav-item nav-link">About Us</a>
+                  <a href="#contact" class=" text-danger-nav nav-item nav-link">Contact</a>
                   
               </div>
           </div>
       </div>
+      <!--Overview-->
   </nav>
+<section>
+  <div class="bg-overview">
   <div class="container">
-      <h1 class="head">Performance Portfolio for CS Students</h1>
-      <p class = "statement lead">This study will help the school monitor their students fast, effectively, and reliably while reducing the professors' manual counter-checking and enabling them to do it within or outside the campus.</p>
-      <div class ="row button_container">
-          <div class ="col-md-5 form-group text-center">
+    <div class = "row">
+      <div class="col-lg-8">
+        <h1 class="head margin-top-header"> EPortfolio for COS Students</h1>
+        <p class = "statement lead">This study aims to help the university monitor students fast, effectively, and reliably while reducing the professors' manual counter-checking, enabling them to do it within or outside the campus.</p>
+        <div class ="row button_container">
+          <div class ="col-md-5 form-group button-wrapper text-center">
             <form action="{% provider_login_url 'google' %}" method="post">
               {% csrf_token %}
-              <button type="submit" class="btn login btn-lg">Sign-up</button>
-
+              <button type="submit" class="btn login btn-lg">Start Now</button>
             </form>
-            
-          </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    {% load static %}
+       
+        
+           
+    
+  </div>
+</div>
+</section>
+<section id ="overview" class="overview-body">
+  <div class="container">
+    <div class="row">
+      <div class ="col-lg-6">
+    <h1 class="head margin-top">Overview</h1>
+    <p class = "statement lead margin-top-text">Academic e-Portfolios are digital portfolios that compile students' course-related work, such as essays, posters, photos, videos, and artwork. Academic e-Portfolios can also feature details on a student's extracurricular activities, employment background, volunteer work, and other experiences. Moreover, e-Portfolios are used to document and publicly exhibit student learning. An effective e-Portfolio needs to include more than just a collection of products. </p>
+      </div>
+      <div class="col">
+        <div class="svg-img-overview">
+      <img src="../../media/images/analytics.svg"></div>
+    </div>
+    </div>
+  </div>
+</section>
+<section id ="about-us" class ="about-body">
+  <div class="head white-text text-center">Meet the Team</div>
+  <div class="grid-container imgs">
+    <div class="grid-item"><img src="../../media/images/costales.jpg"><p>Lalaine Costales</p></div>
+    <div class="grid-item"><img src="../../media/images/dantes.jpg"><p>Archie Dantes</p></div>
+    <div class="grid-item"> <img src="../../media/images/maturan.jpg"><p>Reame Jose</p></div>
+    <div class="grid-item"><img src="../../media/images/jose.jpg"><p>Michelle Anne Maturan</p></div>
+    <div class="grid-item"><img src="../../media/images/teologo11.jpg"><p>John Carlo Teologo</p></div>
+  </div>
+</section>
+<section id ="contact" class ="contact-body">
+  <div class="head text-center">COS Contact</div>
+  <div class="table">
+    <div class="overflow">
+  <table class="center-table">
+    <tbody>
+      <tr>
+        <th>
+            Office/Unit
+        </th>
+        <th>
+            Designation
+        </th>
+        <th>
+          Officials Name
+        </th>
+        <th>
+            Email
+        </th>
+    </tr>
+    <tr>
+        <td>
+            College of Science (COS)
+        </td>
+        <td>
+            Dean
+        </td>
+        <td>
+            Dr. Hadji C. Alegre
+        </td>
+        <td>
+            <a href="#">hadji_alegre@tup.edu.ph</a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            College of Science (COS)
+        </td>
+        <td>
+            College Secretary
+        </td>
+        <td>
+            Dr. Joshua T. Soriano
+        </td>
+        <td>
+            <a href="#">joshua_soriano@tup.edu.ph</a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Computer Studies
+        </td>
+        <td>
+            Head
+        </td>
+        <td>
+            Mrs. Dolores Montesines
+        </td>
+        <td>
+            <a href="#">dolores.montesines@tup.edu.ph</a>
+        </td>
+    </tr>
+    </tbody>
   </div>
   </div>
-  {% load static %}
-
-<img src="{% static '../../media/images/analytics.svg' %}" width="300" height="300"  alt ="banner image" id="dimage" class="svg-container" />
-  <div class='air air1'></div>
-  <div class='air air2'></div>
-  <div class='air air3'></div>
-  <div class='air air4'></div>
+</table> 
+  </div>
+</section>
+<section class="footer">
+</section>
   </body>
+  <script src="../static/eportfolio/nav.js"></script>
 </html>
