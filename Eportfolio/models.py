@@ -7,6 +7,8 @@ from django.db.models.deletion import CASCADE
 
 class User(AbstractUser):
     isProf = models.BooleanField(default=False)
+    def __str__(self):
+        return f"{self.email if self.email else 'Admin'}"
 
 
 class Course(models.Model):

@@ -23,6 +23,12 @@ class tasksFilter(admin.ModelAdmin):
     list_editable=['studentProfileID','task_Type','taskSubject','subjectStudent','title','overallscore','score','date','image']
     search_fields = ['title']
 
+class studentSubjectFilter(admin.ModelAdmin):
+    list_display = ['id','studentProfileID','subjectID' ,'ishide']
+    list_editable = ['studentProfileID','subjectID' ,'ishide']
+    search_fields = ['id']
+
+
 
 
 
@@ -33,7 +39,7 @@ admin.site.register(Gender)
 admin.site.register(Studentprofile,studentProfileFilter)
 admin.site.register(Subject,subjectFilter)
 admin.site.register(Task,tasksFilter)
-admin.site.register(StudentSubject)
+admin.site.register(StudentSubject,studentSubjectFilter)
 admin.site.register(TaskType)
 admin.site.register(Rubrick,rubrickFilter)
 

@@ -14,7 +14,400 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
      <title>Eportfolio</title>
-    <link rel="stylesheet" href="{% static 'eportfolio/landing.css' %}" />
+    <!-- <link rel="stylesheet" href="{% static 'eportfolio/landing.css' %}" /> -->
+    <style>*{
+      margin: 0;
+      padding: 0;
+    }
+    section{
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      z-index: 500 !important;
+    }
+    /*Bodies*/
+    body{
+      background: url(../../media/images/bg-p.jpg);
+      padding: 0px !important;
+      margin: 0px !important;
+      font-size: 2.5vh;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-font-smoothing: antialiased;
+     
+    }
+    body::before{
+      position: block;
+      width: 100%;
+      height: auto;
+      content: "";
+      background: url(../../media/images/drop.png);
+      opacity: 1;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+    body::before{
+      content: "" !important;
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important; 
+      background-color: rgba(64, 17, 17, 0.8) !important;
+      z-index: 50 !important;
+    }
+    /*nav*/
+    nav{
+      margin: 0vh;
+      padding: 1rem;
+      display:flex;
+      justify-content: space-between;
+      text-align: center;   
+    }
+    .nav-color{
+      background-color: #909090;
+      color: #f2f2f2 !important;
+    }
+    .nav-color .text-danger-nav{
+      color: #f2f2f2 !important;
+    
+    }
+    h1{
+      font-family: 'Poppins', sans-serif;
+    }
+    .head {
+      font-size: 6vh !important;
+      word-spacing: 2px !important;
+      margin: 2vh;
+      margin-left: 0;
+      font-weight: 700;
+      margin-top: 10vh;
+      text-align: center;
+    }
+    .statement{
+      font-family: 'Poppins', sans-serif;
+      font-size: 2vh;
+      text-align: justify;
+      word-spacing: 2px;
+      width: 100%;
+      position: relative;
+      bottom: 0;
+      left: 0;
+      top: 0;
+    }
+    .img-logo{
+      width: 60% !important;
+    }
+    .img-logo img{
+      max-width: 15%;
+      width: 100%;
+      }
+     .img-logo a{
+      font-size: 100%;
+     } 
+    .svg-img-overview img {
+      left: 35vh;
+      top: -32vh;
+      position: relative;
+      transform: scale(0.35) !important;
+    }
+    .proportion{
+      display: flex;
+      flex-direction: column;
+      height: 25rem;
+      width: 30rem;
+    }
+    #dimage{
+      display: inline-block;
+      position: relative;
+      padding:1rem;
+      width: 35%;
+      height: auto;
+      margin:3rem;
+      left: 60%;
+      bottom: 27rem;
+      padding-top: 12%;
+      vertical-align: middle;
+      overflow: hidden;   
+    }
+    /* links */
+    ul{
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      left: 5rem;
+      display: flex;
+    }  
+    .navbar-brand{
+      font-family: 'Raleway', sans-serif;
+      font-weight: 700% , bold;
+      color:#532323;
+      text-decoration: none !important;
+    }
+    .text-danger-nav{
+      color:#532323 !important;  
+    }
+    .navli{
+      font-family: 'Raleway', sans-serif;
+      color:#532323; 
+      cursor: pointer;
+    }
+    a:hover {
+      text-decoration: underline !important;
+    }
+    /* If the link is unvisited you see this color*/
+    a:link {
+      color: #532323;
+      text-decoration: none; 
+    }
+    /* If the link is visited you see this color*/
+    a:visited {
+      color: #532323;  
+      text-decoration: none;
+    }
+    /* If the click the link,  you see this color*/
+    a:active {
+      color: #555454;
+    }
+    /* app name */
+    .title{
+      font-family: 'Raleway', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700% , bold;
+      text-decoration: none;
+    }
+    /* buttons */
+      .login {
+        top: 0;
+        border-radius: 25px;
+        width: 44%;
+        height: 62%;
+        margin: 2vh;
+        font-size: 2.5vh;
+        position: relative;
+        border: 3px solid #532323;
+    }
+    button:hover{
+      background-color: #532323;
+      border: 2px solid #FFFF;
+      color: #f2f2f2 !important;/* hindi gumagana */
+      transition-duration: 0.4s;
+      box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+    }
+    .navbar-toggler{
+      padding:.25rem .75rem;
+      font-size: 3vh;
+      line-height: 1;
+      background-color: #555454;
+      border: 1px solid lightblue;
+      border-radius: .25rem;
+      transition: box-shadow .15s ease-in-out;
+    }
+    .show{
+      padding: 20px;
+      box-shadow: inset 0 -3em 3em rgba(0, 0, 0, 0.1), 0 0 0 2px  #1C00ff00, 0.3em 0.3em 1em rgba(0, 0, 0, 0.3);
+    }
+    .table{
+      font-size: 3vh;
+      width: 100%;
+      overflow: auto
+    }
+    .table th{
+      padding: 2vh;
+    }
+    .table td{
+      padding: 2vh;
+    
+    }
+    .imgs{
+      text-align: center;
+      font-size: 1.1rem;
+      font-family: 'arial', sans-serif;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 2rem;
+      color: #f2f2f2 !important;
+    }
+    .imgs img{
+      border-radius: 20% 40% 40% 40%;
+      padding: 5%;
+      width: 200px;
+      height: auto;
+    }
+    .grid-container{
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      gap: 1rem;
+    }
+    .white-text{
+      color:#f2f2f2;
+    }
+    
+    /* Overview */
+    .overview-body{
+      background-color: #f2f2f2;
+    }
+    .svg-img-overview{
+      float: right;
+    }
+    .text-center{
+      text-align: center;
+    }
+    
+    /* About */
+    .about-body{
+      background-color: #532323;
+      height: 230vh;
+      font-family: 'Poppins', sans-serif;
+    }
+    /* Contact */
+    .contact-body{
+      font-family: 'Poppins', sans-serif;
+      background-color: #f2f2f2;
+    }
+    .text-oblique{
+      font-style: oblique;
+    }
+    .overflow{
+     overflow: scroll;
+    }
+    .margin-top-text{
+      margin-top: 3vh;
+    }
+    .margin-top-header{
+      margin-top: 30vh;
+    }
+    /*Footer */
+    .footer{
+      background-color: #532323;
+      height: 10vh;
+    }
+    /*----------------------------------------- responsives -------------------------------------------------- */
+    /* phone landscape */
+    @media (min-width: 576px) {
+      .img-logo {
+        width: 40% !important;
+    }
+    .img-logo img {
+      max-width: 10%;
+      width: 100%;
+    }
+    .head {
+      font-size: 9vh !important;
+    }
+    .statement {
+      font-size: 2.5vh;
+    }
+    .svg-img-overview img {
+      left: 17vh;
+      top: -30vh;
+    }
+    .grid-container{
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .about-body{
+      height: 150vh;
+    }
+    }
+    
+    /*tablet */
+    @media (min-width: 768px) {
+      .button_container{
+        display: flex;
+        justify-content: center;
+      }
+      .button-wrapper{
+        justify-items: center;
+        width: 1000px;
+      }
+      .grid-container{
+        grid-template-columns: repeat(3, 1fr);
+        
+      }
+      .about-body{
+        height: 110vh;
+      }
+      .svg-img-overview img {
+        left: 5vh;
+        top: -28vh;
+        transform: scale(0.45) !important;
+    }
+    }
+    /* laptop */
+    @media (min-width: 992px) {
+      .head {
+        padding: 2vh;
+        text-align: inherit;
+    }
+    .statement {
+      font-size: 2.5vh;
+      padding: 2vh;
+    }
+    .button-wrapper{
+      justify-items: center;
+      width: 500px;
+    }
+    .button_container {
+      display: flex;
+      flex-direction: column;
+      margin-left: -20vh;
+    }
+    
+      .img-logo {
+        width: 24% !important;
+    }
+      .grid-container{
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .about-body{
+        height: 110vh;
+      }
+      .svg-img-overview img {
+        left: -15vh;
+        top: -32vh;
+    }
+    .table {
+      padding: 2vh;
+    }
+    }
+    /* large screen */
+    
+    @media (min-width: 1200px) {
+      .overview-body {
+        height: 95vh;
+    }
+      .svg-img-overview img {
+        left: 15vh;
+        top: -69vh;
+        transform: scale(.8) !important;
+    }
+    
+    .table {
+      margin: auto;
+    }
+    .center-table{
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .margin-top{
+      margin-top: 15vh;
+    }
+    .margin-top-text{
+      margin-top: 3vh;
+    }
+    .overflow {
+      overflow: hidden;
+    }
+    
+    }
+    
+    
+    </style>
   </head>
 
   <body>
@@ -55,7 +448,6 @@
         </div>
       </div>
     </div>
-    {% load static %}
        
         
            
@@ -158,5 +550,5 @@
 <section class="footer">
 </section>
   </body>
-  <script src="../static/eportfolio/nav.js"></script>
+  <script src="{% static 'eportfolio/nav.js' %}"></script>
 </html>
