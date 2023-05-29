@@ -161,3 +161,6 @@ class Task(models.Model):
             "image": self.image.url if self.image else None,
             "action": f'<button type="button" class="btn btn-danger deleteTask" value="{self.id}" name="taskDelete" > <i class="fa fa-trash"></i> </button> <button type="button" class="btn btn-info EditTask" data-toggle="modal" data-target="#actionModify" title="{self.title}" score="{self.score}" overall="{self.overallscore}" date="{self.date}" subject={self.taskSubject_id} subType={self.task_Type_id} id = {self.pk} > <i class="fa fa-edit"></i> </button>'
         }
+    
+
+

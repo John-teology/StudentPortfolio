@@ -182,6 +182,7 @@
         </div>
 
         <div class="container-fluid" id="profilePage">
+          
           <div class="row cardwrapper">
             <div class="col-lg-12">
               <h1 class="title-text">My Profile</h1>
@@ -233,6 +234,18 @@
         </div>
 
         <div class="container-fluid cardwrapper" id="editPage">
+          <div class="bio-row">
+            <table class="display" style="width: 100%" id="subjectTable">
+              <thead>
+                <tr>
+                  <th>Subject Code</th>
+                  <th>Subject Name</th>
+                  <th>Faculty Name</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
           <div class="row">
             <div class="col-lg-12">
               <h1 class="title-text">Edit Demographic Profile</h1>
@@ -321,18 +334,6 @@
                       </div>
                     </div>
                   </div>
-              <div class="bio-row">
-                <table class="display" style="width: 100%" id="subjectTable">
-                  <thead>
-                    <tr>
-                      <th>Subject Code</th>
-                      <th>Subject Name</th>
-                      <th>Faculty Name</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                </table>
-              </div>
             </div>
           </div>
         </div>
@@ -603,17 +604,17 @@
 
       // bar for all chart -----------------------------
 
+      let chartInstance; // Define a variable to store the chart instance
+
       const barGraphProfile = (obj) => {
         const canvas = document.getElementById("dataBars");
         const context = canvas.getContext("2d");
 
-        // Check if the canvas already has a graph
-        if (context.chart) {
-          context.chart.destroy(); // Destroy the existing chart
-        // context.clearRect(0, 0, canvas.width, canvas.height);
-
+        // Check if the chart instance already exists
+        if (chartInstance) {
+          chartInstance.destroy(); // Destroy the existing chart
         }
-        canvas.style.height = '400px';
+
         const data = {
           labels: Object.keys(obj),
           datasets: [
@@ -627,7 +628,7 @@
           ],
         };
 
-        new Chart(context, {
+        chartInstance = new Chart(context, {
           type: "bar",
           data: data,
           options: {
@@ -647,6 +648,7 @@
           },
         });
       };
+
       barGraphProfile(dounuts);
 
 
@@ -706,31 +708,14 @@
             success: (response) => {
               var dataTable = $("#subjectTable").DataTable();
               dataTable.ajax.reload(null, false);
-              alert("added Subject!");
-              $("#listOfMySubjects").append(`<div class="panel">
-                <div class="panel-body bio-graph-info">
-                  <div class="col"></div>
-                  <h1 id="{{sub.subjectCode}}:{{sub.subjectName}}">
-                    ${response.subjectCode}:${response.subjectName}
-                  </h1>
-                  <div id="${response.subjectCode}"></div>
-                  <br />
-                  <br />
-                  <center>
-                    <canvas
-                      id="${response.subjectName}"
-                      style="width: 100%; max-width: 700px; margin-left: 1%"
-                    ></canvas>
-                  </center>
-                </div>
-              </div>
-              <br />
-              <br />`);
-              createBarGraph(response.data);
+              alert("added Subject!s");
+              $('#listOfMySubjects').load(location.href + ' #listOfMySubjects', function() {
+                  createBarGraph(response.data);
+                  for (var key in response.dounut) {
+                    createChart(response.dounut[key], key);
+                  }
+                });
               barGraphProfile(response.dounut);
-              for (var key in response.dounut) {
-                createChart(response.dounut[key], key);
-              }
               $("#taskSubjectEdit")
                 .find("option")
                 .remove()
@@ -786,7 +771,13 @@
               var dataTable = $("#subjectTable").DataTable();
               dataTable.ajax.reload(null, false);
               barGraphProfile(response.dounut);
-             
+              $('#listOfMySubjects').load(location.href + ' #listOfMySubjects', function() {
+                  createBarGraph(response.data);
+                  for (var key in response.dounut) {
+                    createChart(response.dounut[key], key);
+                  }
+                });
+
               $("#taskSubjectEdit")
                 .find("option")
                 .remove()
