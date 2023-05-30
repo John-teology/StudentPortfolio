@@ -15,11 +15,11 @@ def index(request):
     if request.user.is_authenticated:
         if request.user.isProf == True:
             return redirect('indexProf')
-        userid = User.objects.get(username=request.user)
+        userid = User.objects.get(pk=request.user.id)
         if (Studentprofile.objects.filter(userID=userid).count() > 0):
             studentN = Studentprofile.objects.get(userID=userid)
             return HttpResponseRedirect(reverse('studentProfile', args=(studentN.studentNumber,)))
-        if request.user.username == "jan":
+        if request.user == "Admin":
             return HttpResponseRedirect(reverse('admin'))
 
         # return HttpResponseRedirect(reverse('profileForm'))
@@ -31,7 +31,7 @@ def index(request):
 def demographicForm(request):
     if request.user.isProf == True:
         return redirect('indexProf')
-    userid = User.objects.get(username=request.user)
+    userid = User.objects.get(pk=request.user.id)
     if (Studentprofile.objects.filter(userID=userid).count() > 0):
         studentN = Studentprofile.objects.get(userID=userid)
         return HttpResponseRedirect(reverse('studentProfile', args=(studentN.studentNumber,)))
@@ -112,9 +112,10 @@ def studentProfile(request, studentID):
 
     if request.method == "POST":
 
-        #user subject ids
+        # user subject ids
         subID = request.POST.get('addSub', 0)
         deleteSubId = request.POST.get('deleteSubId', 0)
+
         # edit profile below
         isEdit = request.POST.get('editProfile', 0)
         guardName = request.POST.get('guardianName', 0)
@@ -216,8 +217,8 @@ def studentProfile(request, studentID):
             subjectCode = addedSubject.subjectCode
             subjectName = addedSubject.subjectName
             facultyName = addedSubject.facultyName
-            studentprof = studentprof 
-              # Get the student profile instance
+            studentprof = studentprof
+            # Get the student profile instance
             # Check if there is an existing subject in StudentSubject with the same subjectCode and subjectName but different facultyName
             existing_subject = StudentSubject.objects.filter(
                 Q(subjectID__subjectCode=subjectCode) &
@@ -227,17 +228,16 @@ def studentProfile(request, studentID):
             ).first()
 
             if existing_subject:
-                return JsonResponse({'isAlreadyAdded': 0 }, safe=False)
+                return JsonResponse({'isAlreadyAdded': 1}, safe=False)
             else:
                 # Subject does not exist in StudentSubject with the same subjectCode, subjectName, and different facultyName
                 # Create and save the new StudentSubject instance
-                addedSubject = Subject.objects.get(subjectCode=subjectCode, subjectName=subjectName, facultyName__username=facultyName)
-                sub = StudentSubject(studentProfileID=studentprof, subjectID=addedSubject)
+                sub = StudentSubject(
+                    studentProfileID=studentprof, subjectID=addedSubject)
                 sub.save()
 
-
             studentSubjects = StudentSubject.objects.filter(
-                studentProfileID=studentprof,ishide = False)
+                studentProfileID=studentprof, ishide=False)
             subjectIDs = [
                 studentSubject.subjectID_id for studentSubject in studentSubjects]
             subjects = Subject.objects.filter(id__in=subjectIDs)
@@ -246,14 +246,15 @@ def studentProfile(request, studentID):
             data = dataForGraph(subjects, studentTasks)
             dataD = dataForGraph(subjects, studentTasks, isrubick=1)
             return JsonResponse({'data': data, 'subjectCode': addedSubject.subjectCode, 'subjectName': addedSubject.subjectName, 'dounut': dataD}, safe=False)
-        
+
         if deleteSubId:
             deletedSub = Subject.objects.get(pk=deleteSubId)
-            toBeDeleteSubject = StudentSubject.objects.get(studentProfileID = studentprof,subjectID = deleteSubId)
+            toBeDeleteSubject = StudentSubject.objects.get(
+                studentProfileID=studentprof, subjectID=deleteSubId)
             toBeDeleteSubject.delete()
-            
+
             studentSubjects = StudentSubject.objects.filter(
-                studentProfileID=studentprof,ishide = False)
+                studentProfileID=studentprof, ishide=False)
             subjectIDs = [
                 studentSubject.subjectID_id for studentSubject in studentSubjects]
             subjects = Subject.objects.filter(id__in=subjectIDs)
@@ -262,8 +263,8 @@ def studentProfile(request, studentID):
             data = dataForGraph(subjects, studentTasks)
             dataD = dataForGraph(subjects, studentTasks, isrubick=1)
             return JsonResponse({'data': data, 'subjectCode': deletedSub.subjectCode, 'subjectName': deletedSub.subjectName, 'dounut': dataD}, safe=False)
-        
-    return render(request, "studentProfile2.html", {
+
+    return render(request, "studentProfile.html", {
         'studentprof': studentprof,
         'subjects': subjects,
         'availSubs': availableSubs,
@@ -340,7 +341,8 @@ def studentProfile(request, studentID):
 
 def getUserSubject(request):
     user = Studentprofile.objects.get(emailAddress=request.user.email)
-    studentSubjects = StudentSubject.objects.filter(studentProfileID=user,ishide=False)
+    studentSubjects = StudentSubject.objects.filter(
+        studentProfileID=user, ishide=False)
     subjectIDs = [
         studentSubject.subjectID_id for studentSubject in studentSubjects]
     subjects = Subject.objects.filter(id__in=subjectIDs)
@@ -367,13 +369,13 @@ def getAllSubject(request):
     user = Studentprofile.objects.get(emailAddress=request.user.email)
     availableSubs = Subject.objects.all()
     return JsonResponse([subject.serialize(user) for subject in availableSubs], safe=False)
-    
+
 
 @login_required
 @csrf_exempt
 def getAllProfSubject(request):
     userFaculty = User.objects.get(pk=request.user.id)
-    availableSubs = Subject.objects.filter(facultyName = userFaculty)
+    availableSubs = Subject.objects.filter(facultyName=userFaculty)
     return JsonResponse([subject.serialize() for subject in availableSubs], safe=False)
 
 
