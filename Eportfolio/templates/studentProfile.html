@@ -3,212 +3,253 @@
   <head>
     <meta charset="utf-8" />
 
-    <title>Student Profile</title>
+    <title>Student Portfolio</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="../static/eportfolio/studentform.css" />
     <link
-      href="https://netdna.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
     />
-    <!-- Font-style -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+
     <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap"
       rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
     />
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
     <link
       href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="../static/eportfolio/navbar.css" />
-    <link rel="stylesheet" href="../static/eportfolio/style.css" />
+    <!-- font awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <!-- font awesome -->
+
+    <!-- chartjs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+
+    <!-- chartjs -->
+
+    <!-- toastTR -->
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"
+    />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <!-- toastTR -->
+
     <!-- link for datatables -->
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
     <link
       rel="stylesheet"
       href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css"
     />
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
-
-    <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.7.0/js/dataTables.buttons.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.70/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.70/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.print.min.js"></script>
 
     <!-- end of link for datatables -->
   </head>
-
   <body>
-    <div id="wrapper" class="wrapper-content ">
+    <div id="wrapper" class="wrapper-content">
       <div id="sidebar-wrapper">
-    <ul class="sidebar-nav">
-<li class="sidebar-brand">
-  <a class="no-hovera" href="#">
-    Eportfolio
-      </a>
-      </li>
-      <li  id="activeProfile">
-        <a id="showProfilePage"> <i class="fa fa-user"></i> Profile</a>
-      </li>
-      <li id="activeStat">
-        <a href="#" id="statisticPage">
-          <i class="fa fa-calendar"></i> Statistics
-        </a>
-      </li>
-      <li id="activeSubject" class="active">
-        <a id="Subjects"> <i class="fa fa-book"></i>Subjects</a>
-      </li>
-      <li id="activeEdit">
-        <a id="editProfile"> <i class="fa fa-edit"></i> Edit profile</a>
-      </li>
-      <li id="activeSignOut">
-        <a id="Signout"> <i class="fa fa-sign-out"></i> Sign Out</a>
-      </li>
-    </ul>
-    </div>
-    <div class="container-fluid">
-      <button class="btn-menu btn btn-toggle-menu overlay-button" type="button">
-      <i class="fa fa-bars"></i>
-      </button>
-        </div>
-    <div class="container bootstrap snippets bootdey overlay">
-      <div class="row">
-        <div class="profile-nav col-md-2">
-        
-        </div>
-
-        <div class="profile-info col-md-10" id="profilePage">
-          <div class="panel">
-            <div class="bio-graph-heading">
-              Welcome Back!
-              <h2>{{studentprof.firstName}}</h2><div class="panel-body bio-graph-info" id="editProfileHolderReload">
-              {% if studentprof %}
-              <h1>Demographic Profile</h1>
-              <div class="row">
-                <div class="bio-row">
-                  <p><span>First Name </span>: {{studentprof.firstName}}</p>
-                </div>
-                <div class="bio-row">
-                  <p><span>Last Name </span>: {{studentprof.lastName}}</p>
-                </div>
-                <div class="bio-row">
-                  <p>
-                    <span>Student No. </span>: {{studentprof.studentNumber}}
-                  </p>
-                </div>
-                <div class="bio-row">
-                  <p>
-                    <span>Year / Course</span>: {{studentprof.yearID}} /
-                    {{studentprof.courseID}}
-                  </p>
-                </div>
-                <div class="bio-row">
-                  <p>
-                    <span>Contact Details </span>: {{studentprof.contactNumber}}
-                  </p>
-                </div>
-                <div class="bio-row">
-                  <p>
-                    <span>Email </span>:
-                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__"
-                      >{{studentprof.emailAddress}}</a
-                    >
-                  </p>
-                </div>
-                <div class="bio-row">
-                  <p>
-                    <span>Guardian Name </span>: {{studentprof.guardianName}}
-                  </p>
-                </div>
-                <div class="bio-row">
-                  <p>
-                    <span>Guardian No. </span>: {{studentprof.guardianNumber}}
-                  </p>
-                </div>
-              </div>
-              {% endif %}
-            
+        <ul class="sidebar-nav">
+          <li class="sidebar-brand">
+            <a href="#">E-portfolio</a>
+          </li>
+          <div class="sidebar-hoverable">
+            <li id="activeProfile" class="active">
+              <a id="showProfilePage">Profile</a>
+            </li>
+            <!-- <li id="activeStat">
+            <a id="statisticPage">Analytics</a>
+          </li> -->
+            <li id="activeEdit">
+              <a id="editProfile">Edit Profile</a>
+            </li>
+            <li id="activeSubject">
+              <a id="Subjects">Activities</a>
+            </li>
+            <!-- <li id="activeSignOut">
+            <a id="Signout">Sign Out</a>
+          </li> -->
+          </div>
+        </ul>
+      </div>
+      <div id="page-content-wrapper">
+        <nav class="navbar navbar-default">
+          <div class="container-fluid">
+            <div class="navbar-header">
+              <button
+                class="btn-menu btn btn-success btn-toggle-menu"
+                type="button"
+              >
+                <i class="fa fa-bars"></i>
+              </button>
             </div>
-            <div class="panel-body bio-graph-info" id="editProfileHolderReload">
-              {% if studentprof %}
-              <h1>Demographic Profile</h1>
-              <div class="row">
-                <div class="bio-row">
-                  <p><span>First Name </span>: {{studentprof.firstName}}</p>
-                </div>
-                <div class="bio-row">
-                  <p><span>Last Name </span>: {{studentprof.lastName}}</p>
-                </div>
-                <div class="bio-row">
-                  <p>
-                    <span>Student No. </span>: {{studentprof.studentNumber}}
-                  </p>
-                </div>
-                <div class="bio-row">
-                  <p>
-                    <span>Year / Course</span>: {{studentprof.yearID}} /
-                    {{studentprof.courseID}}
-                  </p>
-                </div>
-                <div class="bio-row">
-                  <p>
-                    <span>Contact Details </span>: {{studentprof.contactNumber}}
-                  </p>
-                </div>
-                <div class="bio-row">
-                  <p>
-                    <span>Email </span>:
-                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__"
-                      >{{studentprof.emailAddress}}</a
-                    >
-                  </p>
-                </div>
-                <div class="bio-row">
-                  <p>
-                    <span>Guardian Name </span>: {{studentprof.guardianName}}
-                  </p>
-                </div>
-                <div class="bio-row">
-                  <p>
-                    <span>Guardian No. </span>: {{studentprof.guardianNumber}}
-                  </p>
-                </div>
-              </div>
-              {% endif %}
+            <div class="collapse navbar-collapse">
+              <ul class="nav navbar-nav navbar-right">
+                <li>
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <i class="ti-panel"></i>
+                    <p>Stats</p>
+                  </a>
+                </li>
+                <li>
+                  <a href="#">
+                    <i class="ti-settings"></i>
+                    <p>Settings</p>
+                  </a>
+                </li>
+              </ul>
             </div>
           </div>
-          <div>
-            <h2 class="sub-head">Subjects</h2>
-            <div class="row" id="listOfSubs">
+        </nav>
+        {% include "modals/editTask.html" %}
+        <div class="container-fluid" id="subjectPage">
+          {% include "modals/addTask.html" %}
+          <div class="row cardwrapper">
+            <div class="col-lg-12">
+              <h1 class="title-text">My Activities</h1>
+              <table class="display" style="width: 100%" id="tasksTable">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>My Score</th>
+                    <th>Overall Score</th>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Subject</th>
+                    <th>Attachments</th>
+                    <th id="editButton">Actions</th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12" id="listOfMySubjects" style="margin-top: 5%">
+              <!-- <h1 class="title-text">Analytics</h1> -->
               {% for sub in subjects %}
-              <a
-                href="{% url 'studentSubject' studentprof.studentNumber sub.subjectCode %}"
-              >
-                <div class="col-md-6">
-                  <div class="panel sub-wrapper">
-                    <div class="panel-body subject-bg">
-                      <div class="bio-chart"></div>
-                      <div class="sub-textoverlay">
-                        <h4 class="cc-text">{{sub.subjectCode}}</h4>
-                        <p class="sub-text">{{sub.subjectName}}</p>
-                      </div>
-                    </div>
-                  </div>
+              <div class="panel">
+                <div class="panel-body bio-graph-info">
+                  <div class="col"></div>
+                  <h1 id="{{sub.subjectCode}}:{{sub.subjectName}}">
+                    {{sub.subjectCode}}:{{sub.subjectName}}
+                  </h1>
+                  <div id="{{sub.subjectCode}}"></div>
+                  <br />
+                  <br />
+                  <center>
+                    <canvas
+                      id="{{sub.subjectName}}"
+                      style="width: 100%; max-width: 700px; margin-left: 1%"
+                    ></canvas>
+                  </center>
                 </div>
-              </a>
+              </div>
+              <br />
+              <br />
               {% endfor %}
             </div>
           </div>
         </div>
 
-        <div class="profile-info col-md-9" id="editPage">
-          <div class="panel">
-            <div class="panel-body bio-graph-info">
-              <h1>Edit Demographic Profile</h1>
-              <div class="row">
+        <div class="container-fluid" id="profilePage">
+          
+          <div class="row cardwrapper">
+            <div class="col-lg-12">
+              <h1 class="title-text">My Profile</h1>
+              <div class="row" id="editProfileHolderReload">
+                <div class="col-lg-6 description-profile">
+                  <div class="bio-row">
+                    <p>
+                      <span class="sub-heading">First Name </span>:
+                      {{studentprof.firstName}}
+                    </p>
+                  </div>
+                  <div class="bio-row">
+                    <p>
+                      <span class="sub-heading">Year</span>:
+                      {{studentprof.yearID}}
+                    </p>
+                  </div>
+                  <div class="bio-row">
+                    <p>
+                      <span class="sub-heading">Student No. </span>:
+                      {{studentprof.studentNumber}}
+                    </p>
+                  </div>
+                </div>
+                <div class="col-lg-6 description-profile">
+                  <div class="bio-row">
+                    <p>
+                      <span class="sub-heading">Last Name </span>:
+                      {{studentprof.lastName}}
+                    </p>
+                  </div>
+                  <div class="bio-row">
+                    <p>
+                      <span class="sub-heading">Course</span
+                      >:{{studentprof.courseID}}
+                    </p>
+                    <p>
+                      <span class="sub-heading">Email </span>:
+                      <a href="/cdn-cgi/l/email-protection" class="__cf_email__"
+                        >{{studentprof.emailAddress}}</a
+                      >
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <canvas id="dataBars" style="width:100%; margin-top: 3%;">></canvas>
+        </div>
+
+        <div class="container-fluid cardwrapper" id="editPage">
+          <div class="bio-row">
+            <table class="display" style="width: 100%" id="subjectTable">
+              <thead>
+                <tr>
+                  <th>Subject Code</th>
+                  <th>Subject Name</th>
+                  <th>Faculty Name</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+          <div class="row">
+            <div class="col-lg-12">
+              <h1 class="title-text">Edit Demographic Profile</h1>
+              <form id="editUserProfileForm">
                 <div class="bio-row">
                   <label for="guardianName">Guardian Name:</label>
                   <input
@@ -219,7 +260,13 @@
                     value="{{studentprof.guardianName}}"
                   />
                 </div>
-
+                <input
+                  type="number"
+                  name="editProfile"
+                  id="editProfile"
+                  value="1"
+                  hidden
+                />
                 <div class="bio-row">
                   <label for="guardianNumber">Guardian Contact Details</label>
                   <input
@@ -262,257 +309,525 @@
                   />
                 </div>
 
-                <div class="bio-row">
-                  <div class="bio-row">
-                    <button
-                      type="button"
-                      id="saveProfile"
-                      class="btn btn-primary btn-hovergreen"
-                      style="margin-top: 15%"
-                    >
-                      Save
-                    </button>
+                  <div class="bio-row" style="margin: 20px 20px">
+                    <div style="display: flex; float: right; margin-bottom: 20px">
+                      <div style="margin-right: 10px">
+                        <button
+                          type="submit"
+                          id="saveProfile"
+                          class="btn btn-primary btn-hovergreen"
+                        >
+                          Save
+                        </button>
+                      </div>
+                      <div>
+                </form>
+                          <form method="post" action="/accounts/logout/">
+                            {% csrf_token %}
+                            <button
+                              class="btn btn-dark btn-hoverred"
+                              type="submit"
+                            >
+                              Sign Out
+                            </button>
+                          </form>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div class="bio-row">
-                  <form method="post" action="/accounts/logout/">
-                    {% csrf_token %}
-                    <button class="btn btn-dark btn-hoverred" type="submit">
-                      Sign Out
-                    </button>
-                  </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- <div class="container-fluid" id="statPage">
+          <div class="row">
+            <div class="col-lg-12" id="listOfMySubjects">
+              <h1 class="title-text">My Subjects</h1>
+              {% for sub in subjects %}
+              <div class="panel">
+                <div class="panel-body bio-graph-info">
+                  <h1>{{sub.subjectCode}}:{{sub.subjectName}}</h1>
+                  <div id="{{sub.subjectName}}"></div>
+                  <canvas
+                    id="{{sub.subjectCode}}"
+                    style="width: 100%; max-width: 700px"
+                  ></canvas>
                 </div>
               </div>
-            </div>
-          </div>
-          <div class="panel-body bio-graph-info">
-            <table id="example" class="display" style="width: 100%">
-              <thead>
-                <tr>
-                  <th>Subject Code</th>
-                  <th>Subject Name</th>
-                  <th>Faculty</th>
-                  <th>No. Of Units</th>
-                  <th>ADD</th>
-                </tr>
-              </thead>
-              {% for sub in availSubs %}
-              <tbody>
-                <tr>
-                  <td>{{sub.subjectCode}}</td>
-                  <td>{{sub.subjectName}}</td>
-                  <td>{{sub.facultyName}}</td>
-                  <td>{{sub.units}}</td>
-                  
-                  <td>
-                    <button
-                      type="button"
-                      class="btn btn-info addSubButton"
-                      value="{{sub.id}}"
-                    >
-                      Add Subject
-                    </button>
-                  </td>
-                 
-                </tr>
-              </tbody>
+              <br />
               {% endfor %}
-
-            </table>
-          </div>
-        </div>
-
-        <div class="profile-info col-md-9" id="statPage">
-          {% for sub in subjects %}
-          <div class="panel">
-            <div class="panel-body bio-graph-info">
-              <h1>{{sub.subjectCode}}:{{sub.subjectName}}</h1>
-              <div id="{{sub.subjectCode}}: {{sub.subjectName}}"></div>
             </div>
           </div>
-          <br />
-
-          {% endfor %}
-        </div>
-
-
-        <div class="profile-info col-md-9" id="subjectPage">
-          <h2>Subjects</h2>
-          
-        </div>
+        </div> -->
       </div>
     </div>
-    {% csrf_token %}
-    <script>
+    {{test|json_script:"dataObject"}} {{dounut|json_script:"dounutObject"}}
+
+    <script type="text/javascript">
+      $(function () {
+        $(".btn-toggle-menu").click(function () {
+          $("#wrapper").toggleClass("toggled");
+        });
+      });
+
+      //  tasks datatables config -----------------------------------------------
+
       $(document).ready(() => {
-        // getting the object from django template-------------
-        const data = "{{test|safe}}";
+        var tasksTable = $("#tasksTable").DataTable({
+          dom: "Bfrtip",
+          columns: [
+            { data: "title" },
+            { data: "score" },
+            { data: "overallscore" },
+            { data: "date" },
+            { data: "taskType" },
+            {
+              data: "subject",
+              render: function (data, type, row, meta) {
+                if (type === "display") {
+                  return (
+                    '<a href="#' + data.replace(" ", "") + '">' + data + "</a>"
+                  );
+                }
+                return data;
+              },
+            },
+            {
+              data: "image",
+              render: function (data, type, row, meta) {
+                if (type === "display") {
+                  return (
+                    '<a href="' +
+                    data +
+                    '" download>' +
+                    String(data).slice(14) +
+                    "</a>"
+                  );
+                }
+                return data;
+              },
+            },
+            { data: "action" },
+          ],
+          ajax: {
+            url: "{% url 'getUserTask' %}",
+            type: "POST",
+            dataSrc: "",
+          },
+          buttons: [
+            {
+              extend: "excel",
+              text: "Export to Excel",
+              className: "btn btn-outline-success",
+              exportOptions: {
+                columns: [0, 1, 2, 3, 4, 5], // Include all columns in the export
+              },
+            },
+            {
+              extend: "pdf",
+              text: "Export to PDF",
+              className: "btn btn-outline-danger",
+              exportOptions: {
+                columns: [0, 1, 2, 3, 4, 5], // Include all columns in the export
+              },
+            },
+          ],
+          initComplete: function () {
+            $(".dt-buttons").append(
+              `<button
+                type="button"
+                id = "addUserTaskButton"
+                class="btn btn-outline-info"
+                data-toggle="modal"
+                data-target="#addTaskModalOriginal"
+              >
+              <i class="fa fa-plus-square"></i> Add Item 
+              </button>`
+            );
+            $(".dt-buttons").append(`
+               <button type="button" class = "btn btn-outline-secondary " id="editTogglere" > <i class="fa fa-edit"></i>Edit Item </button>`);
 
-        const validJson = data.replace(/'/g, '"');
+            let num = false;
+            tasksTable.column(-1).visible(num);
+            $("#editTogglere").click(() => {
+              num = !num;
+              tasksTable.column(-1).visible(num);
+            });
+          },
+        });
+      });
 
-        // Parse the string as JSON
-        const obj = JSON.parse(validJson);
+      // end task  datatables config -----------------------------------------------
+
+      //navigation  ------------------------ ------------------------
+      $("#editPage").hide();
+      $("#subjectPage").hide();
+      $("#subjectPage").hide();
+      //end of div that need to hide -----------------
+
+      $("#showProfilePage").click(() => {
+        $("#profilePage").show();
+        $("#subjectPage").hide();
+        $("#editPage").hide();
+        $("#activeEdit").removeClass();
+        $("#activeStat").removeClass();
+        $("#activeSubject").removeClass();
+        $("#activeProfile").addClass("active");
+      });
+
+      $("#editProfile").click(() => {
+        $("#profilePage").hide();
+        $("#subjectPage").hide();
+        $("#editPage").show();
+        $("#activeProfile").removeClass();
+        $("#activeStat").removeClass();
+        $("#activeSubject").removeClass();
+        $("#activeEdit").addClass("active");
+      });
+
+      $("#Subjects").click(() => {
+        $("#subjectPage").show();
+        $("#editPage").hide();
+        $("#profilePage").hide();
+        $("#activeEdit").removeClass();
+        $("#activeStat").removeClass();
+        $("#activeProfile").removeClass();
+        $("#activeSubject").addClass("active");
+      });
+      //navigation  ------------------------ ------------------------
+
+      // Delete funtion ------------------------------
+      $(document).on("click", ".deleteTask", function (e) {
+        $.ajax({
+          url: "{% url 'studentProfile' studentprof.studentNumber %}",
+          data: {
+            taskDeleteID: e.currentTarget.value,
+          },
+          method: "POST",
+          success: function (response) {
+            var dataTable = $("#tasksTable").DataTable();
+            dataTable.ajax.reload(null, false);
+            createBarGraph(response.data);
+            barGraphProfile(response.dounut);
+            for (var key in response.dounut) {
+              createChart(response.dounut[key], key);
+            }
+          },
+        });
+      });
+
+      // Delete funtion ------------------------------
+
+      // Initialize Toastr
+      toastr.options = {
+        closeButton: true,
+        progressBar: true,
+        preventDuplicates: true,
+        positionClass: "toast-top-right",
+        timeOut: 3000, // Adjust the duration as per your preference
+      };
+
+      // getting the object from django template-------------
+
+      // const validJson = boxName.replace(/'/g, '"');
+      // console.log(validJson)
+
+      const createBarGraph = (data) => {
+        const obj = JSON.parse(JSON.stringify(data));
 
         for (const [key, value] of Object.entries(obj)) {
           let counter = 0;
 
           const subArray = Object.entries(value).map(([subKey, subValue]) => [
-              ,
+            subKey,
             subValue,
           ]);
           graph_it_percentage(subArray, 200, document.getElementById(key));
         }
+      };
+      const bars = JSON.parse($("#dataObject").text());
 
-        // getting the object from django template -------------------------------
+      createBarGraph(bars);
 
-        // edit Profile -----------------------------------------
-        var course = "{{studentprof.courseID}}";
-        var year = "{{studentprof.yearID}}";
-        $("#courseID").val(course);
-        $("#yearID").val(year);
-
-        const csrftoken = document.querySelector(
-          "[name=csrfmiddlewaretoken]"
-        ).value;
-        $("#saveProfile").click(() => {
-          $.ajax({
-            url: "{% url 'studentProfile' studentprof.studentNumber %}",
-            headers: { "X-CSRFToken": csrftoken },
-            data: {
-              editProfile: 1,
-              guardianName: $("#guardianName").val(),
-              guardianNum: $("#guardianNumber").val(),
-              courseName: $("#courseID").val(),
-              yearName: $("#yearID").val(),
-              contactD: $("#contactNumber").val(),
-            },
-            method: "POST",
-            success: (data) => {
-              $("#editProfileHolderReload").load(
-                location.href + " #editProfileHolderReload"
-              );
-            },
-          });
-        });
-
-        // edit Profile -----------------------------------------
-
-    
-
-        // Datatable ------------------------
-        $("#example").DataTable({
-          dom: "Bfrtip",
-          buttons: [
-            {
-              extend: "excelHtml5",
-              exportOptions: {
-                orthogonal: "export", // Export all rows
-                columns: [0, 1, 2, 3], // Include only the first 4 columns
-              },
-            },
-            {
-              extend: "pdfHtml5",
-              exportOptions: {
-                orthogonal: "export", // Export all rows
-                columns: [0, 1, 2, 3], // Include only the first 4 columns
-              },
-            },
-          ],
-        });
-      
-        // Datatable ------------------------
-
-
-        //navigation  ------------------------ ------------------------
-        $("#editPage").hide();
-        $("#statPage").hide();
-        $("#profilePage").hide();
-        //end of div that need to hide -----------------
-
-        $("#showProfilePage").click(() => {
-          $("#profilePage").show();
-          $("#editPage").hide();
-          $("#statPage").hide();
-          $("#activeEdit").removeClass();
-          $("#activeStat").removeClass();
-          $("#activeProfile").addClass("active");
-        });
-
-        $("#editProfile").click(() => {
-          $("#profilePage").hide();
-          $("#statPage").hide();
-          $("#editPage").show();
-          $("#activeProfile").removeClass();
-          $("#activeEdit").addClass("active");
-          $("#activeStat").removeClass();
-        });
-
-        $("#statisticPage").click(() => {
-          $("#statPage").show();
-          $("#profilePage").hide();
-          $("#editPage").hide();
-          $("#activeStat").addClass("active");
-          $("#activeEdit").removeClass();
-          $("#activeProfile").removeClass();
-        });
-
-        $("#showProfilePage").click(() => {
-          $("#profilePage").show();
-          $("#editPage").hide();
-          $("#statPage").hide();
-          $("#activeEdit").removeClass();
-          $("#activeStat").removeClass();
-          $("#activeProfile").addClass("active");
-        });
-        //navigation  ------------------------ ------------------------
-
-
-
-        $(".addSubButton").click((e) => {
-          $.ajax({
-            url: "{% url 'studentProfile' studentprof.studentNumber %}",
-            headers: { "X-CSRFToken": csrftoken },
-            data: { addSub: e.currentTarget.value },
-            method: "POST",
-            success: (data) => {
-              $("#listOfSubs").load(location.href + " #listOfSubs");
-            },
-          });
-        });
-      });
-
-      // function that create bar
+      // function that create bar ******
       function graph_it_percentage(g, g_width, g_element) {
-        let output = '<table border="0" cellspacing="0" cellpadding="8">',
-          calwidth_percentage = 0;
-        let barColor;
+        let output = '<table border="0" cellspacing="0" cellpadding="8">';
+        let barColor = "pink"; // Set the desired color for all bars
+        let unfilledBarColor = "lightgrey"; // Set the color for empty bars
 
         for (i = 0; i < g.length; i++) {
           calwidth_percentage = g_width * (parseInt(g[i][1]) / 100);
 
-          if (parseInt(g[i][1]) > 75) {
-            barColor = "green";
-          } else if (parseInt(g[i][1]) < 75 && parseInt(g[i][1]) > 65) {
-            barColor = "orange";
-          } else {
-            barColor = "lightcoral";
-          }
-          let unfilledBarColor = "lightgrey";
           let unfilledBarWidth = g_width - calwidth_percentage;
-          output += `<tr><td style="padding-right: 10px;">${g[i][0]}</td><td><svg xmlns="http://www.w3.org/2000/svg" width="${g_width}" height="10"><g class="bar"><rect x="${calwidth_percentage}" width="${unfilledBarWidth}" height="10" fill="${unfilledBarColor}"></rect><rect width="${calwidth_percentage}" height="10" fill="${barColor}"></rect></g></svg> ${g[i][1]}%</td></tr>`;
+          output += `<tr><td style="padding-right: 20px;">${g[i][0]}</td><td><svg xmlns="http://www.w3.org/2000/svg" width="${g_width}" height="20"><g class="bar"><rect x="${calwidth_percentage}" width="${unfilledBarWidth}" height="10" fill="${unfilledBarColor}"></rect><rect width="${calwidth_percentage}" height="10" fill="${barColor}"></rect></g></svg> ${g[i][1]}%</td></tr>`;
         }
 
         output += "</table>";
 
         g_element.innerHTML = output;
+        g_element.style.display = "flex";
+        g_element.style.justifyContent = "center";
+        g_element.style.alignItems = "center";
       }
-    </script>
-    <script type="text/javascript">
-    $(function(){
-        $(".btn-toggle-menu").click(function() {
-            $("#wrapper").toggleClass("toggled");
+
+      // dounut chart -----------------------------
+
+      const dounuts = JSON.parse($("#dounutObject").text());
+
+      function createChart(score, chartId) {
+        const passingRate = `${score.toFixed(2)}%`;
+
+        const data = {
+          labels: [`${score.toFixed(2)}%`],
+          datasets: [
+            {
+              label: "My First Dataset",
+              data: [score.toFixed(2), (100 - score).toFixed(2)],
+              backgroundColor: ["rgb(255, 0, 0)", "rgb(211, 211, 211)"],
+              hoverOffset: 4,
+            },
+          ],
+        };
+
+        const myChart = new Chart(chartId, {
+          type: "doughnut",
+          data: data,
         });
-    })
+      }
+
+      // Usage example
+
+      for (var key in dounuts) {
+        createChart(dounuts[key], key);
+      }
+
+      // dounut chart -----------------------------
+
+      // bar for all chart -----------------------------
+
+      let chartInstance; // Define a variable to store the chart instance
+
+      const barGraphProfile = (obj) => {
+        const canvas = document.getElementById("dataBars");
+        const context = canvas.getContext("2d");
+
+        // Check if the chart instance already exists
+        if (chartInstance) {
+          chartInstance.destroy(); // Destroy the existing chart
+        }
+
+        const data = {
+          labels: Object.keys(obj),
+          datasets: [
+            {
+              label: "My Subjects Passing Rate",
+              data: Object.values(obj),
+              backgroundColor: "rgba(255, 99, 132, 0.2)",
+              borderColor: "rgb(255, 99, 132)",
+              borderWidth: 2,
+            },
+          ],
+        };
+
+        chartInstance = new Chart(context, {
+          type: "bar",
+          data: data,
+          options: {
+            scales: {
+              yAxes: [
+                {
+                  scaleLabel: {
+                    display: true,
+                    labelString: "Passing Rate (%)",
+                  },
+                  ticks: {
+                    beginAtZero: true,
+                  },
+                },
+              ],
+            },
+          },
+        });
+      };
+
+      barGraphProfile(dounuts);
+
+
+      // bar for all chart -----------------------------
+
+      // edit profile -------------------------
+
+      // editUserProfileForm
+      $("#editUserProfileForm").submit(function (event) {
+        event.preventDefault(); // Prevent form submission
+
+        // Get form data
+        var formData = new FormData(this);
+        $.ajax({
+          url: "{% url 'studentProfile' studentprof.studentNumber %}",
+          data: formData,
+          method: "POST",
+          processData: false,
+          contentType: false,
+          success: (data) => {
+            $("#editProfileHolderReload").load(
+              location.href + " #editProfileHolderReload"
+            );
+          },
+        });
+      });
+
+      // edit profile -------------------------
+
+      // table for list of subjects --------------
+
+      var subTable = $("#subjectTable").DataTable({
+        resonsive: true,
+        columns: [
+          { data: "subjectCode" },
+          { data: "subjectName" },
+          { data: "facultyName" },
+          { data: "action" },
+        ],
+        ajax: {
+          url: "{% url 'getAllSubs' %}",
+          type: "POST",
+          dataSrc: "",
+        },
+      });
+
+      // table for list of subjects --------------
+
+      // add new subject ------------------
+
+      $(document).ready(() => {
+        $(document).on("click", ".addSubButton", function (e) {
+          $.ajax({
+            url: "{% url 'studentProfile' studentprof.studentNumber %}",
+            data: { addSub: $(e.target).val() },
+            method: "POST",
+            success: (response) => {
+              if(response.isAlreadyAdded){
+                  alert('This Subject is Already Added');
+              }
+              else{
+                var dataTable = $("#subjectTable").DataTable();
+              dataTable.ajax.reload(null, false);
+              alert("added Subject!s");
+              $('#listOfMySubjects').load(location.href + ' #listOfMySubjects', function() {
+                  createBarGraph(response.data);
+                  for (var key in response.dounut) {
+                    createChart(response.dounut[key], key);
+                  }
+                });
+              barGraphProfile(response.dounut);
+              $("#taskSubjectEdit")
+                .find("option")
+                .remove()
+                .end()
+                .append('<option value="" disabled selected>Select</option>');
+              $.ajax({
+                url: "{% url 'getUserSubject' %}",
+                method: "GET",
+                success: (data) => {
+                  for (var i = 0; i <= data.length - 1; i++) {
+                    var user_position = new Option(
+                      data[i].subjectName,
+                      data[i].id
+                    );
+                    $("#taskSubjectEdit").append(user_position);
+                  }
+                },
+              });
+
+              $("#taskSubject")
+                .find("option")
+                .remove()
+                .end()
+                .append('<option value="" disabled selected>Select</option>');
+              $.ajax({
+                url: "{% url 'getUserSubject' %}",
+                method: "GET",
+                success: (data) => {
+                  for (var i = 0; i <= data.length - 1; i++) {
+                    var user_position = new Option(
+                      data[i].subjectName,
+                      data[i].id
+                    );
+                    $("#taskSubject").append(user_position);
+                  }
+                },
+              });
+              }
+            },
+          });
+        });
+      });
+
+      // add new subject ------------------
+
+      // delete my subject ----------------------------
+        $(document).on('click','.deleteMySubject', function (e) {
+          $.ajax({
+            url: "{% url 'studentProfile' studentprof.studentNumber %}",
+            data: {deleteSubId: $(e.currentTarget).val()},
+            method: "POST",
+            success: function (response) {
+              console.log(response)
+              var dataTable = $("#subjectTable").DataTable();
+              dataTable.ajax.reload(null, false);
+              barGraphProfile(response.dounut);
+              $('#listOfMySubjects').load(location.href + ' #listOfMySubjects', function() {
+                  createBarGraph(response.data);
+                  for (var key in response.dounut) {
+                    createChart(response.dounut[key], key);
+                  }
+                });
+
+              $("#taskSubjectEdit")
+                .find("option")
+                .remove()
+                .end()
+                .append('<option value="" disabled selected>Select</option>');
+              $.ajax({
+                url: "{% url 'getUserSubject' %}",
+                method: "GET",
+                success: (data) => {
+                  for (var i = 0; i <= data.length - 1; i++) {
+                    var user_position = new Option(
+                      data[i].subjectName,
+                      data[i].id
+                    );
+                    $("#taskSubjectEdit").append(user_position);
+                  }
+                },
+              });
+
+              $("#taskSubject")
+                .find("option")
+                .remove()
+                .end()
+                .append('<option value="" disabled selected>Select</option>');
+              $.ajax({
+                url: "{% url 'getUserSubject' %}",
+                method: "GET",
+                success: (data) => {
+                  for (var i = 0; i <= data.length - 1; i++) {
+                    var user_position = new Option(
+                      data[i].subjectName,
+                      data[i].id
+                    );
+                    $("#taskSubject").append(user_position);
+                  }
+                },
+              });
+            }
+          })
+
+        })
+
+
+
+      // delete my subject ----------------------------
     </script>
   </body>
 </html>
