@@ -8,31 +8,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Professor's Page</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
-      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-      crossorigin="anonymous"
-    />
-    <script
-      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
-      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-      crossorigin="anonymous"
-    ></script>
+
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
       integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
       crossorigin="anonymous"
     ></script>
+
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+
     <!-- link for datatables -->
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
@@ -48,36 +41,431 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.70/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.print.min.js"></script>
+    <style>
+      /*Demographic profile*/
+      @import url("https://fonts.googleapis.com/css2?family=Noto+Sans:wght@700&family=Poppins:wght@400;500;600&display=swap");
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
 
+      body {
+        background-color: rgba(243, 243, 243, 0.3);
+      }
+
+      #tasksTable th,
+      #subjectTable th {
+        background-color: #7e3d3d; /* Set the background color */
+        color: white; /* Set the text color */
+      }
+      #wrapper {
+        padding-left: 0;
+        -webkit-transition: all 0.5s ease;
+        -moz-transition: all 0.5s ease;
+        -o-transition: all 0.5s ease;
+        transition: all 0.5s ease;
+      }
+
+      #wrapper.toggled {
+        padding-left: 250px;
+      }
+
+      #sidebar-wrapper {
+        z-index: 1000;
+        position: fixed;
+        left: 250px;
+        width: 0;
+        height: 100%;
+        margin-left: -250px;
+        overflow-y: auto;
+        background: #fff;
+        -webkit-transition: all 0.5s ease;
+        -moz-transition: all 0.5s ease;
+        -o-transition: all 0.5s ease;
+        transition: all 0.5s ease;
+      }
+
+      #sidebar-wrapper {
+        box-shadow: inset -1px 0px 0px 0px #dddddd;
+      }
+
+      #wrapper.toggled #sidebar-wrapper {
+        width: 250px;
+      }
+
+      #page-content-wrapper {
+        width: 100%;
+        position: relative;
+      }
+      .main-content-container {
+        padding: 5vh !important;
+      }
+      #wrapper.toggled #page-content-wrapper {
+        position: absolute;
+        margin-right: -250px;
+      }
+      /* Sidebar Styles */
+
+      .sidebar-nav {
+        position: absolute;
+        top: 0;
+        width: 250px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .sidebar-nav li {
+        text-indent: 20px;
+        line-height: 40px;
+      }
+
+      .sidebar-nav li:hover {
+        background-color: #999999;
+        color: white !important;
+        border-left: 5px solid lightcoral;
+      }
+
+      .sidebar-nav li a {
+        display: block;
+        text-decoration: none;
+        color: #999999;
+      }
+
+      .sidebar-nav li a:hover {
+        text-decoration: none;
+      }
+      /*.sidebar-hoverable li a:hover{
+          background-color: #999999;
+          color:white !important;
+          border-left: 5px solid lightcoral;
+        }
+        */
+
+      .sidebar-brand li a:active,
+      .sidebar-brand li a:focus {
+        text-decoration: none;
+      }
+
+      .sidebar-nav > .sidebar-brand {
+        height: 65px;
+        font-size: 18px;
+        line-height: 60px;
+      }
+
+      .sidebar-nav > .sidebar-brand a {
+        color: #999999;
+      }
+
+      @media (min-width: 768px) {
+        #wrapper {
+          padding-left: 250px;
+        }
+
+        #wrapper.toggled {
+          padding-left: 0;
+        }
+
+        #sidebar-wrapper {
+          width: 250px;
+        }
+
+        #wrapper.toggled #sidebar-wrapper {
+          width: 0;
+        }
+        #wrapper.toggled #page-content-wrapper {
+          position: relative;
+          margin-right: 0;
+        }
+      }
+
+      .arrow {
+        border-right: 17px solid #333333 !important;
+        border-top: 17px solid transparent !important;
+        border-bottom: 17px solid transparent !important;
+        content: "" !important;
+        display: inline-block !important;
+        position: absolute !important;
+        right: -1px !important;
+      }
+      .active {
+        background-color: #727272 !important;
+        color: white !important;
+        border-left: 5px solid #800000 !important;
+      }
+      .sidebar-brand {
+        border-bottom: 1px solid rgba(102, 97, 91, 0.3);
+      }
+
+      .sidebar-brand {
+        padding: 18px 0px;
+        margin: 0 20px;
+      }
+
+      .navbar .navbar-nav > li > a p {
+        display: inline-block;
+        margin: 0;
+      }
+      p {
+        font-size: 15px;
+        line-height: 1.4em;
+      }
+
+      .navbar-default {
+        background-color: #6e6e6e;
+        border: 0px;
+        border-bottom: 1px solid #dddddd;
+      }
+
+      btn-menu {
+        border-radius: 3px;
+        padding: 4px 12px;
+        margin: 14px 5px 5px 20px;
+        font-size: 14px;
+        float: left;
+      }
+
+      .cardwrapper {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 16px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(7.5px);
+        -webkit-backdrop-filter: blur(7.5px);
+        border: 1px solid rgba(255, 255, 255, 1);
+        text-align: justify;
+        margin-top: 2vh !important;
+        margin-bottom: 1vh !important;
+        margin: 2vh !important;
+      }
+      .title-text {
+        margin: 3vh;
+        font-weight: 700;
+        line-height: 1.5;
+      }
+      .description-profile {
+        text-indent: 3vh;
+      }
+      .sub-heading {
+        font-weight: 600;
+      }
+      .pop {
+        font-weight: 300;
+      }
+      .dataTables_wrapper {
+        overflow: auto;
+        margin: 1vh !important;
+      }
+      .title-nav {
+        font-style: oblique;
+        font-weight: 700;
+      }
+      .sidebar-nav > .sidebar-brand a {
+        color: #800000 !important;
+      }
+      .title-nav a {
+        top: 0;
+        position: absolute;
+        margin: 2vh 5vh;
+      }
+
+      @media (min-width: 320px) and (max-width: 768px) {
+        .title-nav a {
+          top: 0;
+          position: absolute;
+          margin: 2vh 5vh;
+        }
+      }
+      @media (min-width: 768px) and (max-width: 991px) {
+        .title-nav a {
+          top: 0;
+          position: absolute;
+          margin: 1vh 3vh;
+        }
+      }
+
+      .title-nav img {
+        height: auto;
+        max-width: 100%;
+        width: 10%;
+        margin: 1%;
+        margin-bottom: 10%;
+      }
+      #nav-header {
+        padding: 0 !important;
+      }
+      .btn {
+        margin: 1px;
+      }
+      .submit-button {
+        display: flex;
+        float: right;
+        margin-bottom: 20px;
+      }
+      .nav-wrapper {
+        text-decoration: none;
+      }
+      .icon-text {
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        width: 100%;
+      }
+      .icon-text:hover {
+        background-color: #7e3d3d;
+        color: white !important;
+        border-left: 5px solid #8a9a5b;
+        cursor: pointer;
+      }
+      .icon-text a {
+        width: 100%;
+      }
+      .btn-success {
+        color: #fff;
+        background-color: #28a745;
+      }
+      .btn-success:hover {
+        color: #fff;
+        background-color: #800000 !important ;
+      }
+      .fa {
+        color: white !important;
+      }
+      .fa-plus-square {
+        color: #17a2b8 !important;
+      }
+      .fa-edit {
+        color: #6c757d !important ;
+      }
+
+      .btn-toggs {
+        background-color: none;
+        border-color: none;
+      }
+      .btn-toggs:hover {
+        color: #fff;
+        background-color: #800000 !important ;
+      }
+      .bar-data {
+        padding: 4vh;
+        padding-top: 1vh;
+      }
+      /*----------------------------------------- responsives -------------------------------------------------- */
+      /* phone landscape */
+      @media (min-width: 576px) {
+      }
+      /* laptop */
+      @media (min-width: 992px) {
+      }
+      /* large screen */
+
+      @media (min-width: 1200px) {
+      }
+    </style>
     <!-- end of link for datatables -->
   </head>
   <body>
     <!-- NavBar -->
-    <nav class="navbar navbar-light bg-light justify-content-between">
-      <a class="navbar-brand">Faculty Page</a>
-      {% include 'modals/addSubject_modal.html' %} 
-      {% include 'modals/editSubject_modal.html' %}
+    <div id="wrapper" class="wrapper-content">
+      <div id="sidebar-wrapper">
+        <ul class="sidebar-nav">
+          <li class="sidebar-brand title-nav">
+            <img src="../media/images/logo-portfolio.png" alt="ep-logo" />
+            <a href="#">EPortfolio</a>
+          </li>
+          <div class="sidebar-hoverable">
+            <li id="activeSubject" class="active">
+              <a id="showSubjectPage">My Subjects</a>
+            </li>
+            <!-- <li id="activeStat">
+          <a id="statisticPage">Analytics</a>
+        </li> -->
+            <li id="activeStudent">
+              <a id="myStudentPage">My Students</a>
+            </li>
 
-      <form method="post" action="/accounts/logout/" style="margin-top: 10px">
-        {% csrf_token %}
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
-          Signout
-        </button>
-      </form>
-    </nav>
-    <!-- End of NavBar -->
-    <table id="subjectTable">
-      <thead style="background-color: red; color: white">
-        <tr>
-          <th>Subject Code</th>
-          <th>Subject Name</th>
-          <th>Units</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-    </table>
+            <li id="activeSignOut">
+              <form method="post" action="/accounts/logout/">
+                {% csrf_token %}
+                <button style="background: none; border: none; padding: 0; font: inherit; cursor: pointer; outline: inherit;">
+                  Sign Out
+                </button>
+              </form>
+            </li>
+          </div>
+        </ul>
+      </div>
+      <div id="page-content-wrapper">
+        <nav class="navbar navbar-default">
+          <div class="container-fluid">
+            <div class="navbar-header">
+              <button
+                class="btn-menu btn btn-toggs btn-toggle-menu"
+                type="button"
+              >
+                <i class="fa fa-bars"></i>
+              </button>
+            </div>
+            <div class="collapse navbar-collapse">helo</div>
+          </div>
+        </nav>
+        {% include 'modals/addSubject_modal.html' %}
+
+        <!-- End of NavBar -->
+
+        <div class="container-fluid" id="mySubjects">
+        {% include 'modals/delete_modal_prof.html' %}
+
+          <table id="subjectTable">
+            <thead style="background-color: red; color: white">
+              <tr>
+                <th>Subject Code</th>
+                <th>Subject Name</th>
+                <th>Units</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+          </table>
+        
+          
+        </div>
+
+        <div class="container-fluid" id="myStudents">
+          <table id="studentTableProf">
+            <thead style="background-color: red; color: white">
+              <tr>
+                <th>Student Number</th>
+                <th>Student Name</th>
+                <th>Student Surname</th>
+                <th>Year</th>
+                <th>Course</th>
+              </tr>
+            </thead>
+          </table>
+        </div>
+      </div>
+    </div>
+    <a href=""></a>
+    {% include 'modals/editSubject_modal.html' %}
+
     <script>
       $(document).ready(() => {
+        $("#myStudents").hide();
+
+        $("#showSubjectPage").click(() => {
+          $("#mySubjects").show();
+          $("#myStudents").hide();
+          $("#activeStudent").removeClass();
+          $("#activeSubject").addClass("active");
+        });
+
+        $("#myStudentPage").click(() => {
+          $("#mySubjects").hide();
+          $("#myStudents").show();
+          $("#activeSubject").removeClass();
+          $("#activeStudent").addClass("active");
+        });
         var addButton = `<button
                 type="button"
                 style = "margin-left: 5px;"
@@ -121,9 +509,20 @@
         },
       });
 
-      $("#subjectTable_wrapper").css({
-        width: "95%",
-        margin: "15px auto",
+      const myStudentTable = $("#studentTableProf ").DataTable({
+        resonsive: true,
+        columns: [
+          { data: "StudentNumber" },
+          { data: "StudentName" },
+          { data: "StudentSurname" },
+          { data: "YearLevel" },
+          { data: "Course" },
+        ],
+        ajax: {
+          url: "{% url 'mystudents' request.user.id %}",
+          type: "GET",
+          dataSrc: "",
+        },
       });
 
       // delete
@@ -137,6 +536,7 @@
           success: function (response) {
             var dataTable = $("#subjectTable").DataTable();
             dataTable.ajax.reload(null, false);
+            $('.modaldelete').click()
           },
         });
       });

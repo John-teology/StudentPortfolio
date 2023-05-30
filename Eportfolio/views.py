@@ -50,6 +50,7 @@ def demographicForm(request):
 
         studentNumberFormat = r'^TUPM-\d{2}-\d{4}$'
 
+        
         match_result = re.match(studentNumberFormat, studentNumber)
 
         if not match_result:
@@ -65,9 +66,27 @@ def demographicForm(request):
                 'guardianNumber': guardianNumber,
                 'course': course,
                 'guardianName': guardianName,
-                'error': 'Wrong Format'
+                'error': 'Invalid TUPM Email'
 
             })
+    
+        if (Studentprofile.objects.filter(studentNumber=studentNumber).count() > 0):
+            return render(request, "studentForm.html", {
+                    'courses': Course.objects.all(),
+                    'yearLevels': YearLevel.objects.all(),
+                    'gender': Gender.objects.all(),
+                    'studentNumber': studentNumber,
+                    'first': first,
+                    'last': last,
+                    'phoneNumber': phoneNumber,
+                    'email': email,
+                    'guardianNumber': guardianNumber,
+                    'course': course,
+                    'guardianName': guardianName,
+                    'error': 'Already Added TUP Number'
+
+            })
+
 
         courseInstance = Course.objects.get(pk=course)
         yearInstance = YearLevel.objects.get(pk=yearlevel)
@@ -221,8 +240,8 @@ def studentProfile(request, studentID):
             # Get the student profile instance
             # Check if there is an existing subject in StudentSubject with the same subjectCode and subjectName but different facultyName
             existing_subject = StudentSubject.objects.filter(
-                Q(subjectID__subjectCode=subjectCode) &
-                Q(subjectID__subjectName=subjectName) &
+                (Q(subjectID__subjectCode=subjectCode) |
+                 Q(subjectID__subjectName=subjectName)) &
                 ~Q(subjectID__facultyName__username=facultyName) &
                 Q(studentProfileID=studentprof)
             ).first()
@@ -339,8 +358,8 @@ def studentProfile(request, studentID):
 
 # below are for ajax ----------------------------
 
-def getUserSubject(request):
-    user = Studentprofile.objects.get(emailAddress=request.user.email)
+def getUserSubject(request, studentNumber):
+    user = Studentprofile.objects.get(studentNumber=studentNumber)
     studentSubjects = StudentSubject.objects.filter(
         studentProfileID=user, ishide=False)
     subjectIDs = [
@@ -356,8 +375,8 @@ def getUserRubrick(request, subjectid):
 
 
 @csrf_exempt
-def getUserTask(request):
-    user = Studentprofile.objects.get(emailAddress=request.user.email)
+def getUserTask(request,studentNumber):
+    user = Studentprofile.objects.get(studentNumber=studentNumber)
     studentTasks = Task.objects.filter(
         studentProfileID=user)
     task_data = [task.serialize() for task in studentTasks]
@@ -365,8 +384,8 @@ def getUserTask(request):
 
 
 @csrf_exempt
-def getAllSubject(request):
-    user = Studentprofile.objects.get(emailAddress=request.user.email)
+def getAllSubject(request,studentNumber):
+    user = Studentprofile.objects.get(studentNumber=studentNumber)
     availableSubs = Subject.objects.all()
     return JsonResponse([subject.serialize(user) for subject in availableSubs], safe=False)
 

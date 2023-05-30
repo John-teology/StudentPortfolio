@@ -12,8 +12,8 @@ urlpatterns = [
     path("studentprofile/<str:studentID>",
          views.studentProfile, name="studentProfile"),
 
-#     path("studentprofile/<str:studentID>/<str:subjectCode>",
-#          views.studentSubject, name="studentSubject"),
+    #     path("studentprofile/<str:studentID>/<str:subjectCode>",
+    #          views.studentSubject, name="studentSubject"),
 
 
 
@@ -21,11 +21,13 @@ urlpatterns = [
 
 
     # ajax
-    path("getsubjects/", views.getUserSubject, name="getUserSubject"),
-    path("gettask/", views.getUserTask, name="getUserTask"),
-    path("getallsubs/", views.getAllSubject, name="getAllSubs"),
+    path("getsubjects/<str:studentNumber>",
+         views.getUserSubject, name="getUserSubject"),
+    path("gettask/<str:studentNumber>", views.getUserTask, name="getUserTask"),
+    path("getallsubs/<str:studentNumber>", views.getAllSubject, name="getAllSubs"),
     path("getallprofsubs/", views.getAllProfSubject, name="getAllProfSubs"),
-    path("getrubrick/<int:subjectid>",views.getUserRubrick, name="getUserRubrick"),
+    path("getrubrick/<int:subjectid>",
+         views.getUserRubrick, name="getUserRubrick"),
 
 
 

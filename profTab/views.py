@@ -130,6 +130,19 @@ def getMySubjects(request, subId):
     return JsonResponse([rub.serialize(isprof=1) for rub in rubricks], safe=False)
 
 
-def prof_auth(request):
+def getAllMyStudents(request,profid):
+    # Retrieve the faculty object based on the faculty_id
+    faculty = User.objects.get(id=profid)
 
-    return render(request, 'professor/login_prof.html')
+    # Get all the student subjects associated with the faculty
+    student_subjects = StudentSubject.objects.filter(
+        subjectID__facultyName=faculty)
+
+    serialized_data = []
+    for rub in student_subjects:
+        serialized_obj = rub.serialize()
+        print(serialized_obj)
+        if serialized_obj not in serialized_data:
+            serialized_data.append(serialized_obj)
+            
+    return JsonResponse(serialized_data, safe=False)

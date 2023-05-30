@@ -75,336 +75,330 @@
     <script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.print.min.js"></script>
 
     <!-- end of link for datatables -->
-          <!-- STYLES -->
-          <style>/*Demographic profile*/
-            @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@700&family=Poppins:wght@400;500;600&display=swap');
-            *{
-              margin: 0;
-              padding: 0;
-              box-sizing: border-box;
-              font-family: "Poppins", sans-serif ;
-            }
-            body {
-            background-color:rgba(243, 243, 243, 0.3)   
-            }
-            
-              #tasksTable th,
-              #subjectTable th {
-                background-color: #7e3d3d; /* Set the background color */
-                color: white; /* Set the text color */
-              }
-              #wrapper {
-                padding-left: 0;
-                -webkit-transition: all 0.5s ease;
-                -moz-transition: all 0.5s ease;
-                -o-transition: all 0.5s ease;
-                transition: all 0.5s ease;
-              }
-            
-              #wrapper.toggled {
-                padding-left: 250px;
-              }
-            
-              #sidebar-wrapper {
-                z-index: 1000;
-                position: fixed;
-                left: 250px;
-                width: 0;
-                height: 100%;
-                margin-left: -250px;
-                overflow-y: auto;
-                background: #fff;
-                -webkit-transition: all 0.5s ease;
-                -moz-transition: all 0.5s ease;
-                -o-transition: all 0.5s ease;
-                transition: all 0.5s ease;
-              }
-            
-              #sidebar-wrapper {
-                box-shadow: inset -1px 0px 0px 0px #dddddd;
-              }
-            
-              #wrapper.toggled #sidebar-wrapper {
-                width: 250px;
-              }
-            
-              #page-content-wrapper {
-                width: 100%;
-                position: relative;
-                
-              }
-            .main-content-container{
-                padding: 5vh !important;
-              }
-              #wrapper.toggled #page-content-wrapper {
-                position: absolute;
-                margin-right: -250px;
-              }
-              /* Sidebar Styles */
-            
-              .sidebar-nav {
-                position: absolute;
-                top: 0;
-                width: 250px;
-                margin: 0;
-                padding: 0;
-                list-style: none;
-              }
-            
-              .sidebar-nav li {
-                text-indent: 20px;
-                line-height: 40px;
-              }
-            
-              .sidebar-nav li a {
-                display: block;
-                text-decoration: none;
-                color: #999999;
-              }
-            
-              .sidebar-nav li a:hover {
-                text-decoration: none;
-              }
-              /*.sidebar-hoverable li a:hover{
+    <!-- STYLES -->
+    <style>
+      /*Demographic profile*/
+      @import url("https://fonts.googleapis.com/css2?family=Noto+Sans:wght@700&family=Poppins:wght@400;500;600&display=swap");
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+      body {
+        background-color: rgba(243, 243, 243, 0.3);
+      }
+
+      #tasksTable th,
+      #subjectTable th {
+        background-color: #7e3d3d; /* Set the background color */
+        color: white; /* Set the text color */
+      }
+      #wrapper {
+        padding-left: 0;
+        -webkit-transition: all 0.5s ease;
+        -moz-transition: all 0.5s ease;
+        -o-transition: all 0.5s ease;
+        transition: all 0.5s ease;
+      }
+
+      #wrapper.toggled {
+        padding-left: 250px;
+      }
+
+      #sidebar-wrapper {
+        z-index: 1000;
+        position: fixed;
+        left: 250px;
+        width: 0;
+        height: 100%;
+        margin-left: -250px;
+        overflow-y: auto;
+        background: #fff;
+        -webkit-transition: all 0.5s ease;
+        -moz-transition: all 0.5s ease;
+        -o-transition: all 0.5s ease;
+        transition: all 0.5s ease;
+      }
+
+      #sidebar-wrapper {
+        box-shadow: inset -1px 0px 0px 0px #dddddd;
+      }
+
+      #wrapper.toggled #sidebar-wrapper {
+        width: 250px;
+      }
+
+      #page-content-wrapper {
+        width: 100%;
+        position: relative;
+      }
+      .main-content-container {
+        padding: 5vh !important;
+      }
+      #wrapper.toggled #page-content-wrapper {
+        position: absolute;
+        margin-right: -250px;
+      }
+      /* Sidebar Styles */
+
+      .sidebar-nav {
+        position: absolute;
+        top: 0;
+        width: 250px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .sidebar-nav li {
+        text-indent: 20px;
+        line-height: 40px;
+      }
+
+      .sidebar-nav li a {
+        display: block;
+        text-decoration: none;
+        color: #999999;
+      }
+
+      .sidebar-nav li a:hover {
+        text-decoration: none;
+      }
+      /*.sidebar-hoverable li a:hover{
                 background-color: #999999;
                 color:white !important;
                 border-left: 5px solid lightcoral;
               }
               */
-              
-            
-              .sidebar-brand li a:active,
-              .sidebar-brand li a:focus {
-                text-decoration: none;
-              }
-             
-              .sidebar-nav > .sidebar-brand {
-                height: 65px;
-                font-size: 18px;
-                line-height: 60px;
-              }
-            
-              .sidebar-nav > .sidebar-brand a {
-                color: #999999;
-              }
-            
-              @media (min-width: 768px) {
-                #wrapper {
-                  padding-left: 250px;
-                }
-            
-                #wrapper.toggled {
-                  padding-left: 0;
-                }
-            
-                #sidebar-wrapper {
-                  width: 250px;
-                }
-            
-                #wrapper.toggled #sidebar-wrapper {
-                  width: 0;
-                }
-                #wrapper.toggled #page-content-wrapper {
-                  position: relative;
-                  margin-right: 0;
-                }
-              }
-            
-            .arrow {
-                border-right: 17px solid #333333 !important;
-                border-top: 17px solid transparent !important;
-                border-bottom: 17px solid transparent !important;
-                content: "" !important;
-                display: inline-block !important;
-                position: absolute !important;
-                right: -1px !important;
-              }
-            .active{
-              background-color: #727272 !important;
-              color:white !important;
-              border-left: 5px solid #800000 !important;
-            }
-              .sidebar-brand {
-                border-bottom: 1px solid rgba(102, 97, 91, 0.3);
-              }
-            
-              .sidebar-brand {
-                padding: 18px 0px;
-                margin: 0 20px;
-              }
-            
-              .navbar .navbar-nav > li > a p {
-                display: inline-block;
-                margin: 0;
-              }
-              p {
-                font-size: 15px;
-                line-height: 1.4em;
-              }
-            
-              .navbar-default {
-                background-color: #6e6e6e;
-                border: 0px;
-                border-bottom: 1px solid #dddddd;
-              }
-            
-              btn-menu {
-                border-radius: 3px;
-                padding: 4px 12px;
-                margin: 14px 5px 5px 20px;
-                font-size: 14px;
-                float: left;
-              }
-            
-            .cardwrapper{
-                background: rgba(255, 255, 255, .2);
-                border-radius: 16px;
-                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
-                backdrop-filter: blur(7.5px);
-                -webkit-backdrop-filter: blur(7.5px);
-                border: 1px solid rgba(255, 255, 255, 1);
-                text-align: justify;
-                margin-top: 2vh !important;
-                margin-bottom: 1vh !important;
-                margin: 2vh !important;
-                } 
-             .title-text{
-                margin: 3vh;
-                font-weight: 700;
-                line-height: 1.5;
-             }   
-             .description-profile{
-                text-indent: 3vh;
-             }
-             .sub-heading{
-                font-weight: 600;
-             }
-             .pop{
-              font-weight: 300;
-             }
-             .dataTables_wrapper{
-              overflow: auto;
-              margin: 1vh !important;
-             }
-             .title-nav{
-              
-              font-style: oblique;
-              font-weight: 700;
-             }
-             .sidebar-nav > .sidebar-brand a{
-              color: #800000 !important;
-             }
-             .title-nav a {
-              top: 0;
-              position: absolute;
-              margin: 2vh 5vh;
-             
-            }
-            
-            @media(min-width:320px) and (max-width:768px) {
-              .title-nav a {
-                top: 0;
-                position: absolute;
-                margin: 2vh 5vh;
-               
-              }
-            }
-            @media(min-width:768px) and (max-width:991px) {
-              .title-nav a {
-                top: 0;
-                position: absolute;
-                margin: 1vh 3vh;
-              }
-            }
-             
-             .title-nav img{
-                height: auto;
-                max-width: 100%;
-                width: 10%;
-                margin: 1%;
-                margin-bottom: 10%;
-             }
-             #nav-header{
-                padding: 0 !important;
-             }
-             .btn{
-              margin: 1px;
-             }
-             .submit-button{
-              display: flex;
-              float: right;
-              margin-bottom: 20px
-             }
-             .nav-wrapper{
-              text-decoration: none;
-             }
-             .icon-text {
-              display: flex;
-              align-items: center;
-              flex-direction: row;
-              width: 100%;
-            }
-            .icon-text:hover{
-              background-color: #7e3d3d;
-              color:white !important;
-              border-left: 5px solid #8A9A5B;
-              cursor: pointer;
-            }
-            .icon-text a{
-              width:100%;
-            }
-            .btn-success{
-                color: #fff;
-                background-color: #28a745;
-            }
-            .btn-success:hover{
-              color: #fff;
-              background-color:#800000 !important ;
-            }
-            .fa{
-              color:white !important;
-            }
-            .fa-plus-square{
-              color: #17a2b8 !important;
-            }
-            .fa-edit{
-              color:#6c757d !important ;
-            }
-        
-            .btn-toggs{
-             background-color: none;
-             border-color: none;
-            }
-            .btn-toggs:hover{
-              color: #fff;
-              background-color:#800000 !important ;
-             }
-             .bar-data{
-              padding: 4vh;
-              padding-top: 1vh;
-             }
-               /*----------------------------------------- responsives -------------------------------------------------- */
-                /* phone landscape */
-                @media (min-width: 576px) {
-                }
-                /* laptop */
-                @media (min-width: 992px) {
-                }
-                /* large screen */
-                
-                @media (min-width: 1200px) {
-             
-                }
-                
-          </style>
-          <!-- STYLES END -->
+
+      .sidebar-brand li a:active,
+      .sidebar-brand li a:focus {
+        text-decoration: none;
+      }
+
+      .sidebar-nav > .sidebar-brand {
+        height: 65px;
+        font-size: 18px;
+        line-height: 60px;
+      }
+
+      .sidebar-nav > .sidebar-brand a {
+        color: #999999;
+      }
+
+      @media (min-width: 768px) {
+        #wrapper {
+          padding-left: 250px;
+        }
+
+        #wrapper.toggled {
+          padding-left: 0;
+        }
+
+        #sidebar-wrapper {
+          width: 250px;
+        }
+
+        #wrapper.toggled #sidebar-wrapper {
+          width: 0;
+        }
+        #wrapper.toggled #page-content-wrapper {
+          position: relative;
+          margin-right: 0;
+        }
+      }
+
+      .arrow {
+        border-right: 17px solid #333333 !important;
+        border-top: 17px solid transparent !important;
+        border-bottom: 17px solid transparent !important;
+        content: "" !important;
+        display: inline-block !important;
+        position: absolute !important;
+        right: -1px !important;
+      }
+      .active {
+        background-color: #727272 !important;
+        color: white !important;
+        border-left: 5px solid #800000 !important;
+      }
+      .sidebar-brand {
+        border-bottom: 1px solid rgba(102, 97, 91, 0.3);
+      }
+
+      .sidebar-brand {
+        padding: 18px 0px;
+        margin: 0 20px;
+      }
+
+      .navbar .navbar-nav > li > a p {
+        display: inline-block;
+        margin: 0;
+      }
+      p {
+        font-size: 15px;
+        line-height: 1.4em;
+      }
+
+      .navbar-default {
+        background-color: #6e6e6e;
+        border: 0px;
+        border-bottom: 1px solid #dddddd;
+      }
+
+      btn-menu {
+        border-radius: 3px;
+        padding: 4px 12px;
+        margin: 14px 5px 5px 20px;
+        font-size: 14px;
+        float: left;
+      }
+
+      .cardwrapper {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 16px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(7.5px);
+        -webkit-backdrop-filter: blur(7.5px);
+        border: 1px solid rgba(255, 255, 255, 1);
+        text-align: justify;
+        margin-top: 2vh !important;
+        margin-bottom: 1vh !important;
+        margin: 2vh !important;
+      }
+      .title-text {
+        margin: 3vh;
+        font-weight: 700;
+        line-height: 1.5;
+      }
+      .description-profile {
+        text-indent: 3vh;
+      }
+      .sub-heading {
+        font-weight: 600;
+      }
+      .pop {
+        font-weight: 300;
+      }
+      .dataTables_wrapper {
+        overflow: auto;
+        margin: 1vh !important;
+      }
+      .title-nav {
+        font-style: oblique;
+        font-weight: 700;
+      }
+      .sidebar-nav > .sidebar-brand a {
+        color: #800000 !important;
+      }
+      .title-nav a {
+        top: 0;
+        position: absolute;
+        margin: 2vh 5vh;
+      }
+
+      @media (min-width: 320px) and (max-width: 768px) {
+        .title-nav a {
+          top: 0;
+          position: absolute;
+          margin: 2vh 5vh;
+        }
+      }
+      @media (min-width: 768px) and (max-width: 991px) {
+        .title-nav a {
+          top: 0;
+          position: absolute;
+          margin: 1vh 3vh;
+        }
+      }
+
+      .title-nav img {
+        height: auto;
+        max-width: 100%;
+        width: 10%;
+        margin: 1%;
+        margin-bottom: 10%;
+      }
+      #nav-header {
+        padding: 0 !important;
+      }
+      .btn {
+        margin: 1px;
+      }
+      .submit-button {
+        display: flex;
+        float: right;
+        margin-bottom: 20px;
+      }
+      .nav-wrapper {
+        text-decoration: none;
+      }
+      .icon-text {
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        width: 100%;
+      }
+      .icon-text:hover {
+        background-color: #7e3d3d;
+        color: white !important;
+        border-left: 5px solid #8a9a5b;
+        cursor: pointer;
+      }
+      .icon-text a {
+        width: 100%;
+      }
+      .btn-success {
+        color: #fff;
+        background-color: #28a745;
+      }
+      .btn-success:hover {
+        color: #fff;
+        background-color: #800000 !important ;
+      }
+      .fa {
+        color: white !important;
+      }
+      .fa-plus-square {
+        color: #17a2b8 !important;
+      }
+      .fa-edit {
+        color: #6c757d !important ;
+      }
+
+      .btn-toggs {
+        background-color: none;
+        border-color: none;
+      }
+      .btn-toggs:hover {
+        color: #fff;
+        background-color: #800000 !important ;
+      }
+      .bar-data {
+        padding: 4vh;
+        padding-top: 1vh;
+      }
+      /*----------------------------------------- responsives -------------------------------------------------- */
+      /* phone landscape */
+      @media (min-width: 576px) {
+      }
+      /* laptop */
+      @media (min-width: 992px) {
+      }
+      /* large screen */
+
+      @media (min-width: 1200px) {
+      }
+    </style>
+    <!-- STYLES END -->
   </head>
   <body>
     <div id="wrapper" class="wrapper-content">
       <div id="sidebar-wrapper">
         <ul class="sidebar-nav">
           <li class="sidebar-brand title-nav">
-            <img src="../media/images/logo-portfolio.png" alt="ep-logo"> 
+            <img src="../media/images/logo-portfolio.png" alt="ep-logo" />
             <a href="#">EPortfolio</a>
           </li>
           <div class="sidebar-hoverable">
@@ -414,15 +408,34 @@
             <!-- <li id="activeStat">
             <a id="statisticPage">Analytics</a>
           </li> -->
+            {% if request.user.first_name == studentprof.firstName %}
             <li id="activeEdit">
               <a id="editProfile">Edit Profile</a>
             </li>
+            {% endif %}
             <li id="activeSubject">
               <a id="Subjects">Activities</a>
             </li>
-            <!-- <li id="activeSignOut">
-            <a id="Signout">Sign Out</a>
-          </li> -->
+            {% if request.user.first_name == studentprof.firstName %}
+
+            <li id="activeSignOut">
+              <form method="post" action="/accounts/logout/">
+                {% csrf_token %}
+                <button
+                  style="
+                    background: none;
+                    border: none;
+                    padding: 0;
+                    font: inherit;
+                    cursor: pointer;
+                    outline: inherit;
+                  "
+                >
+                  Sign Out
+                </button>
+              </form>
+            </li>
+            {% endif %}
           </div>
         </ul>
       </div>
@@ -438,23 +451,12 @@
               </button>
             </div>
             <div class="collapse navbar-collapse">
-              <ul class="nav navbar-nav navbar-right">
-                <li>
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    <i class="ti-panel"></i>
-                    <p>Stats</p>
-                  </a>
-                </li>
-                <li>
-                  <a href="#">
-                    <i class="ti-settings"></i>
-                    <p>Settings</p>
-                  </a>
-                </li>
-              </ul>
+              <!-- Navbar content here -->
+              {% include "modals/delete_modal.html" %}
             </div>
           </div>
         </nav>
+
         {% include "modals/editTask.html" %}
         <div class="container-fluid" id="subjectPage">
           {% include "modals/addTask.html" %}
@@ -471,7 +473,9 @@
                     <th>Type</th>
                     <th>Subject</th>
                     <th>Attachments</th>
+                    {% if request.user.first_name == studentprof.firstName %}
                     <th id="editButton">Actions</th>
+                    {% endif %}
                   </tr>
                 </thead>
               </table>
@@ -482,31 +486,32 @@
               <!-- <h1 class="title-text">Analytics</h1> -->
               {% for sub in subjects %}
               <div class="panel">
-                <div class="panel-body bio-graph-info">
-                  <div class="col"></div>
-                  <h1 id="{{sub.subjectCode}}:{{sub.subjectName}}">
-                    {{sub.subjectCode}}:{{sub.subjectName}}
-                  </h1>
-                  <div id="{{sub.subjectCode}}"></div>
-                  <br />
-                  <br />
-                  <center>
-                    <canvas
-                      id="{{sub.subjectName}}"
-                      style="width: 100%; max-width: 700px; margin-left: 1%"
-                    ></canvas>
-                  </center>
+                <div class="panel-body bio-graph-info row">
+                  <div class="col-md-6">
+                    <h1 id="{{sub.subjectCode}}:{{sub.subjectName}}">
+                      {{sub.subjectCode}}:{{sub.subjectName}}
+                    </h1>
+                    <div id="{{sub.subjectCode}}"></div>
+                  </div>
+                  <div class="col-md-6">
+                    <center>
+                      <canvas
+                        id="{{sub.subjectName}}"
+                        style="width: 100%; max-width: 700px; margin-left: 1%"
+                      ></canvas>
+                    </center>
+                  </div>
                 </div>
               </div>
               <br />
               <br />
+              
               {% endfor %}
             </div>
           </div>
         </div>
 
         <div class="container-fluid" id="profilePage">
-          
           <div class="row cardwrapper">
             <div class="col-lg-12">
               <h1 class="title-text">My Profile</h1>
@@ -554,10 +559,15 @@
               </div>
             </div>
           </div>
-          <div class = "cardwrapper">
-          <canvas id="dataBars" class ="bar-data" style="width:100%; margin-top: 3%;">></canvas>
+          <div class="cardwrapper">
+            <canvas
+              id="dataBars"
+              class="bar-data"
+              style="width: 100%; margin-top: 3%"
+            ></canvas>
+          </div>
         </div>
-      </div>
+
         <div class="container-fluid cardwrapper" id="editPage">
           <div class="bio-row">
             <table class="display" style="width: 100%" id="subjectTable">
@@ -606,6 +616,9 @@
                 <div class="bio-row">
                   <label for="courseID">Course:</label>
                   <select class="form-control" id="courseID" name="courseID">
+                    <option value="{{studentprof.courseID}}" selected disabled>
+                      {{studentprof.courseID}}
+                    </option>
                     {% for course in courseList %}
                     <option value="{{course.course}}">{{course.course}}</option>
                     {% endfor %}
@@ -615,6 +628,10 @@
                 <div class="bio-row">
                   <label for="yearID">Year Level:</label>
                   <select class="form-control" id="yearID" name="yearID">
+                    <option value="{{studentprof.yearID}}" selected disabled>
+                      {{studentprof.yearID}}
+                    </option>
+
                     {% for year in yearList %}
                     <option value="{{year.yearLevel}}">
                       {{year.yearLevel}}
@@ -634,57 +651,28 @@
                   />
                 </div>
 
-                  <div class="bio-row" style="margin: 20px 20px">
-                    <div style="display: flex; float: right; margin-bottom: 20px">
-                      <div style="margin-right: 10px">
-                        <button
-                          type="submit"
-                          id="saveProfile"
-                          class="btn btn-primary btn-hovergreen"
-                        >
-                          Save
-                        </button>
-                      </div>
-                      <div>
-                </form>
-                          <form method="post" action="/accounts/logout/">
-                            {% csrf_token %}
-                            <button
-                              class="btn btn-dark btn-hoverred"
-                              type="submit"
-                            >
-                              Sign Out
-                            </button>
-                          </form>
-                      </div>
+                <div class="bio-row" style="margin: 20px 20px">
+                  <div style="display: flex; float: right; margin-bottom: 20px">
+                    <div style="margin-right: 10px">
+                      <button
+                        type="submit"
+                        id="saveProfile"
+                        class="btn btn-primary btn-hovergreen"
+                      >
+                        Save
+                      </button>
                     </div>
                   </div>
+                </div>
+              </form>
             </div>
           </div>
         </div>
-
-        <!-- <div class="container-fluid" id="statPage">
-          <div class="row">
-            <div class="col-lg-12" id="listOfMySubjects">
-              <h1 class="title-text">My Subjects</h1>
-              {% for sub in subjects %}
-              <div class="panel">
-                <div class="panel-body bio-graph-info">
-                  <h1>{{sub.subjectCode}}:{{sub.subjectName}}</h1>
-                  <div id="{{sub.subjectName}}"></div>
-                  <canvas
-                    id="{{sub.subjectCode}}"
-                    style="width: 100%; max-width: 700px"
-                  ></canvas>
-                </div>
-              </div>
-              <br />
-              {% endfor %}
-            </div>
-          </div>
-        </div> -->
       </div>
     </div>
+
+    {{request.user.first_name|json_script:"loginUser"}}
+    {{studentprof.firstName|json_script:"profile"}}
     {{test|json_script:"dataObject"}} {{dounut|json_script:"dounutObject"}}
 
     <script type="text/javascript">
@@ -695,70 +683,143 @@
       });
 
       //  tasks datatables config -----------------------------------------------
+      const loginU = JSON.parse($("#loginUser").text());
+      const profile = JSON.parse($("#profile").text());
 
       $(document).ready(() => {
-        var tasksTable = $("#tasksTable").DataTable({
-          dom: "Bfrtip",
-          columns: [
-            { data: "title" },
-            { data: "score" },
-            { data: "overallscore" },
-            { data: "date" },
-            { data: "taskType" },
-            {
-              data: "subject",
-              render: function (data, type, row, meta) {
-                if (type === "display") {
-                  return (
-                    '<a href="#' + data.replace(" ", "") + '">' + data + "</a>"
-                  );
-                }
-                return data;
+        if (loginU != profile) {
+          var tasksTableNew = $("#tasksTable").DataTable({
+            dom: "Bfrtip",
+            columns: [
+              { data: "title" },
+              { data: "score" },
+              { data: "overallscore" },
+              { data: "date" },
+              { data: "taskType" },
+              {
+                data: "subject",
+                render: function (data, type, row, meta) {
+                  if (type === "display") {
+                    return (
+                      '<a href="#' +
+                      data.replace(" ", "") +
+                      '">' +
+                      data +
+                      "</a>"
+                    );
+                  }
+                  return data;
+                },
               },
-            },
-            {
-              data: "image",
-              render: function (data, type, row, meta) {
-                if (type === "display") {
-                  return (
-                    '<a href="' +
-                    data +
-                    '" download>' +
-                    String(data).slice(14) +
-                    "</a>"
-                  );
-                }
-                return data;
+              {
+                data: "image",
+                render: function (data, type, row, meta) {
+                  if (type === "display") {
+                    return (
+                      '<a href="' +
+                      data +
+                      '" download>' +
+                      String(data).slice(14) +
+                      "</a>"
+                    );
+                  }
+                  return data;
+                },
               },
+            ],
+            ajax: {
+              url: "{% url 'getUserTask' studentprof.studentNumber %}",
+              type: "POST",
+              dataSrc: "",
             },
-            { data: "action" },
-          ],
-          ajax: {
-            url: "{% url 'getUserTask' %}",
-            type: "POST",
-            dataSrc: "",
-          },
-          buttons: [
-            {
-              extend: "excel",
-              text: "Export to Excel",
-              className: "btn btn-outline-success",
-              exportOptions: {
-                columns: [0, 1, 2, 3, 4, 5], // Include all columns in the export
+            buttons: [
+              {
+                extend: "excel",
+                text: "Export to Excel",
+                className: "btn btn-outline-success",
+                exportOptions: {
+                  columns: [0, 1, 2, 3, 4, 5], // Include all columns in the export
+                },
               },
-            },
-            {
-              extend: "pdf",
-              text: "Export to PDF",
-              className: "btn btn-outline-danger",
-              exportOptions: {
-                columns: [0, 1, 2, 3, 4, 5], // Include all columns in the export
+              {
+                extend: "pdf",
+                text: "Export to PDF",
+                className: "btn btn-outline-danger",
+                exportOptions: {
+                  columns: [0, 1, 2, 3, 4, 5], // Include all columns in the export
+                },
               },
+            ],
+          });
+        } else {
+          var tasksTable = $("#tasksTable").DataTable({
+            dom: "Bfrtip",
+            columns: [
+              { data: "title" },
+              { data: "score" },
+              { data: "overallscore" },
+              { data: "date" },
+              { data: "taskType" },
+              {
+                data: "subject",
+                render: function (data, type, row, meta) {
+                  if (type === "display") {
+                    return (
+                      '<a href="#' +
+                      data.replace(" ", "") +
+                      '">' +
+                      data +
+                      "</a>"
+                    );
+                  }
+                  return data;
+                },
+              },
+              {
+                data: "image",
+                render: function (data, type, row, meta) {
+                  if (type === "display") {
+                    return (
+                      '<a href="' +
+                      data +
+                      '" download>' +
+                      String(data).slice(14) +
+                      "</a>"
+                    );
+                  }
+                  return data;
+                },
+              },
+              { data: "action" },
+            ],
+            ajax: {
+              url: "{% url 'getUserTask' studentprof.studentNumber %}",
+              type: "POST",
+              dataSrc: "",
             },
-          ],
-          initComplete: function () {
-            $(".dt-buttons").append(
-              `<button
+            buttons: [
+              {
+                extend: "excel",
+                text: "Export to Excel",
+                className: "btn btn-outline-success",
+                exportOptions: {
+                  columns: [0, 1, 2, 3, 4, 5], // Include all columns in the export
+                },
+              },
+              {
+                extend: "pdf",
+                text: "Export to PDF",
+                className: "btn btn-outline-danger",
+                exportOptions: {
+                  columns: [0, 1, 2, 3, 4, 5], // Include all columns in the export
+                },
+              },
+            ],
+
+            initComplete: function () {
+              if (loginU == profile) {
+                $(".dt-buttons").append(
+                  `<button
                 type="button"
                 id = "addUserTaskButton"
                 class="btn btn-outline-info"
@@ -767,18 +828,20 @@
               >
               <i class="fa fa-plus-square"></i> Add Item 
               </button>`
-            );
-            $(".dt-buttons").append(`
+                );
+                $(".dt-buttons").append(`
                <button type="button" class = "btn btn-outline-secondary " id="editTogglere" > <i class="fa fa-edit"></i>Edit Item </button>`);
 
-            let num = false;
-            tasksTable.column(-1).visible(num);
-            $("#editTogglere").click(() => {
-              num = !num;
-              tasksTable.column(-1).visible(num);
-            });
-          },
-        });
+                let num = false;
+                tasksTable.column(-1).visible(num);
+                $("#editTogglere").click(() => {
+                  num = !num;
+                  tasksTable.column(-1).visible(num);
+                });
+              }
+            },
+          });
+        }
       });
 
       // end task  datatables config -----------------------------------------------
@@ -831,6 +894,7 @@
           success: function (response) {
             var dataTable = $("#tasksTable").DataTable();
             dataTable.ajax.reload(null, false);
+            $(".modaldelete").click();
             createBarGraph(response.data);
             barGraphProfile(response.dounut);
             for (var key in response.dounut) {
@@ -976,7 +1040,6 @@
 
       barGraphProfile(dounuts);
 
-
       // bar for all chart -----------------------------
 
       // edit profile -------------------------
@@ -1014,7 +1077,7 @@
           { data: "action" },
         ],
         ajax: {
-          url: "{% url 'getAllSubs' %}",
+          url: "{% url 'getAllSubs' studentprof.studentNumber %}",
           type: "POST",
           dataSrc: "",
         },
@@ -1031,57 +1094,59 @@
             data: { addSub: $(e.target).val() },
             method: "POST",
             success: (response) => {
-              if(response.isAlreadyAdded){
-                  alert('This Subject is Already Added');
-              }
-              else{
+              if (response.isAlreadyAdded) {
+                alert("This Subject is Already Added");
+              } else {
                 var dataTable = $("#subjectTable").DataTable();
-              dataTable.ajax.reload(null, false);
-              alert("added Subject!s");
-              $('#listOfMySubjects').load(location.href + ' #listOfMySubjects', function() {
-                  createBarGraph(response.data);
-                  for (var key in response.dounut) {
-                    createChart(response.dounut[key], key);
+                dataTable.ajax.reload(null, false);
+                alert("added New Subject!");
+                $("#listOfMySubjects").load(
+                  location.href + " #listOfMySubjects",
+                  function () {
+                    createBarGraph(response.data);
+                    for (var key in response.dounut) {
+                      createChart(response.dounut[key], key);
+                    }
                   }
+                );
+                barGraphProfile(response.dounut);
+                $("#taskSubjectEdit")
+                  .find("option")
+                  .remove()
+                  .end()
+                  .append('<option value="" disabled selected>Select</option>');
+                $.ajax({
+                  url: "{% url 'getUserSubject' studentprof.studentNumber %}",
+                  method: "GET",
+                  success: (data) => {
+                    for (var i = 0; i <= data.length - 1; i++) {
+                      var user_position = new Option(
+                        data[i].subjectName,
+                        data[i].id
+                      );
+                      $("#taskSubjectEdit").append(user_position);
+                    }
+                  },
                 });
-              barGraphProfile(response.dounut);
-              $("#taskSubjectEdit")
-                .find("option")
-                .remove()
-                .end()
-                .append('<option value="" disabled selected>Select</option>');
-              $.ajax({
-                url: "{% url 'getUserSubject' %}",
-                method: "GET",
-                success: (data) => {
-                  for (var i = 0; i <= data.length - 1; i++) {
-                    var user_position = new Option(
-                      data[i].subjectName,
-                      data[i].id
-                    );
-                    $("#taskSubjectEdit").append(user_position);
-                  }
-                },
-              });
 
-              $("#taskSubject")
-                .find("option")
-                .remove()
-                .end()
-                .append('<option value="" disabled selected>Select</option>');
-              $.ajax({
-                url: "{% url 'getUserSubject' %}",
-                method: "GET",
-                success: (data) => {
-                  for (var i = 0; i <= data.length - 1; i++) {
-                    var user_position = new Option(
-                      data[i].subjectName,
-                      data[i].id
-                    );
-                    $("#taskSubject").append(user_position);
-                  }
-                },
-              });
+                $("#taskSubject")
+                  .find("option")
+                  .remove()
+                  .end()
+                  .append('<option value="" disabled selected>Select</option>');
+                $.ajax({
+                  url: "{% url 'getUserSubject' studentprof.studentNumber %}",
+                  method: "GET",
+                  success: (data) => {
+                    for (var i = 0; i <= data.length - 1; i++) {
+                      var user_position = new Option(
+                        data[i].subjectName,
+                        data[i].id
+                      );
+                      $("#taskSubject").append(user_position);
+                    }
+                  },
+                });
               }
             },
           });
@@ -1091,66 +1156,66 @@
       // add new subject ------------------
 
       // delete my subject ----------------------------
-        $(document).on('click','.deleteMySubject', function (e) {
-          $.ajax({
-            url: "{% url 'studentProfile' studentprof.studentNumber %}",
-            data: {deleteSubId: $(e.currentTarget).val()},
-            method: "POST",
-            success: function (response) {
-              console.log(response)
-              var dataTable = $("#subjectTable").DataTable();
-              dataTable.ajax.reload(null, false);
-              barGraphProfile(response.dounut);
-              $('#listOfMySubjects').load(location.href + ' #listOfMySubjects', function() {
-                  createBarGraph(response.data);
-                  for (var key in response.dounut) {
-                    createChart(response.dounut[key], key);
-                  }
-                });
+      $(document).on("click", ".deleteMySubject", function (e) {
+        $.ajax({
+          url: "{% url 'studentProfile' studentprof.studentNumber %}",
+          data: { deleteSubId: $(e.currentTarget).val() },
+          method: "POST",
+          success: function (response) {
+            console.log(response);
+            var dataTable = $("#subjectTable").DataTable();
+            dataTable.ajax.reload(null, false);
+            barGraphProfile(response.dounut);
+            $("#listOfMySubjects").load(
+              location.href + " #listOfMySubjects",
+              function () {
+                createBarGraph(response.data);
+                for (var key in response.dounut) {
+                  createChart(response.dounut[key], key);
+                }
+              }
+            );
 
-              $("#taskSubjectEdit")
-                .find("option")
-                .remove()
-                .end()
-                .append('<option value="" disabled selected>Select</option>');
-              $.ajax({
-                url: "{% url 'getUserSubject' %}",
-                method: "GET",
-                success: (data) => {
-                  for (var i = 0; i <= data.length - 1; i++) {
-                    var user_position = new Option(
-                      data[i].subjectName,
-                      data[i].id
-                    );
-                    $("#taskSubjectEdit").append(user_position);
-                  }
-                },
-              });
+            $("#taskSubjectEdit")
+              .find("option")
+              .remove()
+              .end()
+              .append('<option value="" disabled selected>Select</option>');
+            $.ajax({
+              url: "{% url 'getUserSubject' studentprof.studentNumber %}",
+              method: "GET",
+              success: (data) => {
+                for (var i = 0; i <= data.length - 1; i++) {
+                  var user_position = new Option(
+                    data[i].subjectName,
+                    data[i].id
+                  );
+                  $("#taskSubjectEdit").append(user_position);
+                }
+              },
+            });
 
-              $("#taskSubject")
-                .find("option")
-                .remove()
-                .end()
-                .append('<option value="" disabled selected>Select</option>');
-              $.ajax({
-                url: "{% url 'getUserSubject' %}",
-                method: "GET",
-                success: (data) => {
-                  for (var i = 0; i <= data.length - 1; i++) {
-                    var user_position = new Option(
-                      data[i].subjectName,
-                      data[i].id
-                    );
-                    $("#taskSubject").append(user_position);
-                  }
-                },
-              });
-            }
-          })
-
-        })
-
-
+            $("#taskSubject")
+              .find("option")
+              .remove()
+              .end()
+              .append('<option value="" disabled selected>Select</option>');
+            $.ajax({
+              url: "{% url 'getUserSubject' studentprof.studentNumber %}",
+              method: "GET",
+              success: (data) => {
+                for (var i = 0; i <= data.length - 1; i++) {
+                  var user_position = new Option(
+                    data[i].subjectName,
+                    data[i].id
+                  );
+                  $("#taskSubject").append(user_position);
+                }
+              },
+            });
+          },
+        });
+      });
 
       // delete my subject ----------------------------
     </script>

@@ -1,12 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db.models.deletion import CASCADE
+from django.urls import reverse
 
 # Create your models here.
 
 
 class User(AbstractUser):
     isProf = models.BooleanField(default=False)
+
     def __str__(self):
         return f"{self.email if self.email else 'Admin'}"
 
@@ -63,23 +65,25 @@ class Studentprofile(models.Model):
 class Subject(models.Model):
     subjectCode = models.CharField(max_length=100)
     subjectName = models.CharField(max_length=100)
-    facultyName = models.ForeignKey(User,on_delete=CASCADE,related_name='profSubject')
+    facultyName = models.ForeignKey(
+        User, on_delete=CASCADE, related_name='profSubject')
     units = models.IntegerField()
 
     def __str__(self):
         return f"{self.subjectCode}: {self.subjectName}"
 
-    def serialize(self, user=False): 
+    def serialize(self, user=False):
         if user:
-            is_subject_added = StudentSubject.objects.filter(studentProfileID=user, subjectID=self).exists()
+            is_subject_added = StudentSubject.objects.filter(
+                studentProfileID=user, subjectID=self).exists()
             action_button = f'<button type="button" class="btn btn-info addSubButton" value="{self.id}"'
-            
+
             if is_subject_added:
                 action_button += ' disabled>Already Added</button>'
                 action_button += f'<button type="button" class="btn btn-danger deleteMySubject" value="{self.id}" name="taskDelete" style="margin-left: 5px;"> <i class="fa fa-trash"></i> </button>'
             else:
                 action_button += '>Add Subject</button>'
-            
+
             return {
                 "id": self.id,
                 "subjectCode": self.subjectCode,
@@ -95,8 +99,9 @@ class Subject(models.Model):
                 "subjectName": self.subjectName,
                 "facultyName": self.facultyName.first_name,
                 "units": self.units,
-                "action": f'<button type="button" class="btn btn-danger deleteMySub" value="{self.id}" name="taskDelete" > <i class="fa fa-trash"></i> </button> <button type="button" class="btn btn-info editSub" data-toggle="modal" data-target="#editSubjetModal" id = {self.pk} subjectcode= "{self.subjectCode}" subjectname = "{self.subjectName}" units= {self.units} > <i class="fa fa-edit"></i> </button>'
+                "action": f'<button type="button" class="btn btn-danger modaldelete" value="{self.id}" name="taskDelete"data-toggle="modal" data-target="#confirmDeleteModal" > <i class="fa fa-trash"></i> </button> <button type="button" class="btn btn-info editSub" data-toggle="modal" data-target="#editSubjetModal" id = {self.pk} subjectcode= "{self.subjectCode}" subjectname = "{self.subjectName}" units= {self.units} > <i class="fa fa-edit"></i> </button>'
             }
+
 
 class Rubrick(models.Model):
     subjectID = models.ForeignKey(
@@ -105,13 +110,13 @@ class Rubrick(models.Model):
         TaskType, on_delete=CASCADE, related_name='takstypeRubicks')
     percentage = models.IntegerField(null=True)
 
-    def serialize(self,isprof=0):
+    def serialize(self, isprof=0):
         if isprof:
-            return{
+            return {
                 "id": self.id,
                 "taskID": self.taskTypeID_id,
                 "taskName": self.taskTypeID.taskType.lower()+"Edit",
-                "percentage":self.percentage
+                "percentage": self.percentage
 
             }
         return {
@@ -119,7 +124,6 @@ class Rubrick(models.Model):
             "taskID": self.taskTypeID_id,
             "taskName": self.taskTypeID.taskType,
         }
-
 
 
 class StudentSubject(models.Model):
@@ -131,8 +135,15 @@ class StudentSubject(models.Model):
 
     def __str__(self):
         return f"{self.studentProfileID.studentNumber}: {self.subjectID.subjectName}"
-    
 
+    def serialize(self):
+        return {
+            "StudentName": self.studentProfileID.firstName,
+            "StudentSurname": self.studentProfileID.lastName,
+            "StudentNumber": f'<a href="{reverse("studentProfile", args=[self.studentProfileID.studentNumber])}"  target="_blank">{self.studentProfileID.studentNumber}</a>',
+            "YearLevel": self.studentProfileID.yearID.yearLevel,
+            "Course": self.studentProfileID.courseID.course,
+        }
 
 
 class Task(models.Model):
@@ -142,7 +153,8 @@ class Task(models.Model):
         TaskType, on_delete=CASCADE, related_name="TypeofTask", null=True)
     taskSubject = models.ForeignKey(
         Subject, on_delete=CASCADE, related_name="subjectTask")
-    subjectStudent = models.ForeignKey(StudentSubject, on_delete=CASCADE,related_name='StudentSubject',null=True)
+    subjectStudent = models.ForeignKey(
+        StudentSubject, on_delete=CASCADE, related_name='StudentSubject', null=True)
     title = models.CharField(max_length=100)
     overallscore = models.IntegerField()
     score = models.IntegerField()
@@ -161,8 +173,5 @@ class Task(models.Model):
             "taskType": self.task_Type.taskType,
             "subject": self.taskSubject.subjectCode + ": " + self.taskSubject.subjectName,
             "image": self.image.url if self.image else None,
-            "action": f'<button type="button" class="btn btn-danger deleteTask" value="{self.id}" name="taskDelete" > <i class="fa fa-trash"></i> </button> <button type="button" class="btn btn-info EditTask" data-toggle="modal" data-target="#actionModify" title="{self.title}" score="{self.score}" overall="{self.overallscore}" date="{self.date}" subject={self.taskSubject_id} subType={self.task_Type_id} id = {self.pk} > <i class="fa fa-edit"></i> </button>'
+            "action": f'<button type="button" class="btn btn-danger modaldelete" value="{self.id}" data-toggle="modal" data-target="#confirmDeleteModal"  > <i class="fa fa-trash"></i> </button> <button type="button" class="btn btn-info EditTask" data-toggle="modal" data-target="#actionModify" title="{self.title}" score="{self.score}" overall="{self.overallscore}" date="{self.date}" subject={self.taskSubject_id} subType={self.task_Type_id} id = {self.pk} > <i class="fa fa-edit"></i> </button>'
         }
-    
-
-

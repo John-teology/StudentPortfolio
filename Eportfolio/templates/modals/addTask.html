@@ -110,7 +110,7 @@
 
 <script>
   $.ajax({
-    url: "{% url 'getUserSubject' %}",
+    url: "{% url 'getUserSubject' studentprof.studentNumber %}",
     method: "GET",
     success: (data) =>{
       for (var i = 0; i <= data.length - 1; i++) {
