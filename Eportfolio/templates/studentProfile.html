@@ -85,7 +85,7 @@
               font-family: "Poppins", sans-serif ;
             }
             body {
-                background-color: #fff1d0 !important;
+                background-color: #999999 !important;
               }
             
               #tasksTable th,
@@ -257,7 +257,7 @@
               }
             
             .cardwrapper{
-                background: rgba(255, 255, 255, 0.7);
+                background: rgba(255, 255, 255, 0.8);
                 border-radius: 16px;
                 box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
                 backdrop-filter: blur(7.5px);
@@ -364,6 +364,9 @@
             .fa{
               color: #333333;
             }
+            .fa-trash{
+              color:white !important;
+            }
             .fa:hover{
               color: #dddddd;
             }
@@ -399,8 +402,9 @@
     <div id="wrapper" class="wrapper-content">
       <div id="sidebar-wrapper">
         <ul class="sidebar-nav">
-          <li class="sidebar-brand">
-            <a href="#">E-portfolio</a>
+          <li class="sidebar-brand title-nav">
+            <img src="../media/images/logo-portfolio.png" alt="ep-logo"> 
+            <a href="#">EPortfolio</a>
           </li>
           <div class="sidebar-hoverable">
             <li id="activeProfile" class="active">
@@ -1150,4 +1154,5 @@
       // delete my subject ----------------------------
     </script>
   </body>
+  <script src="../../static/eportfolio/innerstyle.js"></script>
 </html>
