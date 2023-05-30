@@ -301,3 +301,16 @@ body {
   padding: 4vh;
   padding-top: 1vh;
  }
+   /*----------------------------------------- responsives -------------------------------------------------- */
+    /* phone landscape */
+    @media (min-width: 576px) {
+    }
+    /* laptop */
+    @media (min-width: 992px) {
+    }
+    /* large screen */
+    
+    @media (min-width: 1200px) {
+ 
+    }
+    
