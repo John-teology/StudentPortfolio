@@ -270,6 +270,19 @@
         margin-bottom: 1vh !important;
         margin: 2vh !important;
       }
+      .cardwrapper-graph{
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 16px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(7.5px);
+        -webkit-backdrop-filter: blur(7.5px);
+        border: 1px solid rgba(255, 255, 255, 1);
+        text-align: justify;
+        margin-top: 2vh !important;
+        margin-bottom: 1vh !important;
+        margin: 4% !important;
+        overflow: auto;
+      }
       .title-text {
         margin: 3vh;
         font-weight: 700;
@@ -381,16 +394,58 @@
         padding: 4vh;
         padding-top: 1vh;
       }
+      .donut-item{
+        align-items: baseline !important;
+        justify-content: flex-start !important;
+        padding: 3%;
+        font-size: 80%;
+        margin-top: 9%;
+        overflow: hidden
+      }
+      .donut{
+        width: 100%;
+        max-width: 100%;
+        margin-top:1%;
+        padding-bottom: 5%;
+      }
       /*----------------------------------------- responsives -------------------------------------------------- */
       /* phone landscape */
       @media (min-width: 576px) {
+        .donut {
+          margin-top: 2%;
+ 
+        }
+        .donut-item{
+        font-size: 100%;
+        margin-top: 1%;
+      }
+      .cardwrapper-graph{
+        margin: 3% !important;
+        overflow: auto;
+      }
       }
       /* laptop */
       @media (min-width: 992px) {
+        .donut-item{
+          font-size: 120%;
+          justify-content: center !important;
+      }
+      .donut {
+           margin-top: 5%;
+      }
+      .cardwrapper-graph {
+           margin: 1% !important;
+      }
       }
       /* large screen */
 
       @media (min-width: 1200px) {
+        .donut-item{
+        padding: 2%;
+        font-size: 130%;
+        margin-top: 9%;
+        max-width: 100%;
+      }
       }
     </style>
     <!-- STYLES END -->
@@ -406,7 +461,7 @@
           </li>
           <div class="sidebar-hoverable">
             <li id="activeProfile" class="active">
-              <a id="showProfilePage">Profile</a>
+          <a id="showProfilePage">Profile</a>
             </li>
             <!-- <li id="activeStat">
             <a id="statisticPage">Analytics</a>
@@ -491,20 +546,24 @@
               {% for sub in subjects %}
               <div class="panel">
                 <div class="panel-body bio-graph-info row">
-                  <div class="col-md-6">
+                  <div class="col-md-12" style="margin-left: 1%;">
                     <h1 id="{{sub.subjectCode}}:{{sub.subjectName}}">
                       {{sub.subjectCode}}:{{sub.subjectName}}
                     </h1>
-                    <div id="{{sub.subjectCode}}"></div>
-                  </div>
-                  <div class="col-md-6">
+                    </div>
+                  <div class = "row">
+                    <div class="col-xs-12 col-md-12 col-lg cardwrapper-graph">
+                    <div id="{{sub.subjectCode}}" class="donut-item"></div>
+                    </div>
+                  <div class="col-xs-12 col-md-12 col-lg cardwrapper-graph">
                     <center>
                       <canvas
                         id="{{sub.subjectName}}"
-                        style="width: 100%; max-width: 700px; margin-left: 1%"
+                        class="donut"
                       ></canvas>
                     </center>
                   </div>
+                </div>
                 </div>
               </div>
               <br />
@@ -952,7 +1011,7 @@
           calwidth_percentage = g_width * (parseInt(g[i][1]) / 100);
 
           let unfilledBarWidth = g_width - calwidth_percentage;
-          output += `<tr><td style="padding-right: 20px;">${g[i][0]}</td><td><svg xmlns="http://www.w3.org/2000/svg" width="${g_width}" height="20"><g class="bar"><rect x="${calwidth_percentage}" width="${unfilledBarWidth}" height="10" fill="${unfilledBarColor}"></rect><rect width="${calwidth_percentage}" height="10" fill="${barColor}"></rect></g></svg> ${g[i][1]}%</td></tr>`;
+          output += `<tr><td style="padding-right: 5vh;">${g[i][0]}</td><td><svg xmlns="http://www.w3.org/2000/svg" width="${g_width}" height="20"><g class="bar"><rect x="${calwidth_percentage}" width="${unfilledBarWidth}" height="10" fill="${unfilledBarColor}"></rect><rect width="${calwidth_percentage}" height="10" fill="${barColor}"></rect></g></svg> ${g[i][1]}%</td></tr>`;
         }
 
         output += "</table>";
