@@ -13,6 +13,10 @@ import json
 
 def index(request):
     if request.user.is_authenticated:
+        if request.user.email[-10:] != 'tup.edu.ph':
+            Invalid_User = User.objects.get(pk =request.user.id)
+            Invalid_User.delete()
+            return HttpResponseRedirect(reverse('index'))
         if request.user.isProf == True:
             return redirect('indexProf')
         userid = User.objects.get(pk=request.user.id)
@@ -109,6 +113,7 @@ def studentProfile(request, studentID):
     gender = Gender.objects.get(pk=1)
     yearlist = YearLevel.objects.all()
     courselist = Course.objects.all()
+
 
     studentSubjects = StudentSubject.objects.filter(
         studentProfileID=studentprof, ishide=False)
@@ -292,66 +297,6 @@ def studentProfile(request, studentID):
         'tasks': studentTasks,
         'dounut': dataD
     })
-
-
-# @login_required
-# @csrf_exempt
-# def studentSubject(request, studentID, subjectCode):
-#     profile = Studentprofile.objects.get(studentNumber=studentID)
-
-#     subject = Subject.objects.get(subjectCode=subjectCode)
-
-#     studentTasks = Task.objects.filter(
-#         studentProfileID=profile, taskSubject=subject)
-#     rubrik = Rubrick.objects.filter(subjectID=subject).filter(~Q(percentage=0))
-
-#     if request.method == "POST":
-#         isEdit = request.POST.get('editType', 0)  # this is the ID
-#         typeID = request.POST.get('taskType', '')
-#         subjectID = request.POST.get('taskSubject', '')
-#         title = request.POST.get('taskTitle', '')
-#         myScore = request.POST.get('taskScore', 0)
-#         totalScore = request.POST.get('taskTotal', 0)
-#         date = request.POST.get('taskDate', 0)
-#         image = request.FILES.get('taskAttachments', "")
-#         taskToBeDelete = request.POST.get('taskDeleteID', False)
-
-#         print(type, title, myScore, totalScore, date)
-
-#         if taskToBeDelete:
-#             deleteTask = Task.objects.get(pk=taskToBeDelete)
-#             deleteTask.delete()
-
-#         if isEdit:
-#             tType = TaskType.objects.get(taskType=type)
-#             getTask = Task.objects.get(pk=isEdit)
-#             getTask.task_Type = tType
-#             getTask.title = title
-#             getTask.score = myScore
-#             getTask.overallscore = totalScore
-#             getTask.date = date
-#             if image:
-#                 getTask.image = image
-#             getTask.save()
-
-#             return HttpResponseRedirect(reverse("studentSubject", args=(str(profile.studentNumber), str(subject.subjectCode))))
-
-#         if typeID:
-
-#             tType = TaskType.objects.get(pk=typeID)
-#             subject = Subject.objects.get(pk=subjectID)
-#             uploadedTask = Task(studentProfileID=profile, task_Type=tType, taskSubject=subject, title=title,
-#                                 overallscore=totalScore, score=myScore, image=image, date=date)
-#             uploadedTask.save()
-#             print('done')
-#             return HttpResponseRedirect(reverse("studentSubject", args=(str(profile.studentNumber), str(subject.subjectCode))))
-
-#     return render(request, 'studentSubject.html', {
-#         'subject': subject,
-#         'sNumber': studentID,
-#         'rubricks': rubrik,
-#         'tasks': studentTasks,
-#     })
 
 
 # below are for ajax ----------------------------

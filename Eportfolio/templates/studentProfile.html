@@ -4,9 +4,11 @@
     <meta charset="utf-8" />
 
     <title>Student EPortfolio</title>
-    <link rel = "icon" href = 
-    "../../media/images/logo-portfolio.png" 
-            type = "image/x-icon">
+    <link
+      rel="icon"
+      href="../../media/images/logo-portfolio.png"
+      type="image/x-icon"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!--<link rel="stylesheet" href="../static/eportfolio/studentform.css" />-->
     <link
@@ -270,7 +272,7 @@
         margin-bottom: 1vh !important;
         margin: 2vh !important;
       }
-      .cardwrapper-graph{
+      .cardwrapper-graph {
         background: rgba(255, 255, 255, 0.2);
         border-radius: 16px;
         box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
@@ -312,17 +314,17 @@
         margin: -32% 18%;
       }
 
-      @media (min-width: 768px){
+      @media (min-width: 768px) {
         .title-nav a {
           margin: -31% 14%;
         }
       }
-           @media (min-width: 991px) {
+      @media (min-width: 991px) {
         .title-nav a {
           margin: -32% 14%;
         }
       }
-         @media (min-width: 1200px) {
+      @media (min-width: 1200px) {
         .title-nav a {
           margin: -32% 15%;
         }
@@ -394,18 +396,18 @@
         padding: 4vh;
         padding-top: 1vh;
       }
-      .donut-item{
+      .donut-item {
         align-items: baseline !important;
         justify-content: flex-start !important;
         padding: 3%;
         font-size: 80%;
         margin-top: 9%;
-        overflow: hidden
+        overflow: hidden;
       }
-      .donut{
+      .donut {
         width: 100%;
         max-width: 100%;
-        margin-top:1%;
+        margin-top: 1%;
         padding-bottom: 5%;
       }
       /*----------------------------------------- responsives -------------------------------------------------- */
@@ -413,46 +415,45 @@
       @media (min-width: 576px) {
         .donut {
           margin-top: 2%;
- 
         }
-        .donut-item{
-        font-size: 100%;
-        margin-top: 1%;
-      }
-      .cardwrapper-graph{
-        margin: 3% !important;
-        overflow: auto;
-      }
+        .donut-item {
+          font-size: 100%;
+          margin-top: 1%;
+        }
+        .cardwrapper-graph {
+          margin: 3% !important;
+          overflow: auto;
+        }
       }
       /* laptop */
       @media (min-width: 992px) {
-        .donut-item{
+        .donut-item {
           font-size: 120%;
           justify-content: center !important;
-      }
-      .donut {
-           margin-top: 5%;
-      }
-      .cardwrapper-graph {
-           margin: 1% !important;
-      }
+        }
+        .donut {
+          margin-top: 5%;
+        }
+        .cardwrapper-graph {
+          margin: 1% !important;
+        }
       }
       /* large screen */
 
       @media (min-width: 1200px) {
-        .donut-item{
-        padding: 2%;
-        font-size: 130%;
-        margin-top: 9%;
-        max-width: 100%;
-      }
+        .donut-item {
+          padding: 2%;
+          font-size: 130%;
+          margin-top: 9%;
+          max-width: 100%;
+        }
       }
     </style>
     <!-- STYLES END -->
   </head>
   <body>
     <div id="wrapper" class="wrapper-content">
-         <!-- Side bar -->
+      <!-- Side bar -->
       <div id="sidebar-wrapper">
         <ul class="sidebar-nav">
           <li class="sidebar-brand title-nav">
@@ -461,7 +462,7 @@
           </li>
           <div class="sidebar-hoverable">
             <li id="activeProfile" class="active">
-          <a id="showProfilePage">Profile</a>
+              <a id="showProfilePage">Profile</a>
             </li>
             <!-- <li id="activeStat">
             <a id="statisticPage">Analytics</a>
@@ -497,7 +498,7 @@
           </div>
         </ul>
       </div>
-        <!-- Side bar -->
+      <!-- Side bar -->
       <div id="page-content-wrapper">
         <nav class="navbar navbar-default">
           <div class="container-fluid">
@@ -515,9 +516,10 @@
           </div>
         </nav>
 
-        {% include "modals/editTask.html" %}
+        {% include "modals/editTask.html" %} 
+        {% include "modals/delete_sub_modal.html" %}
         <div class="container-fluid" id="subjectPage">
-          {% include "modals/addTask.html" %}
+          {% include "modals/addTask.html" %} 
           {% include "modals/delete_modal.html" %}
 
           <div class="row cardwrapper">
@@ -547,29 +549,26 @@
               {% for sub in subjects %}
               <div class="panel">
                 <div class="panel-body bio-graph-info row">
-                  <div class="col-md-12" style="margin-left: 1%;">
+                  <div class="col-md-12" style="margin-left: 1%">
                     <h1 id="{{sub.subjectCode}}:{{sub.subjectName}}">
                       {{sub.subjectCode}}:{{sub.subjectName}}
                     </h1>
-                    </div>
-                  <div class = "row">
-                    <div class="col-xs-12 col-md-12 col-lg cardwrapper-graph">
-                    <div id="{{sub.subjectCode}}" class="donut-item"></div>
-                    </div>
-                  <div class="col-xs-12 col-md-12 col-lg cardwrapper-graph">
-                    <center>
-                      <canvas
-                        id="{{sub.subjectName}}"
-                        class="donut"
-                      ></canvas>
-                    </center>
                   </div>
-                </div>
+                  <div class="row">
+                    <div class="col-xs-12 col-md-12 col-lg cardwrapper-graph">
+                      <div id="{{sub.subjectCode}}" class="donut-item"></div>
+                    </div>
+                    <div class="col-xs-12 col-md-12 col-lg cardwrapper-graph">
+                      <center>
+                        <canvas id="{{sub.subjectName}}" class="donut"></canvas>
+                      </center>
+                    </div>
+                  </div>
                 </div>
               </div>
               <br />
               <br />
-              
+
               {% endfor %}
             </div>
           </div>
@@ -740,7 +739,7 @@
     {{test|json_script:"dataObject"}} {{dounut|json_script:"dounutObject"}}
 
     <script type="text/javascript">
-        //  toggle button config -----------------------------------------------
+      //  toggle button config -----------------------------------------------
       $(function () {
         $(".btn-toggle-menu").click(function () {
           $("#wrapper").toggleClass("toggled");
@@ -895,7 +894,7 @@
               </button>`
                 );
                 $(".dt-buttons").append(`
-               <button type="button" class = "btn btn-outline-secondary " id="editTogglere" > <i class="fa fa-edit"></i>Edit Item </button>`);
+               <button type="button" class = "btn btn-outline-secondary " id="editTogglere" > <i class="fa fa-edit"></i>Action </button>`);
 
                 let num = false;
                 tasksTable.column(-1).visible(num);
@@ -1164,6 +1163,7 @@
               } else {
                 var dataTable = $("#subjectTable").DataTable();
                 dataTable.ajax.reload(null, false);
+
                 alert("added New Subject!");
                 $("#listOfMySubjects").load(
                   location.href + " #listOfMySubjects",
@@ -1230,6 +1230,9 @@
             console.log(response);
             var dataTable = $("#subjectTable").DataTable();
             dataTable.ajax.reload(null, false);
+            $(".submodalDelete").click();
+            var dataTableTask = $("#tasksTable").DataTable();
+            dataTableTask.ajax.reload(null, false);
             barGraphProfile(response.dounut);
             $("#listOfMySubjects").load(
               location.href + " #listOfMySubjects",

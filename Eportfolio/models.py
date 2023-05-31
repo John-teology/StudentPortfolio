@@ -80,7 +80,7 @@ class Subject(models.Model):
 
             if is_subject_added:
                 action_button += ' disabled>Already Added</button>'
-                action_button += f'<button type="button" class="btn btn-danger deleteMySubject" value="{self.id}" name="taskDelete" style="margin-left: 5px;"> <i class="fa fa-trash"></i> </button>'
+                action_button += f'<button type="button" class="btn btn-danger submodalDelete" value="{self.id}" data-toggle="modal" data-target="#subConfirmDeleteModal" style="margin-left: 5px;"> <i class="fa fa-trash"></i> </button>'
             else:
                 action_button += '>Add Subject</button>'
 

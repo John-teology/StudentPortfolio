@@ -25,13 +25,14 @@
       <div class="modal-body">
         <form  id="addTask" enctype="multipart/form-data">
           {% csrf_token %}
-          <label for="taskTitle">Title:</label>
+          <label for="taskTitle" >Title:</label>
           <input
             type="text"
             class="form-control"
             id="taskTitle"
             name="taskTitle"
             placeholder="Title"
+            autofocus
             required
           />
           <label for="taskScore">Your Total Score:</label>
@@ -54,6 +55,7 @@
             placeholder="Total"
             required
           />
+          <div id="errorHolder" style="color: red;"></div>
           <label for="taskDate">Date:</label>
           <input
             type="date"
@@ -145,30 +147,39 @@
             event.preventDefault(); // Prevent form submission
 
             // Get form data
+            // errorHolder
             var formData = new FormData(this);
+            var total = $("#taskTotal").val()
+            var score = $("#taskScore").val()
+            if (total<score){
+              $("#errorHolder").append('<p>Invalid Total Score</p>')
+            }
+            else
+            {
+                $.ajax({
+                url: "{% url 'studentProfile' studentprof.studentNumber %}", // Replace with your actual submit URL
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                  // Handle success response
+                  $("#addTask")[0].reset();
+                  console.log(response.data);
+                  var dataTable = $("#tasksTable").DataTable();
+                  dataTable.ajax.reload(null, false); 
+                  $("#addUserTaskButton").click();
+                  // $('#dataforbargrapht').load(location.href + ' #dataforbargraph');
+                  createBarGraph(response.data);
+                  barGraphProfile(response.dounut);
+                  for (var key in response.dounut) {
+                    createChart(response.dounut[key], key);
+                  }
 
-            $.ajax({
-              url: "{% url 'studentProfile' studentprof.studentNumber %}", // Replace with your actual submit URL
-              type: "POST",
-              data: formData,
-              processData: false,
-              contentType: false,
-              success: function (response) {
-                // Handle success response
-                $("#addTask")[0].reset();
-                console.log(response.data);
-                var dataTable = $("#tasksTable").DataTable();
-                dataTable.ajax.reload(null, false); 
-                $("#addUserTaskButton").click();
-                // $('#dataforbargrapht').load(location.href + ' #dataforbargraph');
-                createBarGraph(response.data);
-                barGraphProfile(response.dounut);
-                for (var key in response.dounut) {
-                  createChart(response.dounut[key], key);
-                }
-
-              },
-            });
+                },
+              });
+            }
+            
           });
 
 </script> 
