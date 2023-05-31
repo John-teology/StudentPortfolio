@@ -50,7 +50,6 @@ def demographicForm(request):
 
         studentNumberFormat = r'^TUPM-\d{2}-\d{4}$'
 
-        
         match_result = re.match(studentNumberFormat, studentNumber)
 
         if not match_result:
@@ -66,27 +65,26 @@ def demographicForm(request):
                 'guardianNumber': guardianNumber,
                 'course': course,
                 'guardianName': guardianName,
-                'error': 'Invalid TUPM Email'
+                'error': 'Invalid Student Number'
 
             })
-    
+
         if (Studentprofile.objects.filter(studentNumber=studentNumber).count() > 0):
             return render(request, "studentForm.html", {
-                    'courses': Course.objects.all(),
-                    'yearLevels': YearLevel.objects.all(),
-                    'gender': Gender.objects.all(),
-                    'studentNumber': studentNumber,
-                    'first': first,
-                    'last': last,
-                    'phoneNumber': phoneNumber,
-                    'email': email,
-                    'guardianNumber': guardianNumber,
-                    'course': course,
-                    'guardianName': guardianName,
-                    'error': 'Already Added TUP Number'
+                'courses': Course.objects.all(),
+                'yearLevels': YearLevel.objects.all(),
+                'gender': Gender.objects.all(),
+                'studentNumber': studentNumber,
+                'first': first,
+                'last': last,
+                'phoneNumber': phoneNumber,
+                'email': email,
+                'guardianNumber': guardianNumber,
+                'course': course,
+                'guardianName': guardianName,
+                'error': 'Already Added TUP Number'
 
             })
-
 
         courseInstance = Course.objects.get(pk=course)
         yearInstance = YearLevel.objects.get(pk=yearlevel)
@@ -375,7 +373,7 @@ def getUserRubrick(request, subjectid):
 
 
 @csrf_exempt
-def getUserTask(request,studentNumber):
+def getUserTask(request, studentNumber):
     user = Studentprofile.objects.get(studentNumber=studentNumber)
     studentTasks = Task.objects.filter(
         studentProfileID=user)
@@ -384,7 +382,7 @@ def getUserTask(request,studentNumber):
 
 
 @csrf_exempt
-def getAllSubject(request,studentNumber):
+def getAllSubject(request, studentNumber):
     user = Studentprofile.objects.get(studentNumber=studentNumber)
     availableSubs = Subject.objects.all()
     return JsonResponse([subject.serialize(user) for subject in availableSubs], safe=False)
