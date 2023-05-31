@@ -296,23 +296,22 @@
         color: #800000 !important;
       }
       .title-nav a {
-        top: 0;
-        position: absolute;
-        margin: 2vh 5vh;
+        margin: -32% 18%;
       }
 
-      @media (min-width: 320px) and (max-width: 768px) {
+      @media (min-width: 768px){
         .title-nav a {
-          top: 0;
-          position: absolute;
-          margin: 2vh 5vh;
+          margin: -31% 14%;
         }
       }
-      @media (min-width: 768px) and (max-width: 991px) {
+           @media (min-width: 991px) {
         .title-nav a {
-          top: 0;
-          position: absolute;
-          margin: 1vh 3vh;
+          margin: -32% 14%;
+        }
+      }
+         @media (min-width: 1200px) {
+        .title-nav a {
+          margin: -32% 15%;
         }
       }
 
@@ -398,6 +397,7 @@
   </head>
   <body>
     <div id="wrapper" class="wrapper-content">
+         <!-- Side bar -->
       <div id="sidebar-wrapper">
         <ul class="sidebar-nav">
           <li class="sidebar-brand title-nav">
@@ -442,6 +442,7 @@
           </div>
         </ul>
       </div>
+        <!-- Side bar -->
       <div id="page-content-wrapper">
         <nav class="navbar navbar-default">
           <div class="container-fluid">
@@ -679,6 +680,7 @@
     {{test|json_script:"dataObject"}} {{dounut|json_script:"dounutObject"}}
 
     <script type="text/javascript">
+        //  toggle button config -----------------------------------------------
       $(function () {
         $(".btn-toggle-menu").click(function () {
           $("#wrapper").toggleClass("toggled");

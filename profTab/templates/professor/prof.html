@@ -56,7 +56,8 @@
       }
 
       #tasksTable th,
-      #subjectTable th {
+      #subjectTable th,
+      #studentTableProf th {
         background-color: #7e3d3d; /* Set the background color */
         color: white; /* Set the text color */
       }
@@ -120,12 +121,6 @@
       .sidebar-nav li {
         text-indent: 20px;
         line-height: 40px;
-      }
-
-      .sidebar-nav li:hover {
-        background-color: #999999;
-        color: white !important;
-        border-left: 5px solid lightcoral;
       }
 
       .sidebar-nav li a {
@@ -238,6 +233,9 @@
         margin-top: 2vh !important;
         margin-bottom: 1vh !important;
         margin: 2vh !important;
+        padding-right: 3%;
+        padding-top: 2%;
+        width: 95%;
       }
       .title-text {
         margin: 3vh;
@@ -265,23 +263,22 @@
         color: #800000 !important;
       }
       .title-nav a {
-        top: 0;
-        position: absolute;
-        margin: 2vh 5vh;
+           margin: -32% 18%;
       }
 
-      @media (min-width: 320px) and (max-width: 768px) {
+      @media (min-width: 768px){
         .title-nav a {
-          top: 0;
-          position: absolute;
-          margin: 2vh 5vh;
+              margin: -31% 14%;
         }
       }
-      @media (min-width: 768px) and (max-width: 991px) {
+           @media (min-width: 991px) {
         .title-nav a {
-          top: 0;
-          position: absolute;
-          margin: 1vh 3vh;
+           margin: -32% 14%;
+        }
+      }
+         @media (min-width: 1200px) {
+        .title-nav a {
+             margin: -32% 15%;
         }
       }
 
@@ -351,6 +348,16 @@
         padding: 4vh;
         padding-top: 1vh;
       }
+      .dataTable{
+        max-width: 100% !important;
+        width: 100% !important;
+      }
+      .dataTables_length{
+        margin: 1%;
+      }
+      .btn-outline-info:hover{
+        color: #fff;
+      }
       /*----------------------------------------- responsives -------------------------------------------------- */
       /* phone landscape */
       @media (min-width: 576px) {
@@ -366,8 +373,9 @@
     <!-- end of link for datatables -->
   </head>
   <body>
-    <!-- NavBar -->
+    <!-- SideBar -->
     <div id="wrapper" class="wrapper-content">
+          <!-- Side bar -->
       <div id="sidebar-wrapper">
         <ul class="sidebar-nav">
           <li class="sidebar-brand title-nav">
@@ -396,6 +404,7 @@
           </div>
         </ul>
       </div>
+            <!-- Side bar -->
       <div id="page-content-wrapper">
         <nav class="navbar navbar-default">
           <div class="container-fluid">
@@ -414,7 +423,7 @@
 
         <!-- End of NavBar -->
 
-        <div class="container-fluid" id="mySubjects">
+        <div class="container-fluid  cardwrapper" id="mySubjects">
         {% include 'modals/delete_modal_prof.html' %}
 
           <table id="subjectTable">
@@ -431,7 +440,7 @@
           
         </div>
 
-        <div class="container-fluid" id="myStudents">
+        <div class="container-fluid cardwrapper" id="myStudents">
           <table id="studentTableProf">
             <thead style="background-color: red; color: white">
               <tr>
@@ -450,6 +459,13 @@
     {% include 'modals/editSubject_modal.html' %}
 
     <script>
+           //  toggle button config -----------------------------------------------
+      $(function () {
+        $(".btn-toggle-menu").click(function () {
+          $("#wrapper").toggleClass("toggled");
+        });
+      });
+       //  Student info config -----------------------------------------------
       $(document).ready(() => {
         $("#myStudents").hide();
 
