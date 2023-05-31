@@ -27,31 +27,89 @@
               font-family: "Poppins", sans-serif ;
             }
             body {
-            background-color:rgba(243, 243, 243, 0.3)   
+            background-color:#E7E9EB;  
             }
             .form-control:disabled{
               background-color: #d0d0d0;
+              color: #5e5e5e !important;
             }
             .title-wrapper{
-              text-align: center;
               margin: 4vh;
+              text-align: center;
               color:#532323; 
             }
             .title-wrapper h1{
               font-weight: 700 !important;
             }
             
-            .profile-container{
-              margin-top: 3%;
+            .profile-container {
+              margin-top: 5%;
               padding: 3vh;
+              margin-bottom: 3%;
+              }
+            .btn-response{
+              background-color: #532323;
+              border-color: #532323;  
+              cursor: pointer;
+       
+              height: 26%;
+              font-size: 85%; width: 40%;
+              text-align: center;
+             
+   
             }
+            .button-wrapper {
+              margin-top: 1vh;
+              text-align: center;
+            }
+            .btn-response:hover{
+              background-color: green !important;
+              border: none;
+              box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
+            }
+            .form-wrapper{
+              padding: 2px 16px;
+              box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);
+              transition: 0.3s;
+              background-color: rgba(255, 255, 255, 0.8);
+              padding-bottom: 5%;
+            }
+       /* phone landscape */
+      @media (min-width: 576px) {
+        .profile-container {
+          margin: 5vh;
+          padding-bottom: 5vh !important;
+          }
+    
+      }
+      /* laptop */
+      @media (min-width: 992px){
+        .profile-container {
+          margin: 2vh;
+          }
+          .button-wrapper {
+            margin-top: 2vh;
+          }
+      }    
+      /* large screen */
+
+      @media (min-width: 1200px) {
+        .profile-container {
+         margin: 3vh;
+         padding-bottom: 5vh !important;
+}
+        .btn-response {
+            width: 23%;
+            margin-top: 1vh;
+          }
+      }
     </style>
   </head>
   <body>
-    <div class="profile-container">
+    <div class="profile-container form-wrapper">
       <div class="title-wrapper">
         <h1>Create Profile</h1>
-      </div>
+    </div>
       <form method="post" action="{% url 'demographicForm' %}">
         {% csrf_token %}
         <div class="form-group">
@@ -203,9 +261,11 @@
             </div>
           </div>
         </div>
-
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <div class ="button-wrapper">
+        <button type="submit" class="btn btn-primary btn-response">Submit</button>
+      </div>
       </form>
+      
     </div>
     <!-- <div class="profile-form" style="position: relative">
       />
