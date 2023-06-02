@@ -13,10 +13,10 @@ import json
 
 def index(request):
     if request.user.is_authenticated:
-        if request.user.email[-10:] != 'tup.edu.ph':
-            Invalid_User = User.objects.get(pk =request.user.id)
-            Invalid_User.delete()
-            return HttpResponseRedirect(reverse('index'))
+        # if request.user.email[-10:] != 'tup.edu.ph':
+        #     Invalid_User = User.objects.get(pk =request.user.id)
+        #     Invalid_User.delete()
+            # return HttpResponseRedirect(reverse('index'))
         if request.user.isProf == True:
             return redirect('indexProf')
         userid = User.objects.get(pk=request.user.id)

@@ -151,7 +151,7 @@
             var formData = new FormData(this);
             var total = $("#taskTotal").val()
             var score = $("#taskScore").val()
-            if (total<score){
+            if (total>=score){
               $("#errorHolder").append('<p>Invalid Total Score</p>')
             }
             else
