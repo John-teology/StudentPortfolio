@@ -341,6 +341,12 @@ def getAllProfSubject(request):
     return JsonResponse([subject.serialize() for subject in availableSubs], safe=False)
 
 
+
+def getAllCpType(request):
+    ctypes = CPType.objects.all()
+    return JsonResponse([cy.serialize() for cy in ctypes], safe=False)
+
+
 def dataForGraph(subjects, studentTasks, isrubick=0):
     percentage = {}
     rubricksTotal = {}
@@ -389,13 +395,3 @@ def dataForGraph(subjects, studentTasks, isrubick=0):
     return rubricksTotal if isrubick else data
 
 
-def about(request):
-    return render(request, 'landing/about.html')
-
-
-def overview(request):
-    return render(request, 'landing/overview.html')
-
-
-def contact(request):
-    return render(request, 'landing/contact.html')

@@ -7,7 +7,11 @@
   aria-labelledby="exampleModalCenterTitle"
   aria-hidden="true"
 >
-  <div class="modal-dialog modal-dialog-centered" role="document">
+  <div
+    class="modal-dialog modal-dialog-centered modal-xl"
+    style="width: 800px"
+    role="document"
+  >
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLongTitle">Add Subject</h5>
@@ -39,33 +43,86 @@
             required
           />
 
-          <label for="units">Units:</label>
-          <input
-            type="number"
-            class="form-control"
-            id="units"
-            placeholder="No. of Units"
-            required
-          />
-          <h3>Rubricks</h3>
-
+          <hr />
+          {% for i in gpTypes %}
           <div class="row">
-            {% for type in tasksT %}
-            <div class="col-md-6">
-              <label for="{{type|lower}}">{{type}}:</label>
+            <h3>{{i.gptypeName}}</h3>
+            <div class="col-md-3">
+              <label for="pCP">Class Performance:</label>
               <input
                 type="number"
                 class="form-control"
                 value=""
-                id="{{type|lower}}"
-                placeholder="{{type}}"
-                
+                id="{{i.gptypeName}}CP"
+                placeholder="%"
               />
             </div>
-            {% endfor %}
-          </div>
+            <div class="col-md-3">
+              <label for="pAttendance">Attendance:</label>
+              <input
+                type="number"
+                class="form-control"
+                value=""
+                id="{{i.gptypeName}}Attendance"
+                placeholder="%"
+              />
+            </div>
+            <div class="col-md-3">
+              <label for="pExam">Exam:</label>
+              <input
+                type="number"
+                class="form-control"
+                value=""
+                id="{{i.gptypeName}}Exam"
+                placeholder="%"
+              />
+            </div>
+            <div class="col-md-3">
+              <label for="pProject">Project:</label>
+              <input
+                type="number"
+                class="form-control"
+                value=""
+                id="{{i.gptypeName}}Project"
+                placeholder="%"
+              />
+            </div>
 
-          <div class="modal-footer">
+            <div class="input-group mb-2 mr-sm-2 mt-4">
+              <div class="input-group-prepend">
+                <div class="input-group-text">Exam</div>
+              </div>
+              <input
+                type="number"
+                class="form-control"
+                id="{{i.gptypeName}}TotalExam"
+                placeholder="Total Score"
+              />
+            </div>
+
+            <div class="input-group" style="margin-top: 3%">
+              <select
+                class="custom-select cpTypes"
+                id="{{i.gptypeName}}cyTypesSelect"
+              ></select>
+              <div class="input-group-append">
+                <button
+                  class="btn btn-outline-secondary add-cp-button"
+                  value="{{i.gptypeName}}"
+                  type="button"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <div class="row" id="{{i.gptypeName}}CP"></div>
+          </div>
+          <hr />
+
+          {% endfor %}
+
+          <div class="modal-footer mt-4">
             <button
               type="button"
               class="btn btn-secondary btn-hoverred"
@@ -86,6 +143,8 @@
 <script>
   $(document).ready(() => {
     // get the values after submit
+    var value = $("#subjectCode").val();
+
     const isvalid = () => {
       let totalRubicks = [
         defaulval("#quiz"),
@@ -115,7 +174,6 @@
       return $(str).val() == "" ? 0 : $(str).val();
     };
 
-
     $(document).on("submit", "#addSubjectForm", (e) => {
       e.preventDefault();
       console.log("submit");
@@ -137,6 +195,92 @@
           dataTable.ajax.reload(null, false);
         });
       }
+    });
+
+    $.ajax({
+      url: `/getcptypes`,
+      success: (data) => {
+        $(".cpTypes")
+          .find("option")
+          .remove()
+          .end()
+          .append(
+            '<option value="" disabled selected>Class Performance.</option>'
+          );
+        for (var i = 0; i <= data.length - 1; i++) {
+          var cpTypes = new Option(data[i].type, data[i].id);
+          $(".cpTypes").append(cpTypes);
+        }
+      },
+    });
+
+    function handleCyTypesSelectChange(event) {
+      var addButton = $(event.currentTarget)
+        .closest(".input-group")
+        .find(".add-cp-button");
+      var selectedText = $(this).find(":selected").text();
+      addButton.attr("id", $(event.currentTarget).val());
+      addButton.attr("name", selectedText);
+      console.log(selectedText);
+    }
+
+    $(document).on(
+      "change",
+      "#PrelimscyTypesSelect",
+      handleCyTypesSelectChange
+    );
+    $(document).on(
+      "change",
+      "#MidtermcyTypesSelect",
+      handleCyTypesSelectChange
+    );
+    $(document).on("change", "#FinalscyTypesSelect", handleCyTypesSelectChange);
+
+    $(document).on("click", ".add-cp-button", function (e) {
+      var cptypeID = $(e.currentTarget).attr("id");
+      var name = $(e.currentTarget).attr("name");
+      var value = $(e.currentTarget).val();
+      console.log(value);
+      var container = $(e.currentTarget).closest(".row").find("[id$='CP']");
+      container.append(`<div class = "row"> <div class="col-sm-6">
+                <div class="input-group mb-3 mt-4">
+                  <div class="input-group-prepend">
+                    <div class="input-group-text">${name}</div>
+                  </div>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="${value}TitleCP"
+                    placeholder="Title"
+                  />
+                </div>
+              </div>
+              <div class="col-sm-5">
+                <div class="input-group mb-3 mt-4">
+                  <div class="input-group-prepend">
+                    <div class="input-group-text">No. of Items</div>
+                  </div>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="${value}TotalItemCP"
+                    placeholder="Total "
+                  />
+                </div>
+              </div>
+              <input type="text" id="PrelimscptypeID" value = "${cptypeID}" hidden>
+              <div class="col-sm-1">
+                <div class="input-group mb-3 mt-4">
+                  <button class="btn btn-outline-secondary remove-row" type="button">
+                    x
+                  </button>
+                </div>
+                </div>
+              </div>`);
+    });
+
+    $(document).on("click", ".remove-row", function () {
+      $(this).closest(".row").remove();
     });
   });
 </script>

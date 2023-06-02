@@ -67,7 +67,6 @@ class Subject(models.Model):
     subjectName = models.CharField(max_length=100)
     facultyName = models.ForeignKey(
         User, on_delete=CASCADE, related_name='profSubject')
-    units = models.IntegerField()
 
     def __str__(self):
         return f"{self.subjectCode}: {self.subjectName}"
@@ -89,7 +88,6 @@ class Subject(models.Model):
                 "subjectCode": self.subjectCode,
                 "subjectName": self.subjectName,
                 "facultyName": self.facultyName.first_name,
-                "units": self.units,
                 "action": action_button
             }
         else:
@@ -98,8 +96,7 @@ class Subject(models.Model):
                 "subjectCode": self.subjectCode,
                 "subjectName": self.subjectName,
                 "facultyName": self.facultyName.first_name,
-                "units": self.units,
-                "action": f'<button type="button" class="btn btn-danger modaldelete" value="{self.id}" name="taskDelete"data-toggle="modal" data-target="#confirmDeleteModal" > <i class="fa fa-trash"></i> </button> <button type="button" class="btn btn-info editSub" data-toggle="modal" data-target="#editSubjetModal" id = {self.pk} subjectcode= "{self.subjectCode}" subjectname = "{self.subjectName}" units= {self.units} > <i class="fa fa-edit"></i> </button>'
+                "action": f'<button type="button" class="btn btn-danger modaldelete" value="{self.id}" name="taskDelete"data-toggle="modal" data-target="#confirmDeleteModal" > <i class="fa fa-trash"></i> </button> <button type="button" class="btn btn-info editSub" data-toggle="modal" data-target="#editSubjetModal" id = {self.pk} subjectcode= "{self.subjectCode}" subjectname = "{self.subjectName}" > <i class="fa fa-edit"></i> </button>'
             }
 
 
@@ -175,3 +172,37 @@ class Task(models.Model):
             "image": self.image.url if self.image else None,
             "action": f'<button type="button" class="btn btn-danger modaldelete" value="{self.id}" data-toggle="modal" data-target="#confirmDeleteModal"  > <i class="fa fa-trash"></i> </button> <button type="button" class="btn btn-info EditTask" data-toggle="modal" data-target="#actionModify" title="{self.title}" score="{self.score}" overall="{self.overallscore}" date="{self.date}" subject={self.taskSubject_id} subType={self.task_Type_id} id = {self.pk} > <i class="fa fa-edit"></i> </button>'
         }
+
+
+class GPType(models.Model):
+    gptypeName = models.CharField(max_length=50)
+
+
+class CPType(models.Model):
+    cptypeName = models.CharField(max_length=100)
+
+    def serialize(self):
+        return{
+            'id' : self.id,
+            'type': self.cptypeName
+        }
+
+
+
+class GradePeriods(models.Model):
+    subject = models.ForeignKey(Subject,on_delete=CASCADE,related_name='GPSubject')
+    gptype = models.ForeignKey(GPType,on_delete=CASCADE,related_name="GPType")
+    student = models.ForeignKey(Studentprofile, on_delete=CASCADE,related_name="StudentGP")
+    numberOfAbsences = models.IntegerField()
+    exam = models.IntegerField()
+    image = models.ImageField(null=True, blank=True, upload_to='images/')
+
+
+
+class ClassPerformance(models.Model):
+    title = models.CharField(max_length=100)
+    cptype = models.ForeignKey(CPType,on_delete=CASCADE,related_name='CPtype')
+    totalScore = models.IntegerField()
+    score = models.IntegerField(default=0)
+    gpObject = models.ForeignKey(GradePeriods,on_delete=CASCADE,related_name='CPgradepoint')
+    image = models.ImageField(null=True, blank=True, upload_to='images/')

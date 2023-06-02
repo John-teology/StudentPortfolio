@@ -23,10 +23,12 @@ def index(request):
             return redirect('index')
     subjects = Subject.objects.all()
     taskT = TaskType.objects.all()
+    gpTypes = GPType.objects.all()
 
     return render(request, "professor/prof.html", {
         'subjects': subjects,
-        'tasksT': taskT
+        'tasksT': taskT,
+        'gpTypes' : gpTypes
     })
 
 

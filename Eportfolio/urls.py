@@ -26,15 +26,12 @@ urlpatterns = [
     path("gettask/<str:studentNumber>", views.getUserTask, name="getUserTask"),
     path("getallsubs/<str:studentNumber>", views.getAllSubject, name="getAllSubs"),
     path("getallprofsubs/", views.getAllProfSubject, name="getAllProfSubs"),
-    path("getrubrick/<int:subjectid>",
-         views.getUserRubrick, name="getUserRubrick"),
+    path("getrubrick/<int:subjectid>",views.getUserRubrick, name="getUserRubrick"),
+    path("getcptypes/",views.getAllCpType, name="getcpTypes"),
 
 
 
-    # landing page
-    path("about/", views.about, name="aboutpage"),
-    path("overview/", views.overview, name="overviewpage"),
-    path("contact/", views.contact, name="contactpage"),
+
 
 
 ]
