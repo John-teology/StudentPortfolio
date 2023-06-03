@@ -7,7 +7,11 @@
   aria-labelledby="exampleModalCenterTitle"
   aria-hidden="true"
 >
-  <div class="modal-dialog modal-dialog-centered" role="document">
+  <div
+    class="modal-dialog modal-dialog-centered modal-xl"
+    style="width: 800px"
+    role="document"
+  >
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLongTitle">Add Subject</h5>
@@ -22,55 +26,133 @@
       </div>
       <div class="modal-body">
         <form id="editSubjectForm">
-          <label for="subjectCode">Subject Code:</label>
+          <label for="courseCodeEdit">Course Code:</label>
           <input
             type="text"
             class="form-control"
-            id="subjectCodeEdit"
-            name="subjectCodeEdit"
-            placeholder="Subject Code"
+            id="courseCodeEdit"
+            name="courseCodeEdit"
+            placeholder="course Code"
             required
           />
-          <label for="subjectName">Subject Name:</label>
+          <label for="courseNameEdit">Course Name:</label>
           <input
             type="text"
             class="form-control"
-            id="subjectNameEdit"
-            name="subjectNameEdit"
-            placeholder="Subject Name"
+            id="courseNameEdit"
+            name="courseNameEdit"
+            placeholder="Course Name"
             required
           />
+          <input type="number" id="subEditID" hidden>
 
-          <label for="units">Units:</label>
-          <input
-            type="number"
-            class="form-control"
-            id="unitsEdit"
-            name="unitsEdit"
-            placeholder="No. of Units"
-            required
-          />
-
-          <input type="number" id="editID" name="editID" hidden />
-          <h3>Rubricks</h3>
-
+          <hr />
+          {% for i in gpTypes %}
           <div class="row">
-            {% for type in tasksT %}
-            <div class="col-md-6">
-              <label for="{{type|lower}}">{{type}}:</label>
+            <h3>{{i.gptypeName}}</h3>
+            <div class="col-md-3">
+              <label for="pCP">Class Performance:</label>
               <input
                 type="number"
                 class="form-control"
                 value=""
-                name="{{type|lower}}Edit"
-                id="{{type|lower}}Edit"
-                placeholder="{{type}}"
+                id="{{i.gptypeName}}ClassPerformanceEdit"
+                name="{{i.gptypeName}}ClassPerformanceEdit"
+                placeholder="%"
+                required
               />
             </div>
-            {% endfor %}
-          </div>
+            <div class="col-md-3">
+              <label for="pAttendance">Attendance:</label>
+              <input
+                type="number"
+                class="form-control"
+                value=""
+                id="{{i.gptypeName}}AttendanceEdit"
+                name="{{i.gptypeName}}AttendanceEdit"
+                placeholder="%"
+              />
+            </div>
+            <div class="col-md-3">
+              <label for="pExam">Exam:</label>
+              <input
+                type="number"
+                class="form-control"
+                value=""
+                id="{{i.gptypeName}}ExamEdit"
+                name="{{i.gptypeName}}ExamEdit"
+                placeholder="%"
+                required
+              />
+            </div>
+            <div class="col-md-3">
+              <label for="pProject">Project:</label>
+              <input
+                type="number"
+                class="form-control"
+                value=""
+                id="{{i.gptypeName}}ProjectEdit"
+                name="{{i.gptypeName}}ProjectEdit"
+                placeholder="%"
+              />
+            </div>
 
-          <div class="modal-footer">
+            <div class="input-group mb-2 mr-sm-2 mt-4">
+              <div class="input-group-prepend">
+                <div class="input-group-text">Exam</div>
+              </div>
+              <input
+                type="number"
+                class="form-control"
+                id="{{i.gptypeName}}TotalExamEdit"
+                name="{{i.gptypeName}}TotalExamEdit"
+                placeholder="Total Score"
+              />
+            </div>
+
+            <div class="input-group mb-2 mr-sm-2 mt-4">
+              <div class="input-group-prepend">
+                <div class="input-group-text">Project</div>
+              </div>
+              <input
+                type="number"
+                class="form-control"
+                id="{{i.gptypeName}}TotalProjectEdit"
+                name="{{i.gptypeName}}TotalProjectEdit"
+                placeholder="Total Score"
+              />
+            </div>
+
+            <input
+              type="number"
+              name="{{i.gptypeName}}CounterEdit"
+              id="{{i.gptypeName}}CounterEdit"
+              hidden
+            />
+
+            <div class="input-group" style="margin-top: 3%">
+              <select
+                class="custom-select cpTypes"
+                id="{{i.gptypeName}}cyTypesSelectEdit"
+              ></select>
+              <div class="input-group-append">
+                <button
+                  class="btn btn-outline-secondary add-cp-button"
+                  value="{{i.gptypeName}}"
+                  type="button"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <div class="row" id="{{i.gptypeName}}CPEdit"></div>
+          </div>
+          <hr />
+
+          {% endfor %}
+
+          <div class="modal-footer mt-4">
             <button
               type="button"
               class="btn btn-secondary btn-hoverred"
@@ -87,76 +169,175 @@
     </div>
   </div>
 </div>
-{{request.user.id|json_script:"facultyID"}}
 
 <script>
   $(document).ready(() => {
-    $(document).on("click", ".editSub", function (event) {
-      $("#subjectCodeEdit").val($(event.currentTarget).attr("subjectcode"));
-      $("#subjectNameEdit").val($(event.currentTarget).attr("subjectname"));
-      $("#unitsEdit").val($(event.currentTarget).attr("units"));
-      $("#editID").val($(event.currentTarget).attr("id"));
-      var subID = $(event.currentTarget).attr("id");
+    $("#editSubjectForm").submit(function (event) {
+      event.preventDefault();
+      var formData = new FormData(this);
+      let id= $('#subEditID').val()
       $.ajax({
-        url: `getSub/${subID}`,
-        success: (data) => {
-          data.forEach((d) => {
-            $(`#${d.taskName}`).val(d.percentage);
-          });
+        url: `submiteditsubject/${id}`,
+        data: formData,
+        method: "POST",
+        processData: false,
+        contentType: false,
+        success: (response) => {
+          $('.editSub').click();
+          $("#editSubjectForm")[0].reset();
+          var dataTable = $("#subjectTable").DataTable();
+          dataTable.ajax.reload(null, false); 
         },
       });
     });
 
-    // get the values after submit
-    const isvalid = () => {
-      let totalRubicks = [
-        defaulval("#quiz"),
-        defaulval("#performancetask"),
-        defaulval("#prelims"),
-        defaulval("#midterm"),
-        defaulval("#finals"),
-        defaulval("#project"),
-      ];
+    $.ajax({
+      url: `/getcptypes`,
+      success: (data) => {
+        $(".cpTypes")
+          .find("option")
+          .remove()
+          .end()
+          .append(
+            '<option value="" disabled selected>Class Performance.</option>'
+          );
+        for (var i = 0; i <= data.length - 1; i++) {
+          var cpTypes = new Option(data[i].type, data[i].id);
+          $(".cpTypes").append(cpTypes);
+        }
+      },
+    });
 
-      // get the total
-      let sum = totalRubicks.reduce(function (a, b) {
-        return Number(a) + Number(b);
+    function handleCyTypesSelectChange(event) {
+      var addButton = $(event.currentTarget)
+        .closest(".input-group")
+        .find(".add-cp-button");
+      var selectedText = $(this).find(":selected").text();
+      addButton.attr("id", $(event.currentTarget).val());
+      addButton.attr("name", selectedText);
+    }
+
+    $(document).on(
+      "change",
+      "#PrelimscyTypesSelectEdit",
+      handleCyTypesSelectChange
+    );
+    $(document).on(
+      "change",
+      "#MidtermcyTypesSelectEdit",
+      handleCyTypesSelectChange
+    );
+    $(document).on(
+      "change",
+      "#FinalscyTypesSelectEdit",
+      handleCyTypesSelectChange
+    );
+
+    $(document).ready(function () {
+      var counter = {}; // Object to store counters
+
+      $(document).on("click", ".add-cp-button", function (e) {
+        var cptypeID = $(e.currentTarget).attr("id");
+        var name = $(e.currentTarget).attr("name");
+        var value = $(e.currentTarget).val();
+
+        var container = $(e.currentTarget)
+          .closest(".row")
+          .find("[id$='CPEdit']");
+        var identifier = container.attr("id"); // Get the identifier from the container's ID
+        counter[identifier] = counter[identifier] || 1; // Initialize the counter for this identifier if it doesn't exist
+        var currentCounter = counter[identifier]++; // Increment the counter and store the current value
+        let newEditCounter = parseInt($(`#${value}CounterEdit`).val());
+        newEditCounter++; // Increment the counter
+
+        $(`#${value}CounterEdit`).val(newEditCounter);
+        container.append(` <div class="row">
+      <div class="col-sm-6">
+        <div class="input-group mb-3 mt-4">
+          <div class="input-group-prepend">
+            <div class="input-group-text">${name}</div>
+          </div>
+          <input type="text" class="form-control" id="${value}TitleCP${currentCounter}Edit" name="${value}TitleCP${currentCounter}Edit" placeholder="Title" required/>
+        </div>
+      </div>
+      <div class="col-sm-5">
+        <div class="input-group mb-3 mt-4">
+          <div class="input-group-prepend">
+            <div class="input-group-text">No. of Items</div>
+          </div>
+          <input type="number" class="form-control" id="${value}TotalItemCP${currentCounter}Edit" name="${value}TotalItemCP${currentCounter}Edit" placeholder="Total" required/>
+        </div>
+      </div>
+      <input type="text" id="${value}ID${currentCounter}Edit" name="${value}ID${currentCounter}Edit" value="${cptypeID}" hidden />
+      <div class="col-sm-1">
+        <div class="input-group mb-3 mt-4">
+          <button class="btn btn-outline-secondary remove-row" type="button">
+            x
+          </button>
+        </div>
+      </div>
+    </div>`);
       });
+    });
 
-      // apply the condition so it wont submit
-      if (sum > 100) {
-        alert("wrong");
-        return false;
-      } else {
-        return true;
-      }
-    };
+    $(document).on("click", ".remove-row", function () {
+      $(this).closest(".row").remove();
+    });
 
-    // convert empty inputs to zero( 0 )
-    const defaulval = (str) => {
-      return $(str).val() == "" ? 0 : $(str).val();
-    };
-
-    $("#editSubjectForm").submit(function (event) {
-      event.preventDefault(); // Prevent form submission
-      $("#facultyNameEdit").val("{{request.user.id}}");
-
-      // Get form data
-      var formData = new FormData(this);
+    const gtypes = ["Prelims", "Midterm", "Finals"];
+    $(document).on("click", ".editSub", function (event) {
+      var sub_id = $(event.currentTarget).attr("id");
+      $('#subEditID').val(sub_id)
 
       $.ajax({
-        url: "{% url 'addsubject' %}", // Replace with your actual submit URL
-        type: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function (response) {
-          // Handle success response
-          $(".editSub").click();
-          var dataTable = $("#subjectTable").DataTable();
-          dataTable.ajax.reload(null, false);
+        url: `editsubject/${sub_id}`,
+        success: (response) => {
+          $("#courseCodeEdit").val(response.courseCode);
+          $("#courseNameEdit").val(response.courseName);
+          $('#PrelimsCPEdit').empty();
+          $('#MidtermCPEdit').empty();
+          $('#FinalsCPEdit').empty();
 
-          // Additional actions after form submission
+          gtypes.forEach((d) => {
+            $(`#${d}ClassPerformanceEdit`).val(response[d].ClassPerformance);
+            $(`#${d}AttendanceEdit`).val(response[d].Attendance);
+            $(`#${d}ExamEdit`).val(response[d].Exam);
+            $(`#${d}ProjectEdit`).val(response[d].Project);
+            $(`#${d}TotalExamEdit`).val(response[d].totalItem);
+            $(`#${d}TotalProjectEdit`).val(response[d].totalProject);
+            let increment = 1;
+            $(`#${d}CounterEdit`).val(response[d].cpTask.length);
+
+            response[d].cpTask.forEach((data) => {
+              $(`#${d}CPEdit`).append(` <div class="row">
+                <div class="col-sm-6">
+                  <div class="input-group mb-3 mt-4">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">${data.cptype}</div>
+                    </div>
+                    <input type="text" class="form-control" id="${d}TitleCP${increment}Edit" name="${d}TitleCP${increment}Edit" value = ${data.title} required/>
+                  </div>
+                </div>
+                <div class="col-sm-5">
+                  <div class="input-group mb-3 mt-4">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">No. of Items</div>
+                    </div>
+                    <input type="number" class="form-control" id="${d}TotalItemCP${increment}Edit" name="${d}TotalItemCP${increment}Edit" value=${data.noItems} required/>
+                  </div>
+                </div>
+                <input type="text" id="${d}ID${increment}Edit" name="${d}ID${increment}Edit" value="${data.cptypeID}" hidden />
+                <div class="col-sm-1">
+                  <div class="input-group mb-3 mt-4">
+                    <button class="btn btn-outline-secondary remove-row" type="button">
+                      x
+                    </button>
+                  </div>
+                </div>
+              </div>`);
+              increment++;
+            });
+          });
         },
       });
     });

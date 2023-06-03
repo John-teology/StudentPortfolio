@@ -129,8 +129,8 @@ def studentProfile(request, studentID):
     studentTasks = Task.objects.filter(
         studentProfileID=studentprof)
 
-    data = dataForGraph(subjects, studentTasks)
-    dataD = dataForGraph(subjects, studentTasks, isrubick=1)
+    # data = dataForGraph(subjects, studentTasks)
+    # dataD = dataForGraph(subjects, studentTasks, isrubick=1)
 
     if request.method == "POST":
 
@@ -171,12 +171,12 @@ def studentProfile(request, studentID):
             deleteTask.delete()
             subjects = Subject.objects.filter(id__in=subjectIDs)
 
-            studentTasks = Task.objects.filter(
-                studentProfileID=studentprof)
-            data = dataForGraph(subjects, studentTasks)
-            dataD = dataForGraph(subjects, studentTasks, isrubick=1)
+            # studentTasks = Task.objects.filter(
+            #     studentProfileID=studentprof)
+            # data = dataForGraph(subjects, studentTasks)
+            # dataD = dataForGraph(subjects, studentTasks, isrubick=1)
 
-            return JsonResponse({'data': data, 'dounut': dataD}, safe=False)
+            return JsonResponse({'succes':1}, safe=False)
 
         if typeID:
             tType = TaskType.objects.get(pk=typeID)
@@ -188,12 +188,12 @@ def studentProfile(request, studentID):
             uploadedTask.save()
             subjects = Subject.objects.filter(id__in=subjectIDs)
 
-            studentTasks = Task.objects.filter(
-                studentProfileID=studentprof)
-            data = dataForGraph(subjects, studentTasks)
-            dataD = dataForGraph(subjects, studentTasks, isrubick=1)
+            # studentTasks = Task.objects.filter(
+            #     studentProfileID=studentprof)
+            # data = dataForGraph(subjects, studentTasks)
+            # dataD = dataForGraph(subjects, studentTasks, isrubick=1)
 
-            return JsonResponse({"title": uploadedTask.title, "myscore": uploadedTask.score, "overallscore": uploadedTask.overallscore, "date": uploadedTask.date, 'type': tType.taskType, 'subject': subject.subjectName, 'attaachment':  uploadedTask.image.url if uploadedTask.image else None, "data": data, 'dounut': dataD}, safe=False)
+            return JsonResponse({"title": uploadedTask.title, "myscore": uploadedTask.score, "overallscore": uploadedTask.overallscore, "date": uploadedTask.date, 'type': tType.taskType, 'subject': subject.subjectName, 'attaachment':  uploadedTask.image.url if uploadedTask.image else None, }, safe=False)
 
         if isEditType:
             try:
@@ -213,13 +213,13 @@ def studentProfile(request, studentID):
                 modifiedTask.image = imageEdit
                 modifiedTask.save()
 
-                subjects = Subject.objects.filter(id__in=subjectIDs)
-                studentTasks = Task.objects.filter(
-                    studentProfileID=studentprof)
-                data = dataForGraph(subjects, studentTasks)
-                dataD = dataForGraph(subjects, studentTasks, isrubick=1)
+                # subjects = Subject.objects.filter(id__in=subjectIDs)
+                # studentTasks = Task.objects.filter(
+                #     studentProfileID=studentprof)
+                # data = dataForGraph(subjects, studentTasks)
+                # dataD = dataForGraph(subjects, studentTasks, isrubick=1)
 
-                return JsonResponse({'data': 1, 'graphdata': data, 'dounut': dataD}, safe=False)
+                return JsonResponse({'data': 1, }, safe=False)
             except:
                 return JsonResponse({'data': 0}, safe=False)
 
@@ -258,16 +258,16 @@ def studentProfile(request, studentID):
                     studentProfileID=studentprof, subjectID=addedSubject)
                 sub.save()
 
-            studentSubjects = StudentSubject.objects.filter(
-                studentProfileID=studentprof, ishide=False)
-            subjectIDs = [
-                studentSubject.subjectID_id for studentSubject in studentSubjects]
-            subjects = Subject.objects.filter(id__in=subjectIDs)
-            studentTasks = Task.objects.filter(
-                studentProfileID=studentprof)
-            data = dataForGraph(subjects, studentTasks)
-            dataD = dataForGraph(subjects, studentTasks, isrubick=1)
-            return JsonResponse({'data': data, 'subjectCode': addedSubject.subjectCode, 'subjectName': addedSubject.subjectName, 'dounut': dataD}, safe=False)
+            # studentSubjects = StudentSubject.objects.filter(
+            #     studentProfileID=studentprof, ishide=False)
+            # subjectIDs = [
+            #     studentSubject.subjectID_id for studentSubject in studentSubjects]
+            # subjects = Subject.objects.filter(id__in=subjectIDs)
+            # studentTasks = Task.objects.filter(
+            #     studentProfileID=studentprof)
+            # data = dataForGraph(subjects, studentTasks)
+            # dataD = dataForGraph(subjects, studentTasks, isrubick=1)
+            return JsonResponse({ 'subjectCode': addedSubject.subjectCode, 'subjectName': addedSubject.subjectName, }, safe=False)
 
         if deleteSubId:
             deletedSub = Subject.objects.get(pk=deleteSubId)
@@ -275,27 +275,25 @@ def studentProfile(request, studentID):
                 studentProfileID=studentprof, subjectID=deleteSubId)
             toBeDeleteSubject.delete()
 
-            studentSubjects = StudentSubject.objects.filter(
-                studentProfileID=studentprof, ishide=False)
-            subjectIDs = [
-                studentSubject.subjectID_id for studentSubject in studentSubjects]
-            subjects = Subject.objects.filter(id__in=subjectIDs)
-            studentTasks = Task.objects.filter(
-                studentProfileID=studentprof)
-            data = dataForGraph(subjects, studentTasks)
-            dataD = dataForGraph(subjects, studentTasks, isrubick=1)
-            return JsonResponse({'data': data, 'subjectCode': deletedSub.subjectCode, 'subjectName': deletedSub.subjectName, 'dounut': dataD}, safe=False)
+            # studentSubjects = StudentSubject.objects.filter(
+            #     studentProfileID=studentprof, ishide=False)
+            # subjectIDs = [
+            #     studentSubject.subjectID_id for studentSubject in studentSubjects]
+            # subjects = Subject.objects.filter(id__in=subjectIDs)
+            # studentTasks = Task.objects.filter(
+            #     studentProfileID=studentprof)
+            # data = dataForGraph(subjects, studentTasks)
+            # dataD = dataForGraph(subjects, studentTasks, isrubick=1)
+            return JsonResponse({ 'subjectCode': deletedSub.subjectCode, 'subjectName': deletedSub.subjectName, }, safe=False)
 
     return render(request, "studentProfile.html", {
         'studentprof': studentprof,
         'subjects': subjects,
         'availSubs': availableSubs,
-        'test':  data,
         'yearList':  yearlist,
         'courseList':  courselist,
         'male': gender,
         'tasks': studentTasks,
-        'dounut': dataD
     })
 
 

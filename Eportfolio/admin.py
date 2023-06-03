@@ -5,9 +5,9 @@ from .models import *
 
 
 class rubrickFilter(admin.ModelAdmin):
-    list_display = ['id', 'subjectID', 'taskTypeID', 'percentage']
-    list_editable = ['subjectID', 'taskTypeID', 'percentage']
-    search_fields = ['id', 'subjectID', 'taskTypeID', 'percentage']
+    list_display = ['id', 'gpObjt', 'taskTypeID', 'percentage']
+    list_editable = ['gpObjt', 'taskTypeID', 'percentage']
+    search_fields = ['id', 'gpObjt', 'taskTypeID', 'percentage']
 
 
 class studentProfileFilter(admin.ModelAdmin):
@@ -52,13 +52,13 @@ class cpTypeFilter(admin.ModelAdmin):
 
 
 class gradeperiodFilter(admin.ModelAdmin):
-    list_display = ['id','subject','gptype','student','numberOfAbsences','exam','image']
-    list_editable = ['subject','gptype','student','numberOfAbsences','exam','image']
+    list_display = ['id','subject','gptype','numberOfAbsences','exam','image']
+    list_editable = ['subject','gptype','numberOfAbsences','exam','image']
 
 
 class cpFilter(admin.ModelAdmin):
-    list_display = ['id','title','cptype','totalScore','score','gpObject','image']
-    list_editable = ['title','cptype','totalScore','score','gpObject','image']
+    list_display = ['id','title','cptype','totalScore','gpObject','image']
+    list_editable = ['title','cptype','totalScore','gpObject','image']
 
 
 admin.site.register(User)

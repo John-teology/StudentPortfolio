@@ -41,6 +41,26 @@ class Gender(models.Model):
         return f"{self.gender}"
 
 
+class GPType(models.Model):
+    gptypeName = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f"{self.gptypeName}"
+
+
+class CPType(models.Model):
+    cptypeName = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.cptypeName}"
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'type': self.cptypeName
+        }
+
+
 class Studentprofile(models.Model):
     userID = models.ForeignKey(
         User, on_delete=CASCADE, related_name='studentProfile')
@@ -100,29 +120,6 @@ class Subject(models.Model):
             }
 
 
-class Rubrick(models.Model):
-    subjectID = models.ForeignKey(
-        Subject, on_delete=CASCADE, related_name='subjectRubicks')
-    taskTypeID = models.ForeignKey(
-        TaskType, on_delete=CASCADE, related_name='takstypeRubicks')
-    percentage = models.IntegerField(null=True)
-
-    def serialize(self, isprof=0):
-        if isprof:
-            return {
-                "id": self.id,
-                "taskID": self.taskTypeID_id,
-                "taskName": self.taskTypeID.taskType.lower()+"Edit",
-                "percentage": self.percentage
-
-            }
-        return {
-            "id": self.id,
-            "taskID": self.taskTypeID_id,
-            "taskName": self.taskTypeID.taskType,
-        }
-
-
 class StudentSubject(models.Model):
     studentProfileID = models.ForeignKey(
         Studentprofile, on_delete=CASCADE, related_name="studentSubject", null=True)
@@ -174,35 +171,71 @@ class Task(models.Model):
         }
 
 
-class GPType(models.Model):
-    gptypeName = models.CharField(max_length=50)
-
-
-class CPType(models.Model):
-    cptypeName = models.CharField(max_length=100)
-
-    def serialize(self):
-        return{
-            'id' : self.id,
-            'type': self.cptypeName
-        }
-
-
-
-class GradePeriods(models.Model):
-    subject = models.ForeignKey(Subject,on_delete=CASCADE,related_name='GPSubject')
-    gptype = models.ForeignKey(GPType,on_delete=CASCADE,related_name="GPType")
-    student = models.ForeignKey(Studentprofile, on_delete=CASCADE,related_name="StudentGP")
-    numberOfAbsences = models.IntegerField()
+class GradePeriodExam(models.Model):
+    subject = models.ForeignKey(
+        Subject, on_delete=CASCADE, related_name='GPSubject')
+    gptype = models.ForeignKey(
+        GPType, on_delete=CASCADE, related_name="GPType")
     exam = models.IntegerField()
-    image = models.ImageField(null=True, blank=True, upload_to='images/')
+
+    def __str__(self):
+        return f"{self.subject} -{self.gptype.gptypeName}"
+    
+
+class GradePeriodProject(models.Model):
+    subject = models.ForeignKey(
+        Subject, on_delete=CASCADE, related_name='GPSubject')
+    gptype = models.ForeignKey(
+        GPType, on_delete=CASCADE, related_name="GPType")
+    projectTotal = models.IntegerField(null=True)
+
+    def __str__(self):
+        return f"{self.subject} -{self.gptype.gptypeName}"
+
+
+class GradePeriodAttendance(models.Model):
+    subject = models.ForeignKey(
+        Subject, on_delete=CASCADE, related_name='GPSubject')
+    gptype = models.ForeignKey(
+        GPType, on_delete=CASCADE, related_name="GPType")
+    numberOfAbsences = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.subject} -{self.gptype.gptypeName}"
 
 
 
 class ClassPerformance(models.Model):
+    subject = models.ForeignKey(
+        Subject, on_delete=CASCADE, related_name='GPSubject')
+    gpObject = models.ForeignKey(
+        GPType, on_delete=CASCADE, related_name='CPgradepoint')
     title = models.CharField(max_length=100)
-    cptype = models.ForeignKey(CPType,on_delete=CASCADE,related_name='CPtype')
+    cptype = models.ForeignKey(
+        CPType, on_delete=CASCADE, related_name='CPtype')
     totalScore = models.IntegerField()
-    score = models.IntegerField(default=0)
-    gpObject = models.ForeignKey(GradePeriods,on_delete=CASCADE,related_name='CPgradepoint')
     image = models.ImageField(null=True, blank=True, upload_to='images/')
+
+
+class Rubrick(models.Model):
+    subject = models.ForeignKey(
+        Subject, on_delete=CASCADE, related_name='rubrickSubject')
+    gpObjt = models.ForeignKey(
+        GPType, on_delete=CASCADE, related_name='gpRubrick', null=True)
+    taskTypeID = models.ForeignKey(
+        TaskType, on_delete=CASCADE, related_name='typeRubicks')
+    percentage = models.IntegerField(null=True)
+
+    def serialize(self, isprof=0):
+        if isprof:
+            return {
+                "id": self.id,
+                "taskID": self.taskTypeID_id,
+                "taskName": self.taskTypeID.taskType.lower()+"Edit",
+                "percentage": self.percentage
+            }
+        return {
+            "id": self.id,
+            "taskID": self.taskTypeID_id,
+            "taskName": self.taskTypeID.taskType,
+        }

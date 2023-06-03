@@ -6,7 +6,7 @@ from django.http import JsonResponse
 import json
 from django.contrib.auth.decorators import login_required
 from datetime import date
-
+from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
 from Eportfolio.models import *
@@ -28,7 +28,7 @@ def index(request):
     return render(request, "professor/prof.html", {
         'subjects': subjects,
         'tasksT': taskT,
-        'gpTypes' : gpTypes
+        'gpTypes': gpTypes
     })
 
 
@@ -37,89 +37,60 @@ def subject(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)
 
-    # data = json.loads(request.body)
-    subjectCode = request.POST.get('subjectCode', "")
-    subName = request.POST.get('subjectName', "")
-    fName = request.POST.get('facultyName', "")
-    units = request.POST.get('units', 0)
-
-    # edit
-    editID = request.POST.get('editID', 0)
-    subjectCodeEdit = request.POST.get('subjectCodeEdit', "")
-    subNameEdit = request.POST.get('subjectNameEdit', "")
-    unitsEdit = request.POST.get('unitsEdit', 0)
-
-    quizEdit = request.POST.get('quizEdit', 0)
-    performanceTaskEdit = request.POST.get('performancetaskEdit', 0)
-    prelimsEdit = request.POST.get('prelimsEdit', 0)
-    midtermsEdit = request.POST.get('midtermEdit', 0)
-    finalsEdit = request.POST.get('finalsEdit', 0)
-    projectEdit = request.POST.get('projectEdit', 0)
+    # delete sub ----------------------------
 
     deletemySub = request.POST.get('subDeleteID', 0)
+
     if deletemySub:
         subToDelete = Subject.objects.get(pk=deletemySub)
         subToDelete.delete()
+        return JsonResponse({"message": "data deleted successfully."}, status=201)
 
-    if editID:
-        # facultyUser = User.objects.get(pk=request.user.id)
-        mySubject = Subject.objects.get(pk=editID)
-        mySubject.subjectCode = subjectCodeEdit
-        mySubject.subjectName = subNameEdit
-        mySubject.units = unitsEdit
+    # delete sub ----------------------------
 
-        mySubject.save()
+    courseCode = request.POST.get('courseCode', '')
+    courseName = request.POST.get('courseName', '')
+    faculty = User.objects.get(pk=request.user.id)
 
-        addRubricks("Quiz", mySubject, 0 if quizEdit ==
-                    '' else quizEdit, isEdit=1)
-        addRubricks("PerformanceTask", mySubject, 0 if performanceTaskEdit ==
-                    '' else performanceTaskEdit, isEdit=1)
-        addRubricks("Prelims", mySubject, 0 if prelimsEdit ==
-                    '' else prelimsEdit, isEdit=1)
-        addRubricks("Midterm", mySubject, 0 if midtermsEdit ==
-                    '' else midtermsEdit, isEdit=1)
-        addRubricks("Finals", mySubject, 0 if finalsEdit ==
-                    '' else finalsEdit, isEdit=1)
-        addRubricks("Project", mySubject, 0 if projectEdit ==
-                    '' else projectEdit, isEdit=1)
+    studentSubject = Subject(
+        subjectCode=courseCode, subjectName=courseName, facultyName=faculty)
+    studentSubject.save()
 
-    # rubricks
-    quiz = request.POST.get('quiz', 0)
-    performanceTask = request.POST.get('performancetask', 0)
-    prelims = request.POST.get('prelims', 0)
-    midterms = request.POST.get('midterm', 0)
-    finals = request.POST.get('finals', 0)
-    project = request.POST.get('project', 0)
+    gpTypes = GPType.objects.all()
+    tasktypes = TaskType.objects.all()
 
-    if subjectCode:
-        facultyUser = User.objects.get(pk=request.user.id)
-        studentSubject = Subject(
-            subjectCode=subjectCode, subjectName=subName, facultyName=facultyUser, units=units)
-        studentSubject.save()
+    for gp in gpTypes:
+        gptypeSub = studentSubject
+        totalExam = request.POST.get(f'{gp}TotalExam', 0)
+        totalProject = request.POST.get(f'{gp}TotalProject', 0)
 
-        addRubricks("Quiz", studentSubject, quiz)
-        addRubricks("PerformanceTask", studentSubject, performanceTask)
-        addRubricks("Prelims", studentSubject, prelims)
-        addRubricks("Midterm", studentSubject, midterms)
-        addRubricks("Finals", studentSubject, finals)
-        addRubricks("Project", studentSubject, project)
+        subjectGP = GradePeriods(
+            subject=gptypeSub, gptype=gp, exam=totalExam if totalExam != '' else 0, projectTotal=totalProject if totalProject != '' else 0)
+        subjectGP.save()
 
-    # setRubricks = Rubrick(SubjectID = studentSubject,)
+        gpCounter = request.POST.get(f'{gp}Counter', 0)
 
+        if gpCounter:
+            for i in range(int(gpCounter)):
+                title = request.POST.get(f"{gp}TitleCP{i+1}", '')
+                totalItems = request.POST.get(f"{gp}TotalItemCP{i+1}", '')
+                cptypeID = request.POST.get(f"{gp}ID{i+1}", '')
+
+                try:
+                    cptypeObj = CPType.objects.get(pk=cptypeID)
+                    print(title, totalItems, cptypeObj)
+                    newClassP = ClassPerformance(
+                        title=title, gpObject=subjectGP, cptype=cptypeObj, totalScore=totalItems)
+                    newClassP.save()
+                except ValueError:
+                    pass
+
+        for task in tasktypes:
+            percentage = request.POST.get(f"{gp}{task}", 0)
+            rubrick = Rubrick(gpObjt=subjectGP, taskTypeID=task,
+                              percentage=percentage if percentage != '' else 0)
+            rubrick.save()
     return JsonResponse({"message": "data added successfully."}, status=201)
-
-
-def addRubricks(a, b, c, isEdit=0):
-    if isEdit:
-        t_id = TaskType.objects.get(taskType=a)
-        subject = Subject.objects.get(pk=b.id)
-        new_rub = Rubrick.objects.get(subjectID=subject, taskTypeID=t_id)
-        new_rub.percentage = c
-        new_rub.save()
-    else:
-        t_id = TaskType.objects.get(taskType=a)
-        setRubricks = Rubrick(subjectID=b, taskTypeID=t_id, percentage=c)
-        setRubricks.save()
 
 
 def getMySubjects(request, subId):
@@ -132,9 +103,9 @@ def getMySubjects(request, subId):
     return JsonResponse([rub.serialize(isprof=1) for rub in rubricks], safe=False)
 
 
-def getAllMyStudents(request,profid):
+def getAllMyStudents(request, profid):
     # Retrieve the faculty object based on the faculty_id
-    faculty = User.objects.get(id=profid)
+    faculty = User.objects.get(pk=profid)
 
     # Get all the student subjects associated with the faculty
     student_subjects = StudentSubject.objects.filter(
@@ -146,5 +117,130 @@ def getAllMyStudents(request,profid):
         print(serialized_obj)
         if serialized_obj not in serialized_data:
             serialized_data.append(serialized_obj)
-            
+
     return JsonResponse(serialized_data, safe=False)
+
+
+def editSubject(request, subID):
+    # Assuming you have the required subjectCode and subjectName variables
+    subject = Subject.objects.get(pk=subID)
+
+    # Retrieve the related grade periods for the subject
+    grade_periods = GradePeriods.objects.filter(subject=subject)
+
+    # Initialize the dictionary
+    dic = {
+        'courseCode': subject.subjectCode,
+        'courseName': subject.subjectName,
+        'ID': subject.id,
+        'Prelims': {},
+        'Midterm': {},
+        'Finals': {}
+    }
+    for gp in grade_periods:
+        # Retrieve the rubrick for the grade period
+        rubrick = Rubrick.objects.filter(gpObjt=gp)
+
+        # Retrieve the class performances for the grade period
+        class_performances = ClassPerformance.objects.filter(gpObject=gp)
+
+        # Initialize the grade period dictionary
+        gp_dict = {
+            'totalItem': gp.exam,
+            'totalProject': gp.projectTotal,
+            'cpTask': []
+        }
+        for i in rubrick:
+            print(i.taskTypeID)
+            gp_dict[i.taskTypeID.taskType] = i.percentage
+
+        # Iterate over the class performances and populate the cpTask dictionary
+        for i, cp in enumerate(class_performances):
+            cp_task_dict = {
+                'title': cp.title,
+                'cptype': cp.cptype.cptypeName,
+                'noItems': cp.totalScore,
+                'cptypeID': cp.cptype.id,
+                'id': cp.id,
+                'image': cp.image.url if cp.image else None
+            }
+            gp_dict['cpTask'].append(cp_task_dict)
+
+        # Add the grade period dictionary to the respective section in the main dictionary
+        if gp.gptype.gptypeName == 'Prelims':
+            dic['Prelims'] = gp_dict
+        elif gp.gptype.gptypeName == 'Midterm':
+            dic['Midterm'] = gp_dict
+        elif gp.gptype.gptypeName == 'Finals':
+            dic['Finals'] = gp_dict
+
+    return JsonResponse(dic, safe=False)
+
+
+@csrf_exempt
+def edit_subject_form(request, sub_id=60):
+    # Retrieve the existing subject and related objects from the database based on the subject ID
+    try:
+        subject = Subject.objects.get(pk=sub_id)
+    except Subject.DoesNotExist:
+        return JsonResponse({"error": "Subject not found."}, status=404)
+
+    # Update the subject data
+    subject.subjectCode = request.POST.get(
+        'courseCodeEdit', subject.subjectCode)
+    subject.subjectName = request.POST.get(
+        'courseNameEdit', subject.subjectName)
+    subject.save()
+
+    # Update the grade periods and related objects
+    gpTypes = GPType.objects.all()
+    tasktypes = TaskType.objects.all()
+
+    for gp in gpTypes:
+        # Update the GradePeriods object
+        try:
+            subjectGP = GradePeriods.objects.get(subject=subject, gptype=gp)
+        except GradePeriods.DoesNotExist:
+            continue
+
+        subjectGP.exam = request.POST.get(f'{gp}TotalExamEdit', subjectGP.exam)
+        subjectGP.projectTotal = request.POST.get(
+            f'{gp}TotalProjectEdit', subjectGP.projectTotal)
+
+        subjectGP.save()
+
+        gpCounter = request.POST.get(f'{gp}CounterEdit', 0)
+
+        if gpCounter:
+            # Update the ClassPerformance objects
+            ClassPerformance.objects.filter(gpObject=subjectGP).delete()
+
+            for i in range(int(gpCounter)):
+                title = request.POST.get(f"{gp}TitleCP{i+1}Edit", '')
+                totalItems = request.POST.get(f"{gp}TotalItemCP{i+1}Edit", '')
+                cptypeID = request.POST.get(f"{gp}ID{i+1}Edit", '')
+
+                if not cptypeID:  # Skip the iteration if cptypeID is empty
+                    continue
+
+                try:
+                    cptypeObj = CPType.objects.get(pk=cptypeID)
+                    newClassP = ClassPerformance(
+                        title=title, gpObject=subjectGP, cptype=cptypeObj, totalScore=totalItems)
+                    newClassP.save()
+                except CPType.DoesNotExist:
+                    continue
+
+        # Update the Rubrick objects
+        for task in tasktypes:
+            try:
+                rubrick = Rubrick.objects.get(
+                    gpObjt=subjectGP, taskTypeID=task)
+            except Rubrick.DoesNotExist:
+                continue
+
+            rubrick.percentage = request.POST.get(
+                f"{gp}{task}Edit", rubrick.percentage)
+            rubrick.save()
+
+    return JsonResponse({"message": "Data updated successfully."}, status=200)

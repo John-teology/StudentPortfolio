@@ -26,20 +26,22 @@
       </div>
       <div class="modal-body">
         <form id="addSubjectForm">
-          <label for="subjectCode">Subject Code:</label>
+          <label for="courseCode">Course Code:</label>
           <input
             type="text"
             class="form-control"
-            id="subjectCode"
-            placeholder="Subject Code"
+            id="courseCode"
+            name="courseCode"
+            placeholder="course Code"
             required
           />
-          <label for="subjectName">Subject Name:</label>
+          <label for="courseName">Course Description:</label>
           <input
             type="text"
             class="form-control"
-            id="subjectName"
-            placeholder="Subject Name"
+            id="courseName"
+            name="courseName"
+            placeholder="Course Name"
             required
           />
 
@@ -53,8 +55,10 @@
                 type="number"
                 class="form-control"
                 value=""
-                id="{{i.gptypeName}}CP"
+                id="{{i.gptypeName}}ClassPerformance"
+                name="{{i.gptypeName}}ClassPerformance"
                 placeholder="%"
+                required
               />
             </div>
             <div class="col-md-3">
@@ -64,6 +68,7 @@
                 class="form-control"
                 value=""
                 id="{{i.gptypeName}}Attendance"
+                name="{{i.gptypeName}}Attendance"
                 placeholder="%"
               />
             </div>
@@ -74,7 +79,9 @@
                 class="form-control"
                 value=""
                 id="{{i.gptypeName}}Exam"
+                name="{{i.gptypeName}}Exam"
                 placeholder="%"
+                required
               />
             </div>
             <div class="col-md-3">
@@ -84,6 +91,7 @@
                 class="form-control"
                 value=""
                 id="{{i.gptypeName}}Project"
+                name="{{i.gptypeName}}Project"
                 placeholder="%"
               />
             </div>
@@ -96,9 +104,29 @@
                 type="number"
                 class="form-control"
                 id="{{i.gptypeName}}TotalExam"
+                name="{{i.gptypeName}}TotalExam"
                 placeholder="Total Score"
               />
             </div>
+            <div class="input-group mb-2 mr-sm-2 mt-4">
+              <div class="input-group-prepend">
+                <div class="input-group-text">Project</div>
+              </div>
+              <input
+                type="number"
+                class="form-control"
+                id="{{i.gptypeName}}TotalProject"
+                name="{{i.gptypeName}}TotalProject"
+                placeholder="Total Score"
+              />
+            </div>
+
+            <input
+              type="number"
+              name="{{i.gptypeName}}Counter"
+              id="{{i.gptypeName}}Counter"
+              hidden
+            />
 
             <div class="input-group" style="margin-top: 3%">
               <select
@@ -142,61 +170,33 @@
 
 <script>
   $(document).ready(() => {
-    // get the values after submit
-    var value = $("#subjectCode").val();
+    $("#addSubjectForm").submit(function (event) {
+      event.preventDefault();
+      var formData = new FormData(this);
+      // var formValues = {};
+      // for (var pair of formData.entries()) {
+      //   var fieldName = pair[0];
+      //   var fieldValue = pair[1];
+      //   formValues[fieldName] = fieldValue;
+      // }
 
-    const isvalid = () => {
-      let totalRubicks = [
-        defaulval("#quiz"),
-        defaulval("#performancetask"),
-        defaulval("#prelims"),
-        defaulval("#midterm"),
-        defaulval("#finals"),
-        defaulval("#project"),
-      ];
-
-      // get the total
-      let sum = totalRubicks.reduce(function (a, b) {
-        return Number(a) + Number(b);
-      });
-
-      // apply the condition so it wont submit
-      if (sum > 100) {
-        alert("wrong");
-        return false;
-      } else {
-        return true;
-      }
-    };
-
-    // convert empty inputs to zero( 0 )
-    const defaulval = (str) => {
-      return $(str).val() == "" ? 0 : $(str).val();
-    };
-
-    $(document).on("submit", "#addSubjectForm", (e) => {
-      e.preventDefault();
-      console.log("submit");
-      if (isvalid()) {
-        $.post("{% url 'addsubject' %}", {
-          subjectCode: $("#subjectCode").val(),
-          subjectName: $("#subjectName").val(),
-          units: $("#units").val(),
-          quiz: defaulval("#quiz"),
-          performancetask: defaulval("#performancetask"),
-          prelims: defaulval("#prelims"),
-          midterm: defaulval("#midterm"),
-          finals: defaulval("#finals"),
-          project: defaulval("#project"),
-        }).then((response) => {
-          $("#addProfSubjectButton").click();
+      // // Display the form values
+      // console.log(formValues);
+      $.ajax({
+        url: "{% url 'addsubject' %}",
+        data: formData,
+        method: "POST",
+        processData: false,
+        contentType: false,
+        success: (response) => {
           $("#addSubjectForm")[0].reset();
+          $('#addProfSubjectButton').click();
           var dataTable = $("#subjectTable").DataTable();
-          dataTable.ajax.reload(null, false);
-        });
-      }
+          dataTable.ajax.reload(null, false); 
+        },
+      });
     });
-
+   
     $.ajax({
       url: `/getcptypes`,
       success: (data) => {
@@ -221,7 +221,6 @@
       var selectedText = $(this).find(":selected").text();
       addButton.attr("id", $(event.currentTarget).val());
       addButton.attr("name", selectedText);
-      console.log(selectedText);
     }
 
     $(document).on(
@@ -236,47 +235,46 @@
     );
     $(document).on("change", "#FinalscyTypesSelect", handleCyTypesSelectChange);
 
-    $(document).on("click", ".add-cp-button", function (e) {
-      var cptypeID = $(e.currentTarget).attr("id");
-      var name = $(e.currentTarget).attr("name");
-      var value = $(e.currentTarget).val();
-      console.log(value);
-      var container = $(e.currentTarget).closest(".row").find("[id$='CP']");
-      container.append(`<div class = "row"> <div class="col-sm-6">
-                <div class="input-group mb-3 mt-4">
-                  <div class="input-group-prepend">
-                    <div class="input-group-text">${name}</div>
-                  </div>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="${value}TitleCP"
-                    placeholder="Title"
-                  />
-                </div>
-              </div>
-              <div class="col-sm-5">
-                <div class="input-group mb-3 mt-4">
-                  <div class="input-group-prepend">
-                    <div class="input-group-text">No. of Items</div>
-                  </div>
-                  <input
-                    type="number"
-                    class="form-control"
-                    id="${value}TotalItemCP"
-                    placeholder="Total "
-                  />
-                </div>
-              </div>
-              <input type="text" id="PrelimscptypeID" value = "${cptypeID}" hidden>
-              <div class="col-sm-1">
-                <div class="input-group mb-3 mt-4">
-                  <button class="btn btn-outline-secondary remove-row" type="button">
-                    x
-                  </button>
-                </div>
-                </div>
-              </div>`);
+    $(document).ready(function () {
+      var counter = {}; // Object to store counters
+
+      $(document).on("click", ".add-cp-button", function (e) {
+        var cptypeID = $(e.currentTarget).attr("id");
+        var name = $(e.currentTarget).attr("name");
+        var value = $(e.currentTarget).val();
+
+        var container = $(e.currentTarget).closest(".row").find("[id$='CP']");
+        var identifier = container.attr("id"); // Get the identifier from the container's ID
+        counter[identifier] = counter[identifier] || 1; // Initialize the counter for this identifier if it doesn't exist
+        var currentCounter = counter[identifier]++; // Increment the counter and store the current value
+        $(`#${value}Counter`).val(currentCounter);
+        container.append(`<div class="row">
+      <div class="col-sm-6">
+        <div class="input-group mb-3 mt-4">
+          <div class="input-group-prepend">
+            <div class="input-group-text">${name}</div>
+          </div>
+          <input type="text" class="form-control" id="${value}TitleCP${currentCounter}" name="${value}TitleCP${currentCounter}" placeholder="Title" required/>
+        </div>
+      </div>
+      <div class="col-sm-5">
+        <div class="input-group mb-3 mt-4">
+          <div class="input-group-prepend">
+            <div class="input-group-text">No. of Items</div>
+          </div>
+          <input type="number" class="form-control" id="${value}TotalItemCP${currentCounter}" name="${value}TotalItemCP${currentCounter}" placeholder="Total" required/>
+        </div>
+      </div>
+      <input type="text" id="${value}ID${currentCounter}" name="${value}ID${currentCounter}" value="${cptypeID}" hidden />
+      <div class="col-sm-1">
+        <div class="input-group mb-3 mt-4">
+          <button class="btn btn-outline-secondary remove-row" type="button">
+            x
+          </button>
+        </div>
+      </div>
+    </div>`);
+      });
     });
 
     $(document).on("click", ".remove-row", function () {
