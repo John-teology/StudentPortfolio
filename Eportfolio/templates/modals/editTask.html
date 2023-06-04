@@ -38,7 +38,9 @@
             name="taskTitleEdit"
             placeholder="Title"
             required
+            readonly
           />
+
           <label for="taskScoreEdit">Your Total Score:</label>
           <input
             type="number"
@@ -48,7 +50,6 @@
             placeholder="Your Score"
             required
           />
-          
 
           <label for="taskTotalEdit">Total Score:</label>
           <input
@@ -58,7 +59,9 @@
             name="taskTotalEdit"
             placeholder="Total"
             required
+            readonly
           />
+
           <label for="taskDateEdit">Date:</label>
           <input
             type="date"
@@ -69,19 +72,7 @@
             required
           />
 
-          <label for="taskSubjectEdit">Select Subject:</label>
-          <select name="taskSubjectEdit" id="taskSubjectEdit" 
-                  class="form-select form-select-mb" 
-                  aria-label=".form-select-lg example" required>
-                  <option value="" selected disabled>Select</option>
-          </select>
 
-          <label for="taskTypeEdit">Select Task Types:</label>
-          <select name="taskTypeEdit" id="taskTypeEdit" 
-                  class="form-select form-select-mb" 
-                  aria-label=".form-select-lg example" required>
-                  <option value="" selected disabled>Select</option>
-          </select>
 
           <label for="taskAttachmentsEdit">Attachments:</label>
           <input
@@ -120,65 +111,73 @@ $(document).on('click',".EditTask", (event) => {
   $("#taskScoreEdit").val($(event.currentTarget).attr('score'));
   $("#taskTotalEdit").val($(event.currentTarget).attr('overall'));
   $("#taskDateEdit").val($(event.currentTarget).attr('date'));
-  $("#taskSubjectEdit").val($(event.currentTarget).attr('subject'));
 
   var firtValSub =  $(event.currentTarget).attr('subject');
   
-  $.ajax({
-      url:`/getrubrick/${firtValSub}`,
-      success: (data) => {
-      $('#taskTypeEdit')
-      .find('option')
-      .remove()
-      .end()
-      .append('<option value="" disabled selected>Select</option>')
-          for (var i = 0; i <= data.length - 1; i++) {
-              var user_position = new Option(data[i].taskName, Number(data[i].taskID));
-              $('#taskTypeEdit').append(user_position);
-            }
-        $("#taskTypeEdit").val($(event.currentTarget).attr('subType'));
+  // $.ajax({
+  //     url:`/getrubrick/${firtValSub}`,
+  //     success: (data) => {
+  //     $('#taskTypeEdit')
+  //     .find('option')
+  //     .remove()
+  //     .end()
+  //     .append('<option value="" disabled selected>Select</option>')
+  //         for (var i = 0; i <= data.length - 1; i++) {
+  //             var user_position = new Option(data[i].taskName, Number(data[i].taskID));
+  //             $('#taskTypeEdit').append(user_position);
+  //           }
+  //       $("#taskTypeEdit").val($(event.currentTarget).attr('subType'));
 
-      }
-    })
+  //     }
+  //   })
 
 
 })
 
-$.ajax({
-    url: "{% url 'getUserSubject' studentprof.studentNumber %}",
-    method: "GET",
-    success: (data) =>{
-      for (var i = 0; i <= data.length - 1; i++) {
-              var user_position = new Option(data[i].subjectName, data[i].id);
-              $('#taskSubjectEdit').append(user_position);
-            }
-    }
-  })
+// $.ajax({
+//     url: "{% url 'getUserSubject' studentprof.studentNumber %}",
+//     method: "GET",
+//     success: (data) =>{
+//       for (var i = 0; i <= data.length - 1; i++) {
+//               var user_position = new Option(data[i].subjectName, data[i].id);
+//               $('#taskSubjectEdit').append(user_position);
+//             }
+//     }
+//   })
 
 
-  $(document).on('change', '#taskSubjectEdit',(e)=>{
-    var subjectID = e.currentTarget.value;
-    $.ajax({
-      url:`/getrubrick/${subjectID}`,
-      success: (data) => {
-      $('#taskTypeEdit')
-      .find('option')
-      .remove()
-      .end()
-      .append('<option value="" disabled selected>Select</option>')
-          for (var i = 0; i <= data.length - 1; i++) {
-              var user_position = new Option(data[i].taskName, data[i].taskID);
-              $('#taskTypeEdit').append(user_position);
-            }
-      }
-    })
-  })
+  // $(document).on('change', '#taskSubjectEdit',(e)=>{
+  //   var subjectID = e.currentTarget.value;
+  //   $.ajax({
+  //     url:`/getrubrick/${subjectID}`,
+  //     success: (data) => {
+  //     $('#taskTypeEdit')
+  //     .find('option')
+  //     .remove()
+  //     .end()
+  //     .append('<option value="" disabled selected>Select</option>')
+  //         for (var i = 0; i <= data.length - 1; i++) {
+  //             var user_position = new Option(data[i].taskName, data[i].taskID);
+  //             $('#taskTypeEdit').append(user_position);
+  //           }
+  //     }
+  //   })
+  // })
 
   $("#addTaskEdit").submit(function (event) {
         event.preventDefault(); // Prevent form submission
 
         // Get form data
         var formData = new FormData(this);
+        var formValues = {};
+            for (var pair of formData.entries()) {
+              var fieldName = pair[0];
+              var fieldValue = pair[1];
+              formValues[fieldName] = fieldValue;
+            }
+
+            // Display the form values
+            console.log(formValues);
 
         $.ajax({
           url: "{% url 'studentProfile' studentprof.studentNumber %}", // Replace with your actual submit URL
@@ -193,11 +192,11 @@ $.ajax({
             var dataTable = $("#tasksTable").DataTable();
             dataTable.ajax.reload(null, false); 
             $(".EditTask").click();
-            createBarGraph(response.graphdata);
-            for (var key in response.dounut) {
-              createChart(response.dounut[key], key);
-            }
-            barGraphProfile(response.dounut);
+            // createBarGraph(response.graphdata);
+            // for (var key in response.dounut) {
+            //   createChart(response.dounut[key], key);
+            // }
+            // barGraphProfile(response.dounut);
 
             // Additional actions after form submission
           },

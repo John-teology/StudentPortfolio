@@ -7,8 +7,79 @@ from django.db.models import Q
 from .models import *
 import re
 import json
+from django.db.models import Avg, F, FloatField
+
 
 # Create your views here.
+
+def get_activities_average(request, subject_id, student_id):
+    # Get the subject code for the specific subject
+    subject_code = Subject.objects.get(id=subject_id).subjectCode
+
+    # Get all distinct GPType names
+    gptype_names = GPType.objects.values_list('gptypeName', flat=True)
+
+    # Get all distinct TaskType names
+    tasktype_names = TaskType.objects.values_list('taskType', flat=True)
+
+    # Prepare the response data
+    response_data = {}
+
+    # Iterate over the GPType names
+    for gptype_name in gptype_names:
+        # Prepare the GPType data in the response
+        response_data[gptype_name] = {}
+
+        # Iterate over the TaskType names
+        for tasktype_name in tasktype_names:
+            # Get the computed score per GPType and TaskType for the specific subject and student
+            if tasktype_name == 'Attendance':
+                # Set the attendance score to always be 100
+                average_score = 100
+            else:
+                task_scores = Task.objects.filter(
+                    taskSubject_id=subject_id,
+                    studentProfileID_id=student_id,  # Filter tasks by student ID
+                    gptype__gptypeName=gptype_name,
+                    taskType__taskType=tasktype_name,
+                ).values('score', 'overallscore')
+
+                # Calculate the average computed score for the specific GPType and TaskType
+                if task_scores.exists():
+                    total_weighted_score = sum(
+                        ((score['score'] / score['overallscore']) * 50) + 50
+                        for score in task_scores
+                    )
+                    average_score = total_weighted_score / task_scores.count()
+                else:
+                    average_score = 0
+
+                # Check if a Rubrick exists for the current task type
+                rubrick = Rubrick.objects.filter(
+                    taskTypeID__taskType=tasktype_name
+                ).first()
+
+                if rubrick:
+                    # Get the Rubrick percentage for the current task type
+                    rubrick_percentage = rubrick.percentage
+
+                    # Calculate the value for response_data[gptype_name][tasktype_name]
+                    value = average_score * (rubrick_percentage / 100)
+                else:
+                    value = round(average_score, 2)
+
+            # Add the computed score to the GPType data in the response
+            response_data[gptype_name][tasktype_name] = value
+
+    # Create a new dictionary with subject code as key and response data as value
+    response_data = {subject_code: response_data}
+
+    # Return the response as JSON
+    return JsonResponse(response_data)
+
+
+
+
 
 
 def index(request):
@@ -16,7 +87,7 @@ def index(request):
         # if request.user.email[-10:] != 'tup.edu.ph':
         #     Invalid_User = User.objects.get(pk =request.user.id)
         #     Invalid_User.delete()
-            # return HttpResponseRedirect(reverse('index'))
+        # return HttpResponseRedirect(reverse('index'))
         if request.user.isProf == True:
             return redirect('indexProf')
         userid = User.objects.get(pk=request.user.id)
@@ -51,7 +122,7 @@ def demographicForm(request):
         email = request.user.email
         guardianNumber = request.POST['guardianNumber']
         guardianName = request.POST['guardianName']
-
+        isScholarval = request.POST['scholarValue']
         studentNumberFormat = r'^TUPM-\d{2}-\d{4}$'
 
         match_result = re.match(studentNumberFormat, studentNumber)
@@ -95,7 +166,8 @@ def demographicForm(request):
         genderInstance = Gender.objects.get(pk=gender)
 
         studentProfile = Studentprofile(userID=request.user, studentNumber=studentNumber, lastName=last, firstName=first, courseID=courseInstance, yearID=yearInstance,
-                                        genderID=genderInstance, contactNumber=phoneNumber, emailAddress=email, guardianNumber=guardianNumber, guardianName=guardianName)
+                                        genderID=genderInstance, contactNumber=phoneNumber, emailAddress=email, guardianNumber=guardianNumber, guardianName=guardianName,
+                                        isScholar = True if isScholarval else False )
 
         studentProfile.save()
         return HttpResponseRedirect(reverse("studentProfile", args=(str(studentNumber),)))
@@ -114,7 +186,6 @@ def studentProfile(request, studentID):
     yearlist = YearLevel.objects.all()
     courselist = Course.objects.all()
 
-
     studentSubjects = StudentSubject.objects.filter(
         studentProfileID=studentprof, ishide=False)
     subjectIDs = [
@@ -128,6 +199,9 @@ def studentProfile(request, studentID):
 
     studentTasks = Task.objects.filter(
         studentProfileID=studentprof)
+
+    test = TaskType.objects.get(pk=5)
+    print(test)
 
     # data = dataForGraph(subjects, studentTasks)
     # dataD = dataForGraph(subjects, studentTasks, isrubick=1)
@@ -147,7 +221,8 @@ def studentProfile(request, studentID):
         contactD = request.POST.get('contactNumber', 0)
 
         # add task
-        typeID = request.POST.get('taskType', '')
+        gpTypeId = request.POST.get('gpType', '')
+        taskTypeid = request.POST.get('cptypeid', '')
         subjectID = request.POST.get('taskSubject', '')
         title = request.POST.get('taskTitle', '')
         myScore = request.POST.get('taskScore', 0)
@@ -155,6 +230,7 @@ def studentProfile(request, studentID):
         date = request.POST.get('taskDate', 0)
         image = request.FILES.get('taskAttachments', "")
         taskToBeDelete = request.POST.get('taskDeleteID', False)
+        print(gpTypeId, subjectID, title, myScore, totalScore)
 
         # edit task
         isEditType = request.POST.get('taskIdEdit', 0)  # this is the ID
@@ -176,40 +252,44 @@ def studentProfile(request, studentID):
             # data = dataForGraph(subjects, studentTasks)
             # dataD = dataForGraph(subjects, studentTasks, isrubick=1)
 
-            return JsonResponse({'succes':1}, safe=False)
+            return JsonResponse({'succes': 1}, safe=False)
 
-        if typeID:
-            tType = TaskType.objects.get(pk=typeID)
+        if subjectID:
+            gpType = GPType.objects.get(pk=gpTypeId)
+            tasktypeObj = TaskType.objects.get(id=taskTypeid)
             subject = Subject.objects.get(pk=subjectID)
             studentSub = StudentSubject.objects.get(
                 studentProfileID=studentprof, subjectID=subject)
-            uploadedTask = Task(studentProfileID=studentprof, task_Type=tType, taskSubject=subject, title=title,
-                                overallscore=totalScore, score=myScore, image=image, date=date, subjectStudent=studentSub)
+            
+
+            existing_task = Task.objects.filter(
+            taskSubject=subject,
+            gptype=gpType,
+            taskType=tasktypeObj,
+            overallscore=totalScore).first()
+
+            if existing_task:
+                # Task with the same details already exists
+                return JsonResponse({'message': 'Task already added'})
+            uploadedTask = Task(studentProfileID=studentprof, gptype=gpType,
+                                taskType=tasktypeObj, taskSubject=subject, title=title,
+                                overallscore=totalScore, score=myScore, image=image, date=date, studentsubject=studentSub)
             uploadedTask.save()
-            subjects = Subject.objects.filter(id__in=subjectIDs)
+            # subjects = Subject.objects.filter(id__in=subjectIDs)
 
             # studentTasks = Task.objects.filter(
             #     studentProfileID=studentprof)
             # data = dataForGraph(subjects, studentTasks)
             # dataD = dataForGraph(subjects, studentTasks, isrubick=1)
 
-            return JsonResponse({"title": uploadedTask.title, "myscore": uploadedTask.score, "overallscore": uploadedTask.overallscore, "date": uploadedTask.date, 'type': tType.taskType, 'subject': subject.subjectName, 'attaachment':  uploadedTask.image.url if uploadedTask.image else None, }, safe=False)
+            return JsonResponse({"title": uploadedTask.title, "myscore": uploadedTask.score, "overallscore": uploadedTask.overallscore, "date": uploadedTask.date,  'subject': subject.subjectName, 'attaachment':  uploadedTask.image.url if uploadedTask.image else None, }, safe=False)
 
         if isEditType:
             try:
                 modifiedTask = Task.objects.get(pk=isEditType)
-                print(modifiedTask.title)
-                tTypeNew = TaskType.objects.get(pk=typeIDEdit)
-                subjectNew = Subject.objects.get(pk=subjectIDEdit)
-                studentSub = StudentSubject.objects.get(
-                    studentProfileID=studentprof, subjectID=subjectNew)
-                modifiedTask.title = titleEdit
+
                 modifiedTask.score = myScoreEdit
-                modifiedTask.overallscore = totalScoreEdit
-                modifiedTask.task_Type = tTypeNew
-                modifiedTask.taskSubject = subjectNew
                 modifiedTask.date = dateEdit
-                modifiedTask.subjectStudent = studentSub
                 modifiedTask.image = imageEdit
                 modifiedTask.save()
 
@@ -267,7 +347,7 @@ def studentProfile(request, studentID):
             #     studentProfileID=studentprof)
             # data = dataForGraph(subjects, studentTasks)
             # dataD = dataForGraph(subjects, studentTasks, isrubick=1)
-            return JsonResponse({ 'subjectCode': addedSubject.subjectCode, 'subjectName': addedSubject.subjectName, }, safe=False)
+            return JsonResponse({'subjectCode': addedSubject.subjectCode, 'subjectName': addedSubject.subjectName, }, safe=False)
 
         if deleteSubId:
             deletedSub = Subject.objects.get(pk=deleteSubId)
@@ -284,7 +364,7 @@ def studentProfile(request, studentID):
             #     studentProfileID=studentprof)
             # data = dataForGraph(subjects, studentTasks)
             # dataD = dataForGraph(subjects, studentTasks, isrubick=1)
-            return JsonResponse({ 'subjectCode': deletedSub.subjectCode, 'subjectName': deletedSub.subjectName, }, safe=False)
+            return JsonResponse({'subjectCode': deletedSub.subjectCode, 'subjectName': deletedSub.subjectName, }, safe=False)
 
     return render(request, "studentProfile.html", {
         'studentprof': studentprof,
@@ -339,10 +419,64 @@ def getAllProfSubject(request):
     return JsonResponse([subject.serialize() for subject in availableSubs], safe=False)
 
 
-
 def getAllCpType(request):
     ctypes = CPType.objects.all()
     return JsonResponse([cy.serialize() for cy in ctypes], safe=False)
+
+
+def getSpecificSub(request, subID):
+    # Assuming you have the required subjectCode and subjectName variables
+    subject = Subject.objects.get(pk=subID)
+
+    # Retrieve the related grade periods for the subject
+    grade_periods = GradePeriods.objects.filter(subject=subject)
+
+    # Initialize the dictionary
+    dic = {
+        'courseCode': subject.subjectCode,
+        'courseName': subject.subjectName,
+        'ID': subject.id,
+        'Prelims': {},
+        'Midterm': {},
+        'Finals': {}
+    }
+    for gp in grade_periods:
+        # Retrieve the rubrick for the grade period
+        rubrick = Rubrick.objects.filter(gpObjt=gp)
+
+        # Retrieve the class performances for the grade period
+        class_performances = ClassPerformance.objects.filter(gpObject=gp)
+
+        # Initialize the grade period dictionary
+        gp_dict = {
+            'totalItem': gp.exam,
+            'totalProject': gp.projectTotal,
+            'cpTask': [],
+            'percentage': {}
+        }
+        for i in rubrick:
+            gp_dict['percentage'].update({i.taskTypeID.taskType: i.percentage})
+
+        # Iterate over the class performances and populate the cpTask dictionary
+        for i, cp in enumerate(class_performances):
+            cp_task_dict = {
+                'title': cp.title,
+                'cptype': cp.cptype.cptypeName,
+                'noItems': cp.totalScore,
+                'cptypeID': cp.cptype.id,
+                'id': cp.id,
+            }
+            gp_dict['cpTask'].append(cp_task_dict)
+
+        # Add the grade period dictionary to the respective section in the main dictionary
+        if gp.gptype.gptypeName == 'Prelims':
+            dic['Prelims'] = gp_dict
+        elif gp.gptype.gptypeName == 'Midterm':
+            dic['Midterm'] = gp_dict
+        elif gp.gptype.gptypeName == 'Finals':
+            dic['Finals'] = gp_dict
+
+    return JsonResponse(dic, safe=False)
 
 
 def dataForGraph(subjects, studentTasks, isrubick=0):
@@ -391,5 +525,3 @@ def dataForGraph(subjects, studentTasks, isrubick=0):
                     f'{rub.taskTypeID}': total if total else 0}
 
     return rubricksTotal if isrubick else data
-
-

@@ -25,6 +25,35 @@
       <div class="modal-body">
         <form  id="addTask" enctype="multipart/form-data">
           {% csrf_token %}
+
+          
+          <label for="taskSubject">Select Subject:</label>
+          <select name="taskSubject" id="taskSubject" 
+                  class="form-select form-select-mb" 
+                  aria-label=".form-select-lg example" required>
+                  <option value="" selected disabled>Select</option>
+          </select>
+
+
+          <label for="gpType">Select:</label>
+          <select name="gpType" id="gpType" 
+                  class="form-select form-select-mb" 
+                  aria-label=".form-select-lg example" required>
+                  <option value="" selected disabled>Select GradePeriod</option>
+                  <option value="1" >Prelims</option>
+                  <option value="2" >Midterm</option>
+                  <option value="3" >Finals</option>
+          </select>
+
+
+          <label for="activity">Select Activity:</label>
+          <select name="activity" id="activity" 
+                  class="form-select form-select-mb" 
+                  aria-label=".form-select-lg example" required>
+                  <option value="" selected disabled>Select</option>
+          </select>
+
+
           <label for="taskTitle" >Title:</label>
           <input
             type="text"
@@ -32,10 +61,26 @@
             id="taskTitle"
             name="taskTitle"
             placeholder="Title"
-            autofocus
             required
+            readonly="readonly"
           />
-          <label for="taskScore">Your Total Score:</label>
+
+          <input type="number" id="cptypeid" name="cptypeid" hidden>
+
+          
+          <label for="taskTotal">Total Score:</label>
+          <input
+            type="number"
+            class="form-control"
+            id="taskTotal"
+            name="taskTotal"
+            placeholder="Total"
+            required
+            readonly="readonly"
+          />
+
+
+          <label for="taskScore">Your  Score:</label>
           <input
             type="number"
             class="form-control"
@@ -46,15 +91,6 @@
           />
           
 
-          <label for="taskTotal">Total Score:</label>
-          <input
-            type="number"
-            class="form-control"
-            id="taskTotal"
-            name="taskTotal"
-            placeholder="Total"
-            required
-          />
           <div id="errorHolder" style="color: red;"></div>
           <label for="taskDate">Date:</label>
           <input
@@ -66,19 +102,6 @@
             required
           />
 
-          <label for="taskSubject">Select Subject:</label>
-          <select name="taskSubject" id="taskSubject" 
-                  class="form-select form-select-mb" 
-                  aria-label=".form-select-lg example" required>
-                  <option value="" selected disabled>Select</option>
-          </select>
-
-          <label for="taskType">Select Task Types:</label>
-          <select name="taskType" id="taskType" 
-                  class="form-select form-select-mb" 
-                  aria-label=".form-select-lg example" required>
-                  <option value="" selected disabled>Select</option>
-          </select>
 
           <label for="taskAttachments">Attachments:</label>
           <input
@@ -126,20 +149,68 @@
   $(document).on('change', '#taskSubject',(e)=>{
     var subjectID = e.currentTarget.value;
     $.ajax({
-      url:`/getrubrick/${subjectID}`,
+      url:`/professor/editsubject/${subjectID}`,
       success: (data) => {
-      $('#taskType')
-      .find('option')
-      .remove()
-      .end()
-      .append('<option value="" disabled selected>Select</option>')
-          for (var i = 0; i <= data.length - 1; i++) {
-              var user_position = new Option(data[i].taskName, data[i].taskID);
-              $('#taskType').append(user_position);
+
+      $(document).on('change','#gpType', function(e) {
+            $('#taskTitle').val("")
+            $('#taskTotal').val("")
+            $('#cptypeid').val("")
+            var selectedOptionText = $(this).find('option:selected').text();
+            console.log(selectedOptionText);
+            console.log(data[selectedOptionText])
+            $('#activity')
+            .find('option')
+            .remove()
+            .end()
+            .append('<option value="" disabled selected>Select</option>')
+            var optionExam = new Option("Exam", data[selectedOptionText].totalItem);
+            if (data[selectedOptionText].totalItem === 0) {
+              optionExam.disabled = true;
             }
+            optionExam.setAttribute("data-custom-attribute", "attribute-value");
+            $('#activity').append(optionExam);
+
+            var optionProject = new Option("Project", data[selectedOptionText].totalProject);
+            if (data[selectedOptionText].totalProject === 0) {
+              optionProject.disabled = true;
+            }
+            $('#activity').append(optionProject);
+
+
+            console.log(data[selectedOptionText].totalProject)
+
+            for (var i = 0; i < data[selectedOptionText].cpTask.length; i++) {
+              var title = data[selectedOptionText].cpTask[i].title;
+              var type = data[selectedOptionText].cpTask[i].cptype;
+              var noItems = data[selectedOptionText].cpTask[i].noItems;
+              var optionText = title + `(${type})`;
+              var optionValue = data[selectedOptionText].cpTask[i].noItems;
+              var option = new Option(optionText, optionValue);
+              $('#activity').append(option);
+            }
+          })
+        }
+      })
+    })
+    $(document).on('change','select[name="activity"]', function(e) {
+      var selectedOptionText = $(this).find('option:selected').text();
+      var selectedOptionVal = $(this).find('option:selected').val();
+      $('#taskTitle').val(selectedOptionText)
+      $('#taskTotal').val(selectedOptionVal)
+
+      if(selectedOptionText == 'Exam'){
+          $('#cptypeid').val(5)
+      }
+      else if (selectedOptionText == 'Project')
+      {
+          $('#cptypeid').val(6)
+      }
+      else{
+          $('#cptypeid').val(9)
       }
     })
-  })
+
 
 
    // $(document).ready(function () {
@@ -149,13 +220,23 @@
             // Get form data
             // errorHolder
             var formData = new FormData(this);
-            var total = $("#taskTotal").val()
-            var score = $("#taskScore").val()
-            if (total>=score){
+            var formValues = {};
+            for (var pair of formData.entries()) {
+              var fieldName = pair[0];
+              var fieldValue = pair[1];
+              formValues[fieldName] = fieldValue;
+            }
+
+            // Display the form values
+            console.log(formValues);
+            var total = Number($("#taskTotal").val())
+            var score = Number($("#taskScore").val())
+            if (total<score){
               $("#errorHolder").append('<p>Invalid Total Score</p>')
             }
             else
             {
+                $('#errorHolder').empty();
                 $.ajax({
                 url: "{% url 'studentProfile' studentprof.studentNumber %}", // Replace with your actual submit URL
                 type: "POST",
@@ -164,17 +245,19 @@
                 contentType: false,
                 success: function (response) {
                   // Handle success response
+                  if(response.message){
+                    alert(response.message)
+                  }
                   $("#addTask")[0].reset();
-                  console.log(response.data);
                   var dataTable = $("#tasksTable").DataTable();
                   dataTable.ajax.reload(null, false); 
                   $("#addUserTaskButton").click();
                   // $('#dataforbargrapht').load(location.href + ' #dataforbargraph');
-                  createBarGraph(response.data);
-                  barGraphProfile(response.dounut);
-                  for (var key in response.dounut) {
-                    createChart(response.dounut[key], key);
-                  }
+                  // createBarGraph(response.data);
+                  // barGraphProfile(response.dounut);
+                  // for (var key in response.dounut) {
+                  //   createChart(response.dounut[key], key);
+                  // }
 
                 },
               });

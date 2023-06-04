@@ -516,8 +516,8 @@
           </div>
         </nav>
 
-        {% include "modals/editTask.html" %} 
-        {% include "modals/delete_sub_modal.html" %}
+        {% include "modals/editTask.html" %}
+         {% include "modals/delete_sub_modal.html" %}
         <div class="container-fluid" id="subjectPage">
           {% include "modals/addTask.html" %} 
           {% include "modals/delete_modal.html" %}
@@ -529,11 +529,12 @@
                 <thead>
                   <tr>
                     <th>Title</th>
+                    <th>Subject</th>
+                    <th>Period</th>
+                    <th>Type</th>
                     <th>My Score</th>
                     <th>Overall Score</th>
                     <th>Date</th>
-                    <th>Type</th>
-                    <th>Subject</th>
                     <th>Attachments</th>
                     {% if request.user.first_name == studentprof.firstName %}
                     <th id="editButton">Actions</th>
@@ -541,7 +542,6 @@
                   </tr>
                 </thead>
               </table>
-
             </div>
           </div>
           <div class="row">
@@ -757,10 +757,6 @@
             dom: "Bfrtip",
             columns: [
               { data: "title" },
-              { data: "score" },
-              { data: "overallscore" },
-              { data: "date" },
-              { data: "taskType" },
               {
                 data: "subject",
                 render: function (data, type, row, meta) {
@@ -776,6 +772,11 @@
                   return data;
                 },
               },
+              { data: "gptype" },
+              { data: "cptype" },
+              { data: "score" },
+              { data: "overallscore" },
+              { data: "date" },
               {
                 data: "image",
                 render: function (data, type, row, meta) {
@@ -821,10 +822,6 @@
             dom: "Bfrtip",
             columns: [
               { data: "title" },
-              { data: "score" },
-              { data: "overallscore" },
-              { data: "date" },
-              { data: "taskType" },
               {
                 data: "subject",
                 render: function (data, type, row, meta) {
@@ -840,6 +837,11 @@
                   return data;
                 },
               },
+              { data: "gptype" },
+              { data: "cptype" },
+              { data: "score" },
+              { data: "overallscore" },
+              { data: "date" },
               {
                 data: "image",
                 render: function (data, type, row, meta) {
@@ -882,6 +884,58 @@
             ],
 
             initComplete: function () {
+              this.api()
+                .columns([1, 2, 3])
+                .every(function () {
+                  var column = this;
+                  var header = $(column.header());
+
+                  // Create a label for the filter
+                  var label = $("<label></label>").text(
+                    getColumnLabel(column.index())
+                  );
+
+                  // Create a select element for filtering
+                  var select = $(
+                    '<select class="form-select form-select-mb"><option value=""></option></select>'
+                  )
+                    .appendTo(header.empty())
+                    .on("change", function () {
+                      var val = $.fn.dataTable.util.escapeRegex($(this).val());
+                      column
+                        .search(val ? "^" + val + "$" : "", true, false)
+                        .draw();
+                    });
+
+                  // Get unique values from the column
+                  column
+                    .data()
+                    .unique()
+                    .sort()
+                    .each(function (data, j) {
+                      select.append(
+                        '<option value="' + data + '">' + data + "</option>"
+                      );
+                    });
+
+                  // Append the label to the header
+                  label.prependTo(header);
+                });
+
+              // Function to get the column label based on the column index
+              function getColumnLabel(columnIndex) {
+                switch (columnIndex) {
+                  case 1:
+                    return "Subject";
+                  case 2:
+                    return "Period";
+                  case 3:
+                    return "Type";
+                  default:
+                    return "";
+                }
+              }
+
               if (loginU == profile) {
                 $(".dt-buttons").append(
                   `<button
@@ -986,42 +1040,50 @@
       // console.log(validJson)
 
       const createBarGraph = (data) => {
-        const obj = JSON.parse(JSON.stringify(data));
+  const obj = JSON.parse(JSON.stringify(data));
 
-        for (const [key, value] of Object.entries(obj)) {
-          let counter = 0;
+  for (const [key, value] of Object.entries(obj)) {
+    let counter = 0;
 
-          const subArray = Object.entries(value).map(([subKey, subValue]) => [
-            subKey,
-            subValue,
-          ]);
-          graph_it_percentage(subArray, 200, document.getElementById(key));
-        }
-      };
-      const bars = JSON.parse($("#dataObject").text());
+    const subArray = Object.entries(value).map(([subKey, subValue]) => [
+      subKey,
+      subValue,
+    ]);
+    graph_it_percentage(subArray, 200, document.getElementById(key));
+  }
+};
 
-      createBarGraph(bars);
+const bars = {
+  "12ASF": {
+    "Prelims": 80,
+    "Midterm":80,
+    "Finals": 12
+  }
+};
 
-      // function that create bar ******
-      function graph_it_percentage(g, g_width, g_element) {
-        let output = '<table border="0" cellspacing="0" cellpadding="8">';
-        let barColor = "pink"; // Set the desired color for all bars
-        let unfilledBarColor = "lightgrey"; // Set the color for empty bars
+createBarGraph(bars);
 
-        for (i = 0; i < g.length; i++) {
-          calwidth_percentage = g_width * (parseInt(g[i][1]) / 100);
+// function that creates bar graphs
+function graph_it_percentage(g, g_width, g_element) {
+  let output = '<table border="0" cellspacing="0" cellpadding="8">';
+  let barColor = "pink"; // Set the desired color for all bars
+  let unfilledBarColor = "lightgrey"; // Set the color for empty bars
 
-          let unfilledBarWidth = g_width - calwidth_percentage;
-          output += `<tr><td style="padding-right: 5vh;">${g[i][0]}</td><td><svg xmlns="http://www.w3.org/2000/svg" width="${g_width}" height="20"><g class="bar"><rect x="${calwidth_percentage}" width="${unfilledBarWidth}" height="10" fill="${unfilledBarColor}"></rect><rect width="${calwidth_percentage}" height="10" fill="${barColor}"></rect></g></svg> ${g[i][1]}%</td></tr>`;
-        }
+  for (i = 0; i < g.length; i++) {
+    calwidth_percentage = g_width * (parseInt(g[i][1]) / 100);
 
-        output += "</table>";
+    let unfilledBarWidth = g_width - calwidth_percentage;
+    output += `<tr><td style="padding-right: 5vh;">${g[i][0]}</td><td><svg xmlns="http://www.w3.org/2000/svg" width="${g_width}" height="20"><g class="bar"><rect x="${calwidth_percentage}" width="${unfilledBarWidth}" height="10" fill="${unfilledBarColor}"></rect><rect width="${calwidth_percentage}" height="10" fill="${barColor}"></rect></g></svg> ${g[i][1]}%</td></tr>`;
+  }
 
-        g_element.innerHTML = output;
-        g_element.style.display = "flex";
-        g_element.style.justifyContent = "center";
-        g_element.style.alignItems = "center";
-      }
+  output += "</table>";
+
+  g_element.innerHTML = output;
+  g_element.style.display = "flex";
+  g_element.style.justifyContent = "center";
+  g_element.style.alignItems = "center";
+}
+
 
       // dounut chart -----------------------------
 
@@ -1166,16 +1228,16 @@
                 dataTable.ajax.reload(null, false);
 
                 alert("added New Subject!");
-                $("#listOfMySubjects").load(
-                  location.href + " #listOfMySubjects",
-                  function () {
-                    createBarGraph(response.data);
-                    for (var key in response.dounut) {
-                      createChart(response.dounut[key], key);
-                    }
-                  }
-                );
-                barGraphProfile(response.dounut);
+                // $("#listOfMySubjects").load(
+                //   location.href + " #listOfMySubjects",
+                //   function () {
+                //     createBarGraph(response.data);
+                //     for (var key in response.dounut) {
+                //       createChart(response.dounut[key], key);
+                //     }
+                //   }
+                // );
+                // barGraphProfile(response.dounut);
                 $("#taskSubjectEdit")
                   .find("option")
                   .remove()
@@ -1234,16 +1296,16 @@
             $(".submodalDelete").click();
             var dataTableTask = $("#tasksTable").DataTable();
             dataTableTask.ajax.reload(null, false);
-            barGraphProfile(response.dounut);
-            $("#listOfMySubjects").load(
-              location.href + " #listOfMySubjects",
-              function () {
-                createBarGraph(response.data);
-                for (var key in response.dounut) {
-                  createChart(response.dounut[key], key);
-                }
-              }
-            );
+            // barGraphProfile(response.dounut);
+            // $("#listOfMySubjects").load(
+            //   location.href + " #listOfMySubjects",
+            //   function () {
+            //     createBarGraph(response.data);
+            //     for (var key in response.dounut) {
+            //       createChart(response.dounut[key], key);
+            //     }
+            //   }
+            // );
 
             $("#taskSubjectEdit")
               .find("option")

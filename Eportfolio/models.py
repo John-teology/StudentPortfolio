@@ -51,9 +51,6 @@ class GPType(models.Model):
 class CPType(models.Model):
     cptypeName = models.CharField(max_length=100)
 
-    def __str__(self):
-        return f"{self.cptypeName}"
-
     def serialize(self):
         return {
             'id': self.id,
@@ -77,6 +74,7 @@ class Studentprofile(models.Model):
     emailAddress = models.CharField(max_length=100)
     guardianName = models.CharField(max_length=70, default="null")
     guardianNumber = models.IntegerField()
+    isScholar = models.BooleanField(null=True)
 
     def __str__(self):
         return f"{self.studentNumber} : {self.lastName}, {self.firstName}"
@@ -143,12 +141,14 @@ class StudentSubject(models.Model):
 class Task(models.Model):
     studentProfileID = models.ForeignKey(
         Studentprofile, on_delete=CASCADE, related_name="studentTask", null=True)
-    task_Type = models.ForeignKey(
-        TaskType, on_delete=CASCADE, related_name="TypeofTask", null=True)
+    studentsubject = models.ForeignKey(
+        StudentSubject, on_delete=CASCADE, related_name="studentSub", null=True)
     taskSubject = models.ForeignKey(
-        Subject, on_delete=CASCADE, related_name="subjectTask")
-    subjectStudent = models.ForeignKey(
-        StudentSubject, on_delete=CASCADE, related_name='StudentSubject', null=True)
+        Subject, on_delete=CASCADE, related_name="subjectTask", null=True)
+    gptype = models.ForeignKey(
+        GPType, on_delete=CASCADE, related_name='taskGPType' , null=True)
+    taskType = models.ForeignKey(
+        TaskType,  on_delete=CASCADE,db_constraint=False, related_name='UsertaskType', null=True)
     title = models.CharField(max_length=100)
     overallscore = models.IntegerField()
     score = models.IntegerField()
@@ -162,69 +162,47 @@ class Task(models.Model):
         return {
             "title": self.title,
             "score": self.score,
+            "cptype": self.taskType.taskType,
+            "gptype": self.gptype.gptypeName,
             "overallscore": self.overallscore,
             "date": self.date,
-            "taskType": self.task_Type.taskType,
             "subject": self.taskSubject.subjectCode + ": " + self.taskSubject.subjectName,
             "image": self.image.url if self.image else None,
-            "action": f'<button type="button" class="btn btn-danger modaldelete" value="{self.id}" data-toggle="modal" data-target="#confirmDeleteModal"  > <i class="fa fa-trash"></i> </button> <button type="button" class="btn btn-info EditTask" data-toggle="modal" data-target="#actionModify" title="{self.title}" score="{self.score}" overall="{self.overallscore}" date="{self.date}" subject={self.taskSubject_id} subType={self.task_Type_id} id = {self.pk} > <i class="fa fa-edit"></i> </button>'
+            "action": f'<button type="button" class="btn btn-danger modaldelete" value="{self.id}" data-toggle="modal" data-target="#confirmDeleteModal"  > <i class="fa fa-trash"></i> </button> <button type="button" class="btn btn-info EditTask" data-toggle="modal" data-target="#actionModify" title="{self.title}" score="{self.score}" overall="{self.overallscore}" date="{self.date}"  id = {self.pk} > <i class="fa fa-edit"></i> </button>'
         }
 
 
-class GradePeriodExam(models.Model):
-    subject = models.ForeignKey(
-        Subject, on_delete=CASCADE, related_name='GPSubject')
-    gptype = models.ForeignKey(
-        GPType, on_delete=CASCADE, related_name="GPType")
-    exam = models.IntegerField()
-
-    def __str__(self):
-        return f"{self.subject} -{self.gptype.gptypeName}"
-    
-
-class GradePeriodProject(models.Model):
-    subject = models.ForeignKey(
-        Subject, on_delete=CASCADE, related_name='GPSubject')
-    gptype = models.ForeignKey(
-        GPType, on_delete=CASCADE, related_name="GPType")
-    projectTotal = models.IntegerField(null=True)
-
-    def __str__(self):
-        return f"{self.subject} -{self.gptype.gptypeName}"
-
-
-class GradePeriodAttendance(models.Model):
+class GradePeriods(models.Model):
     subject = models.ForeignKey(
         Subject, on_delete=CASCADE, related_name='GPSubject')
     gptype = models.ForeignKey(
         GPType, on_delete=CASCADE, related_name="GPType")
     numberOfAbsences = models.IntegerField(default=0)
+    projectTotal = models.IntegerField(null=True)
+    exam = models.IntegerField()
 
     def __str__(self):
-        return f"{self.subject} -{self.gptype.gptypeName}"
-
+        return f'{self.gptype.gptypeName}:{self.subject.subjectCode}'
+    
 
 
 class ClassPerformance(models.Model):
-    subject = models.ForeignKey(
-        Subject, on_delete=CASCADE, related_name='GPSubject')
-    gpObject = models.ForeignKey(
-        GPType, on_delete=CASCADE, related_name='CPgradepoint')
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=100,unique=True)
     cptype = models.ForeignKey(
         CPType, on_delete=CASCADE, related_name='CPtype')
     totalScore = models.IntegerField()
-    image = models.ImageField(null=True, blank=True, upload_to='images/')
+    gpObject = models.ForeignKey(
+        GradePeriods, on_delete=CASCADE, related_name='CPgradepoint')
 
 
 class Rubrick(models.Model):
-    subject = models.ForeignKey(
-        Subject, on_delete=CASCADE, related_name='rubrickSubject')
     gpObjt = models.ForeignKey(
-        GPType, on_delete=CASCADE, related_name='gpRubrick', null=True)
+        GradePeriods, on_delete=CASCADE, related_name='gpRubrick', null=True)
     taskTypeID = models.ForeignKey(
         TaskType, on_delete=CASCADE, related_name='typeRubicks')
     percentage = models.IntegerField(null=True)
+
+
 
     def serialize(self, isprof=0):
         if isprof:
@@ -239,3 +217,14 @@ class Rubrick(models.Model):
             "taskID": self.taskTypeID_id,
             "taskName": self.taskTypeID.taskType,
         }
+
+
+class SubjectRubrick(models.Model):
+    subjectObj = models.ForeignKey(
+        Subject, on_delete=CASCADE, related_name='subjectRub')
+    gpObjt = models.ForeignKey(
+        GPType, on_delete=CASCADE, related_name='subGpRubrick', null=True)
+    percentage = models.IntegerField(null=True)
+
+    def __str__(self):
+        return f"{self.subjectObj.subjectCode}:{self.subjectObj.subjectName}({self.gpObjt.gptypeName}) = {self.percentage}"

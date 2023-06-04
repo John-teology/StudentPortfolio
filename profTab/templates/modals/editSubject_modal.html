@@ -44,12 +44,24 @@
             placeholder="Course Name"
             required
           />
-          <input type="number" id="subEditID" hidden>
+          <input type="number" id="subEditID" hidden />
 
           <hr />
           {% for i in gpTypes %}
           <div class="row">
             <h3>{{i.gptypeName}}</h3>
+            <div class="input-group mb-2 mr-sm-2 mt-4">
+              <div class="input-group-prepend">
+                <div class="input-group-text">{{i.gptypeName}}</div>
+              </div>
+              <input
+                type="number"
+                class="form-control"
+                id="{{i.gptypeName}}percentageEdit"
+                name="{{i.gptypeName}}percentageEdit"
+                placeholder="Percentage"
+              />
+            </div>
             <div class="col-md-3">
               <label for="pCP">Class Performance:</label>
               <input
@@ -175,7 +187,7 @@
     $("#editSubjectForm").submit(function (event) {
       event.preventDefault();
       var formData = new FormData(this);
-      let id= $('#subEditID').val()
+      let id = $("#subEditID").val();
       $.ajax({
         url: `submiteditsubject/${id}`,
         data: formData,
@@ -183,10 +195,13 @@
         processData: false,
         contentType: false,
         success: (response) => {
-          $('.editSub').click();
+          if(response.error){
+            alert(response.error);
+          }
+          $(".editSub").click();
           $("#editSubjectForm")[0].reset();
           var dataTable = $("#subjectTable").DataTable();
-          dataTable.ajax.reload(null, false); 
+          dataTable.ajax.reload(null, false);
         },
       });
     });
@@ -287,22 +302,25 @@
     const gtypes = ["Prelims", "Midterm", "Finals"];
     $(document).on("click", ".editSub", function (event) {
       var sub_id = $(event.currentTarget).attr("id");
-      $('#subEditID').val(sub_id)
+      $("#subEditID").val(sub_id);
 
       $.ajax({
         url: `editsubject/${sub_id}`,
         success: (response) => {
           $("#courseCodeEdit").val(response.courseCode);
           $("#courseNameEdit").val(response.courseName);
-          $('#PrelimsCPEdit').empty();
-          $('#MidtermCPEdit').empty();
-          $('#FinalsCPEdit').empty();
+          $("#PrelimsCPEdit").empty();
+          $("#MidtermCPEdit").empty();
+          $("#FinalsCPEdit").empty();
 
           gtypes.forEach((d) => {
-            $(`#${d}ClassPerformanceEdit`).val(response[d].ClassPerformance);
-            $(`#${d}AttendanceEdit`).val(response[d].Attendance);
-            $(`#${d}ExamEdit`).val(response[d].Exam);
-            $(`#${d}ProjectEdit`).val(response[d].Project);
+            $(`#${d}ClassPerformanceEdit`).val(
+              response[d].percentage.ClassPerformance
+            );
+            $(`#${d}percentageEdit`).val(response[d].percentageSUB)
+            $(`#${d}AttendanceEdit`).val(response[d].percentage.Attendance);
+            $(`#${d}ExamEdit`).val(response[d].percentage.Exam);
+            $(`#${d}ProjectEdit`).val(response[d].percentage.Project);
             $(`#${d}TotalExamEdit`).val(response[d].totalItem);
             $(`#${d}TotalProjectEdit`).val(response[d].totalProject);
             let increment = 1;

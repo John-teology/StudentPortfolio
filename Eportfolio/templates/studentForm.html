@@ -7,9 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- <link rel="stylesheet" href="\static/eportfolio/style.css" /> -->
     <title>Register</title>
-    <link rel = "icon" href = 
-    "../../media/images/logo-portfolio.png" 
-            type = "image/x-icon">
+    <link
+      rel="icon"
+      href="../../media/images/logo-portfolio.png"
+      type="image/x-icon"
+    />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 
     <link
@@ -19,89 +21,88 @@
       crossorigin="anonymous"
     />
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@700&family=Poppins:wght@400;500;600&display=swap');
-            *{
-              margin: 0;
-              padding: 0;
-              box-sizing: border-box;
-              font-family: "Poppins", sans-serif ;
-            }
-            body {
-            background-color:#E7E9EB;  
-            }
-            .form-control:disabled{
-              background-color: #d0d0d0;
-              color: #5e5e5e !important;
-            }
-            .title-wrapper{
-              margin: 4vh;
-              text-align: center;
-              color:#532323; 
-            }
-            .title-wrapper h1{
-              font-weight: 700 !important;
-            }
-            
-            .profile-container {
-              margin-top: 5%;
-              padding: 3vh;
-              margin-bottom: 3%;
-              }
-            .btn-response{
-              background-color: #532323;
-              border-color: #532323;  
-              cursor: pointer;
-       
-              height: 26%;
-              font-size: 85%; width: 40%;
-              text-align: center;
-             
-   
-            }
-            .button-wrapper {
-              margin-top: 1vh;
-              text-align: center;
-            }
-            .btn-response:hover{
-              background-color: green !important;
-              border: none;
-              box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
-            }
-            .form-wrapper{
-              padding: 2px 16px;
-              box-shadow: 0 4px 8px 0 rgba(0,0,0,0.5);
-              transition: 0.3s;
-              background-color: rgba(255, 255, 255, 0.8);
-              padding-bottom: 5%;
-            }
-       /* phone landscape */
+      @import url("https://fonts.googleapis.com/css2?family=Noto+Sans:wght@700&family=Poppins:wght@400;500;600&display=swap");
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+      body {
+        background-color: #e7e9eb;
+      }
+      .form-control:disabled {
+        background-color: #d0d0d0;
+        color: #5e5e5e !important;
+      }
+      .title-wrapper {
+        margin: 4vh;
+        text-align: center;
+        color: #532323;
+      }
+      .title-wrapper h1 {
+        font-weight: 700 !important;
+      }
+
+      .profile-container {
+        margin-top: 5%;
+        padding: 3vh;
+        margin-bottom: 3%;
+      }
+      .btn-response {
+        background-color: #532323;
+        border-color: #532323;
+        cursor: pointer;
+
+        height: 26%;
+        font-size: 85%;
+        width: 40%;
+        text-align: center;
+      }
+      .button-wrapper {
+        margin-top: 1vh;
+        text-align: center;
+      }
+      .btn-response:hover {
+        background-color: green !important;
+        border: none;
+        box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24),
+          0 17px 50px 0 rgba(0, 0, 0, 0.19);
+      }
+      .form-wrapper {
+        padding: 2px 16px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5);
+        transition: 0.3s;
+        background-color: rgba(255, 255, 255, 0.8);
+        padding-bottom: 5%;
+      }
+      /* phone landscape */
       @media (min-width: 576px) {
         .profile-container {
           margin: 5vh;
           padding-bottom: 5vh !important;
-          }
-    
+        }
       }
       /* laptop */
-      @media (min-width: 992px){
+      @media (min-width: 992px) {
         .profile-container {
           margin: 2vh;
-          }
-          .button-wrapper {
-            margin-top: 2vh;
-          }
-      }    
+        }
+        .button-wrapper {
+          margin-top: 2vh;
+        }
+      }
       /* large screen */
 
       @media (min-width: 1200px) {
         .profile-container {
-         margin: 3vh;
-         padding-bottom: 5vh !important;
-}
+          margin: 3vh;
+          padding-bottom: 5vh !important;
+        }
         .btn-response {
-            width: 23%;
-            margin-top: 1vh;
-          }
+          width: 23%;
+          margin-top: 1vh;
+        }
       }
     </style>
   </head>
@@ -109,12 +110,12 @@
     <div class="profile-container form-wrapper">
       <div class="title-wrapper">
         <h1>Create Profile</h1>
-    </div>
+      </div>
       <form method="post" action="{% url 'demographicForm' %}">
         {% csrf_token %}
         <div class="form-group">
           <label for="email">Email address:</label>
-           <input
+          <input
             type="email"
             class="form-control"
             id="email"
@@ -190,6 +191,21 @@
             </div>
           </div>
         </div>
+        <br />
+        <div class="form-group form-check">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            id="isScholar"
+            name="isScholar"
+            onclick="toggleScholarValue()"
+          />
+          <label class="form-check-label" for="exampleCheck1"
+            >Are you a Scholar?</label
+          >
+        </div>
+        <input type="number" id="scholarValue" name="scholarValue" hidden>
+        <br />
 
         <div class="form-group">
           <label for="studentNumber">Student Number:</label>
@@ -199,9 +215,11 @@
             name="studentNumber"
             id="studentNumber"
             placeholder="Student Number"
+            value="{{studentNumber}}"
           />
         </div>
-        <p style="color: red;">{{error}}</p>
+
+        <p style="color: red">{{error}}</p>
 
         <div class="row">
           <div class="col-md-6">
@@ -230,6 +248,7 @@
                 name="phoneNumber"
                 id="phoneNumber"
                 placeholder="Contact Details"
+                value="{{phoneNumber}}"
               />
             </div>
           </div>
@@ -245,6 +264,8 @@
                 name="guardianName"
                 id="guardianName"
                 placeholder="Guardian Name"
+                value="{{guardianName}}"
+
               />
             </div>
           </div>
@@ -257,15 +278,17 @@
                 name="guardianNumber"
                 id="guardianNumber"
                 placeholder="Contact Details"
+                value="{{guardianNumber}}"
               />
             </div>
           </div>
         </div>
-        <div class ="button-wrapper">
-        <button type="submit" class="btn btn-primary btn-response">Submit</button>
-      </div>
+        <div class="button-wrapper">
+          <button type="submit" class="btn btn-primary btn-response">
+            Submit
+          </button>
+        </div>
       </form>
-      
     </div>
     <!-- <div class="profile-form" style="position: relative">
       />
@@ -379,5 +402,18 @@
     </div>
 
     <script></script>-->
+
+    <script>
+      function toggleScholarValue() {
+        var checkbox = document.getElementById("isScholar");
+        var valueInput = document.getElementById("scholarValue");
+
+        if (checkbox.checked) {
+          valueInput.value = 1;
+        } else {
+          valueInput.value = 0;
+        }
+      }
+    </script>
   </body>
 </html>

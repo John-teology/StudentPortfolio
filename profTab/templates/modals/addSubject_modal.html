@@ -49,6 +49,18 @@
           {% for i in gpTypes %}
           <div class="row">
             <h3>{{i.gptypeName}}</h3>
+            <div class="input-group mb-2 mr-sm-2 mt-4">
+              <div class="input-group-prepend">
+                <div class="input-group-text">{{i.gptypeName}}</div>
+              </div>
+              <input
+                type="number"
+                class="form-control"
+                id="{{i.gptypeName}}percentage"
+                name="{{i.gptypeName}}percentage"
+                placeholder="Percentage"
+              />
+            </div>
             <div class="col-md-3">
               <label for="pCP">Class Performance:</label>
               <input
@@ -173,15 +185,15 @@
     $("#addSubjectForm").submit(function (event) {
       event.preventDefault();
       var formData = new FormData(this);
-      // var formValues = {};
-      // for (var pair of formData.entries()) {
-      //   var fieldName = pair[0];
-      //   var fieldValue = pair[1];
-      //   formValues[fieldName] = fieldValue;
-      // }
+      var formValues = {};
+      for (var pair of formData.entries()) {
+        var fieldName = pair[0];
+        var fieldValue = pair[1];
+        formValues[fieldName] = fieldValue;
+      }
 
-      // // Display the form values
-      // console.log(formValues);
+      // Display the form values
+      console.log(formValues);
       $.ajax({
         url: "{% url 'addsubject' %}",
         data: formData,
@@ -189,6 +201,9 @@
         processData: false,
         contentType: false,
         success: (response) => {
+          if(response.error){
+            alert(response.error);
+          }
           $("#addSubjectForm")[0].reset();
           $('#addProfSubjectButton').click();
           var dataTable = $("#subjectTable").DataTable();

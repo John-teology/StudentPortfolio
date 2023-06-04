@@ -6,8 +6,7 @@ from django.http import JsonResponse
 import json
 from django.contrib.auth.decorators import login_required
 from datetime import date
-from django.shortcuts import render, get_object_or_404
-
+from django.db import IntegrityError
 # Create your views here.
 from Eportfolio.models import *
 
@@ -60,6 +59,10 @@ def subject(request):
     tasktypes = TaskType.objects.all()
 
     for gp in gpTypes:
+        subPercent = request.POST.get(f'{gp}percentage', 0)
+        setSubRubrick = SubjectRubrick(
+            subjectObj=studentSubject, gpObjt=gp, percentage=subPercent)
+        setSubRubrick.save()
         gptypeSub = studentSubject
         totalExam = request.POST.get(f'{gp}TotalExam', 0)
         totalProject = request.POST.get(f'{gp}TotalProject', 0)
@@ -82,8 +85,8 @@ def subject(request):
                     newClassP = ClassPerformance(
                         title=title, gpObject=subjectGP, cptype=cptypeObj, totalScore=totalItems)
                     newClassP.save()
-                except ValueError:
-                    pass
+                except:
+                    return JsonResponse({"error": "Invalid Inputs."})
 
         for task in tasktypes:
             percentage = request.POST.get(f"{gp}{task}", 0)
@@ -140,19 +143,22 @@ def editSubject(request, subID):
     for gp in grade_periods:
         # Retrieve the rubrick for the grade period
         rubrick = Rubrick.objects.filter(gpObjt=gp)
-
+        subRub = SubjectRubrick.objects.get(
+            subjectObj=subject, gpObjt=gp.gptype)
         # Retrieve the class performances for the grade period
         class_performances = ClassPerformance.objects.filter(gpObject=gp)
 
         # Initialize the grade period dictionary
         gp_dict = {
+            'percentageSUB': subRub.percentage,
+            'gpid': gp.id,
             'totalItem': gp.exam,
             'totalProject': gp.projectTotal,
-            'cpTask': []
+            'cpTask': [],
+            'percentage': {}
         }
         for i in rubrick:
-            print(i.taskTypeID)
-            gp_dict[i.taskTypeID.taskType] = i.percentage
+            gp_dict['percentage'].update({i.taskTypeID.taskType: i.percentage})
 
         # Iterate over the class performances and populate the cpTask dictionary
         for i, cp in enumerate(class_performances):
@@ -162,7 +168,6 @@ def editSubject(request, subID):
                 'noItems': cp.totalScore,
                 'cptypeID': cp.cptype.id,
                 'id': cp.id,
-                'image': cp.image.url if cp.image else None
             }
             gp_dict['cpTask'].append(cp_task_dict)
 
@@ -178,7 +183,7 @@ def editSubject(request, subID):
 
 
 @csrf_exempt
-def edit_subject_form(request, sub_id=60):
+def edit_subject_form(request, sub_id):
     # Retrieve the existing subject and related objects from the database based on the subject ID
     try:
         subject = Subject.objects.get(pk=sub_id)
@@ -197,6 +202,13 @@ def edit_subject_form(request, sub_id=60):
     tasktypes = TaskType.objects.all()
 
     for gp in gpTypes:
+
+        percentageEdit = request.POST.get(f'{gp}percentageEdit')
+        updateSubRub = SubjectRubrick.objects.get(
+            subjectObj=subject, gpObjt=gp)
+        updateSubRub.percentage = percentageEdit
+        updateSubRub.save()
+
         # Update the GradePeriods object
         try:
             subjectGP = GradePeriods.objects.get(subject=subject, gptype=gp)
@@ -226,11 +238,12 @@ def edit_subject_form(request, sub_id=60):
                 try:
                     cptypeObj = CPType.objects.get(pk=cptypeID)
                     newClassP = ClassPerformance(
-                        title=title, gpObject=subjectGP, cptype=cptypeObj, totalScore=totalItems)
+                            title=title, gpObject=subjectGP, cptype=cptypeObj, totalScore=totalItems)
                     newClassP.save()
-                except CPType.DoesNotExist:
+                except IntegrityError:
                     continue
 
+                    
         # Update the Rubrick objects
         for task in tasktypes:
             try:
