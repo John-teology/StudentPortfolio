@@ -61,7 +61,7 @@ def subject(request):
     for gp in gpTypes:
         subPercent = request.POST.get(f'{gp}percentage', 0)
         setSubRubrick = SubjectRubrick(
-            subjectObj=studentSubject, gpObjt=gp, percentage=subPercent)
+            subjectObj=studentSubject, gpObjt=gp, percentage=subPercent if subPercent != '' else 0)
         setSubRubrick.save()
         gptypeSub = studentSubject
         totalExam = request.POST.get(f'{gp}TotalExam', 0)
@@ -203,10 +203,10 @@ def edit_subject_form(request, sub_id):
 
     for gp in gpTypes:
 
-        percentageEdit = request.POST.get(f'{gp}percentageEdit')
+        percentageEdit = request.POST.get(f'{gp}percentageEdit',0)
         updateSubRub = SubjectRubrick.objects.get(
             subjectObj=subject, gpObjt=gp)
-        updateSubRub.percentage = percentageEdit
+        updateSubRub.percentage = percentageEdit if percentageEdit != '' else 0
         updateSubRub.save()
 
         # Update the GradePeriods object

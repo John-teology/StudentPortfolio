@@ -516,11 +516,11 @@
           </div>
         </nav>
 
-        {% include "modals/editTask.html" %}
-         {% include "modals/delete_sub_modal.html" %}
+        {% include "modals/editTask.html" %} 
+        {% include "modals/delete_sub_modal.html" %}
         <div class="container-fluid" id="subjectPage">
-          {% include "modals/addTask.html" %} 
-          {% include "modals/delete_modal.html" %}
+          {% include "modals/addTask.html" %}
+           {% include "modals/delete_modal.html" %}
 
           <div class="row cardwrapper">
             <div class="col-lg-12">
@@ -557,13 +557,23 @@
                   </div>
                   <div class="row">
                     <div class="col-xs-12 col-md-12 col-lg cardwrapper-graph">
-                      <div id="{{sub.subjectCode}}" class="donut-item"></div>
+                      <div
+                        id="{{sub.subjectCode}}"
+                        class="donut-item"
+                        style="margin-top: 2%;"
+                      ></div>
+                      <div id="{{sub.subjectCode}}1" class="mt-4" ></div>
+                      <script>
+                        document.addEventListener("DOMContentLoaded", function() {
+                           renderGradeBreakdown("{{sub.id}}","{{studentprof.id}}","{{sub.subjectCode}}");
+                        });
+                      </script>
                     </div>
-                    <div class="col-xs-12 col-md-12 col-lg cardwrapper-graph">
+                    <!-- <div class="col-xs-12 col-md-12 col-lg cardwrapper-graph">
                       <center>
                         <canvas id="{{sub.subjectName}}" class="donut"></canvas>
                       </center>
-                    </div>
+                    </div> -->
                   </div>
                 </div>
               </div>
@@ -575,7 +585,7 @@
           </div>
         </div>
 
-        <div class="container-fluid" id="profilePage">
+        <div class="container-fluid" id="profilePage" >
           <div class="row cardwrapper">
             <div class="col-lg-12">
               <h1 class="title-text">My Profile</h1>
@@ -1034,57 +1044,6 @@
         timeOut: 3000, // Adjust the duration as per your preference
       };
 
-      // getting the object from django template-------------
-
-      // const validJson = boxName.replace(/'/g, '"');
-      // console.log(validJson)
-
-      const createBarGraph = (data) => {
-  const obj = JSON.parse(JSON.stringify(data));
-
-  for (const [key, value] of Object.entries(obj)) {
-    let counter = 0;
-
-    const subArray = Object.entries(value).map(([subKey, subValue]) => [
-      subKey,
-      subValue,
-    ]);
-    graph_it_percentage(subArray, 200, document.getElementById(key));
-  }
-};
-
-const bars = {
-  "12ASF": {
-    "Prelims": 80,
-    "Midterm":80,
-    "Finals": 12
-  }
-};
-
-createBarGraph(bars);
-
-// function that creates bar graphs
-function graph_it_percentage(g, g_width, g_element) {
-  let output = '<table border="0" cellspacing="0" cellpadding="8">';
-  let barColor = "pink"; // Set the desired color for all bars
-  let unfilledBarColor = "lightgrey"; // Set the color for empty bars
-
-  for (i = 0; i < g.length; i++) {
-    calwidth_percentage = g_width * (parseInt(g[i][1]) / 100);
-
-    let unfilledBarWidth = g_width - calwidth_percentage;
-    output += `<tr><td style="padding-right: 5vh;">${g[i][0]}</td><td><svg xmlns="http://www.w3.org/2000/svg" width="${g_width}" height="20"><g class="bar"><rect x="${calwidth_percentage}" width="${unfilledBarWidth}" height="10" fill="${unfilledBarColor}"></rect><rect width="${calwidth_percentage}" height="10" fill="${barColor}"></rect></g></svg> ${g[i][1]}%</td></tr>`;
-  }
-
-  output += "</table>";
-
-  g_element.innerHTML = output;
-  g_element.style.display = "flex";
-  g_element.style.justifyContent = "center";
-  g_element.style.alignItems = "center";
-}
-
-
       // dounut chart -----------------------------
 
       const dounuts = JSON.parse($("#dounutObject").text());
@@ -1349,6 +1308,46 @@ function graph_it_percentage(g, g_width, g_element) {
       });
 
       // delete my subject ----------------------------
+
+      // table----------------------------------
+
+      function renderGradeBreakdown(subid, userid,elementid) {
+        $.ajax({
+          url: `/test/${subid}/${userid}`,
+          success: (data) => {
+            var gradeBreakdownContainer =
+              document.getElementById(`${elementid}1`);
+            var html = "";
+
+            for (var subject in data) {
+              html += '<table class="table table-bordered">';
+              html +=
+                "<thead><tr><th>Period</th><th>Exam</th><th>Project</th><th>Attendance</th><th>Class Performance</th></tr></thead>";
+              html += "<tbody>";
+
+              for (var term in data[subject]) {
+                html += "<tr>";
+                html += "<td>" + term + "</td>";
+                html += "<td>" + data[subject][term]["Exam"] + "</td>";
+                html += "<td>" + data[subject][term]["Project"] + "</td>";
+                html += "<td>" + data[subject][term]["Attendance"] + "</td>";
+                html +=
+                  "<td>" + data[subject][term]["ClassPerformance"] + "</td>";
+                html += "</tr>";
+              }
+
+              html += "</tbody></table>";
+            }
+
+            gradeBreakdownContainer.innerHTML = html;
+
+           
+
+            // createBarGraph(data);
+          },
+        });
+      }
+
     </script>
   </body>
   <script src="../../static/eportfolio/innerstyle.js"></script>

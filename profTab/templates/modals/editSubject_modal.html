@@ -186,24 +186,54 @@
   $(document).ready(() => {
     $("#editSubjectForm").submit(function (event) {
       event.preventDefault();
-      var formData = new FormData(this);
-      let id = $("#subEditID").val();
-      $.ajax({
-        url: `submiteditsubject/${id}`,
-        data: formData,
-        method: "POST",
-        processData: false,
-        contentType: false,
-        success: (response) => {
-          if(response.error){
-            alert(response.error);
+      var prelimsInput = Number($("#PrelimspercentageEdit").val());
+      var midtermInput = Number($("#MidtermpercentageEdit").val());
+      var finalsInput = Number($("#FinalspercentageEdit").val());
+
+      var totalPercentage = prelimsInput + midtermInput + finalsInput;
+
+      if (totalPercentage > 100 || totalPercentage < 50) {
+        alert("The total percentage should be between 50 and 100.");
+      } else {
+        const gtypes = ["Prelims", "Midterm", "Finals"];
+        let isValid = true;
+
+        gtypes.forEach((d) => {
+          const classPerformance =
+            parseInt($(`#${d}ClassPerformanceEdit`).val()) || 0;
+          const attendance = parseInt($(`#${d}AttendanceEdit`).val()) || 0;
+          const exam = parseInt($(`#${d}ExamEdit`).val()) || 0;
+          const project = parseInt($(`#${d}ProjectEdit`).val()) || 0;
+
+          const total = classPerformance + attendance + exam + project;
+
+          if (total !== 100) {
+            isValid = false;
+            alert(`The total percentage for ${d} should be equal to 100.`);
+            return false; // Exit the loop early
           }
-          $(".editSub").click();
-          $("#editSubjectForm")[0].reset();
-          var dataTable = $("#subjectTable").DataTable();
-          dataTable.ajax.reload(null, false);
-        },
-      });
+        });
+        if (isValid) {
+          var formData = new FormData(this);
+          let id = $("#subEditID").val();
+          $.ajax({
+            url: `submiteditsubject/${id}`,
+            data: formData,
+            method: "POST",
+            processData: false,
+            contentType: false,
+            success: (response) => {
+              if (response.error) {
+                alert(response.error);
+              }
+              $(".editSub").click();
+              $("#editSubjectForm")[0].reset();
+              var dataTable = $("#subjectTable").DataTable();
+              dataTable.ajax.reload(null, false);
+            },
+          });
+        }
+      }
     });
 
     $.ajax({
@@ -317,10 +347,10 @@
             $(`#${d}ClassPerformanceEdit`).val(
               response[d].percentage.ClassPerformance
             );
-            $(`#${d}percentageEdit`).val(response[d].percentageSUB)
             $(`#${d}AttendanceEdit`).val(response[d].percentage.Attendance);
             $(`#${d}ExamEdit`).val(response[d].percentage.Exam);
             $(`#${d}ProjectEdit`).val(response[d].percentage.Project);
+            $(`#${d}percentageEdit`).val(response[d].percentageSUB);
             $(`#${d}TotalExamEdit`).val(response[d].totalItem);
             $(`#${d}TotalProjectEdit`).val(response[d].totalProject);
             let increment = 1;

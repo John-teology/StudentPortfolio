@@ -184,34 +184,55 @@
   $(document).ready(() => {
     $("#addSubjectForm").submit(function (event) {
       event.preventDefault();
-      var formData = new FormData(this);
-      var formValues = {};
-      for (var pair of formData.entries()) {
-        var fieldName = pair[0];
-        var fieldValue = pair[1];
-        formValues[fieldName] = fieldValue;
-      }
+      var prelimsInput = Number($("#Prelimspercentage").val());
+      var midtermInput = Number($("#Midtermpercentage").val());
+      var finalsInput = Number($("#Finalspercentage").val());
 
-      // Display the form values
-      console.log(formValues);
-      $.ajax({
-        url: "{% url 'addsubject' %}",
-        data: formData,
-        method: "POST",
-        processData: false,
-        contentType: false,
-        success: (response) => {
-          if(response.error){
-            alert(response.error);
+      var totalPercentage = prelimsInput + midtermInput + finalsInput;
+
+      if (totalPercentage > 100 || totalPercentage < 50) {
+        alert("The total percentage should be between 50 and 100.");
+      } else {
+        const gtypes = ["Prelims", "Midterm", "Finals"];
+        let isValid = true;
+
+        gtypes.forEach((d) => {
+          const classPerformance =
+            parseInt($(`#${d}ClassPerformance`).val()) || 0;
+          const attendance = parseInt($(`#${d}Attendance`).val()) || 0;
+          const exam = parseInt($(`#${d}Exam`).val()) || 0;
+          const project = parseInt($(`#${d}Project`).val()) || 0;
+
+          const total = classPerformance + attendance + exam + project;
+
+          if (total !== 100) {
+            isValid = false;
+            alert(`The total percentage for ${d} should be equal to 100.`);
+            return false; // Exit the loop early
           }
-          $("#addSubjectForm")[0].reset();
-          $('#addProfSubjectButton').click();
-          var dataTable = $("#subjectTable").DataTable();
-          dataTable.ajax.reload(null, false); 
-        },
-      });
+        });
+        if (isValid) {
+          var formData = new FormData(this);
+          $.ajax({
+            url: `{% url 'addsubject' %}`,
+            data: formData,
+            method: "POST",
+            processData: false,
+            contentType: false,
+            success: (response) => {
+              if (response.error) {
+                alert(response.error);
+              }
+              $("#addProfSubjectButton").click();
+              $("#editSubjectForm")[0].reset();
+              var dataTable = $("#subjectTable").DataTable();
+              dataTable.ajax.reload(null, false);
+            },
+          });
+        }
+      }
     });
-   
+
     $.ajax({
       url: `/getcptypes`,
       success: (data) => {

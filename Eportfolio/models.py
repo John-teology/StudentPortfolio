@@ -187,7 +187,7 @@ class GradePeriods(models.Model):
 
 
 class ClassPerformance(models.Model):
-    title = models.CharField(max_length=100,unique=True)
+    title = models.CharField(max_length=100)
     cptype = models.ForeignKey(
         CPType, on_delete=CASCADE, related_name='CPtype')
     totalScore = models.IntegerField()

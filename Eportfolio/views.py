@@ -54,32 +54,28 @@ def get_activities_average(request, subject_id, student_id):
                 else:
                     average_score = 0
 
-                # Check if a Rubrick exists for the current task type
-                rubrick = Rubrick.objects.filter(
-                    taskTypeID__taskType=tasktype_name
-                ).first()
+            # Check if a Rubrick exists for the current task type
+            rubrick = Rubrick.objects.filter(
+                taskTypeID__taskType=tasktype_name
+            ).first()
 
-                if rubrick:
-                    # Get the Rubrick percentage for the current task type
-                    rubrick_percentage = rubrick.percentage
+            if rubrick:
+                # Get the Rubrick percentage for the current task type
+                rubrick_percentage = rubrick.percentage
 
-                    # Calculate the value for response_data[gptype_name][tasktype_name]
-                    value = average_score * (rubrick_percentage / 100)
-                else:
-                    value = round(average_score, 2)
+                # Calculate the value for response_data[gptype_name][tasktype_name]
+                value = average_score * (rubrick_percentage / 100)
+            else:
+                value = round(average_score, 2)
 
             # Add the computed score to the GPType data in the response
-            response_data[gptype_name][tasktype_name] = value
+            response_data[gptype_name][tasktype_name] = f'{round(value,2)} / {rubrick_percentage} %'
 
     # Create a new dictionary with subject code as key and response data as value
     response_data = {subject_code: response_data}
 
     # Return the response as JSON
     return JsonResponse(response_data)
-
-
-
-
 
 
 def index(request):
@@ -167,7 +163,7 @@ def demographicForm(request):
 
         studentProfile = Studentprofile(userID=request.user, studentNumber=studentNumber, lastName=last, firstName=first, courseID=courseInstance, yearID=yearInstance,
                                         genderID=genderInstance, contactNumber=phoneNumber, emailAddress=email, guardianNumber=guardianNumber, guardianName=guardianName,
-                                        isScholar = True if isScholarval else False )
+                                        isScholar=True if isScholarval else False)
 
         studentProfile.save()
         return HttpResponseRedirect(reverse("studentProfile", args=(str(studentNumber),)))
@@ -260,13 +256,12 @@ def studentProfile(request, studentID):
             subject = Subject.objects.get(pk=subjectID)
             studentSub = StudentSubject.objects.get(
                 studentProfileID=studentprof, subjectID=subject)
-            
 
             existing_task = Task.objects.filter(
-            taskSubject=subject,
-            gptype=gpType,
-            taskType=tasktypeObj,
-            overallscore=totalScore).first()
+                taskSubject=subject,
+                gptype=gpType,
+                taskType=tasktypeObj,
+                overallscore=totalScore).first()
 
             if existing_task:
                 # Task with the same details already exists
