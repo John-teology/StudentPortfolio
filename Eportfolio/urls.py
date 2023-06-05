@@ -22,6 +22,8 @@ urlpatterns = [
 
     # ajax
 
+    path("gendersubject/<int:subject_id>/<int:user_id>", views.get_gender_percentage_per_subject, name="genderpersub"),
+    path("scholarssubject/<int:subject_id>/<int:user_id>", views.get_scholar_percentage_per_subject, name="scholarpersub"),
     path('test/<int:subject_id>/<int:student_id>/<int:isbar>/',
          views.get_activities_average, name='get_activitis'),
     path("getsubjects/<str:studentNumber>",

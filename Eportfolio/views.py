@@ -17,85 +17,6 @@ import json
 
 from django.http import JsonResponse
 
-def get_activities_average(request, subject_id, student_id, isbar=1):
-    # Get the subject code for the specific subject
-    subject_code = Subject.objects.get(id=subject_id).subjectName
-
-    # Get all distinct GPType names
-    gptype_names = ['Prelims', 'Midterm', 'Finals']
-
-    # Get all distinct TaskType names
-    tasktype_names = TaskType.objects.values_list('taskType', flat=True)
-
-    # Prepare the response data
-    response_data = {}
-    sumofdata = {
-        "Prelims": 0,
-        "Midterm": 0,
-        "Finals": 0,
-    }
-
-    # Iterate over the GPType names
-    for gptype_name in gptype_names:
-        # Prepare the GPType data in the response
-        response_data[gptype_name] = {}
-
-        # Get the Rubrick objects for the current subject and GPType
-        rubricks = Rubrick.objects.filter(
-            gpObjt__subject_id=subject_id, gpObjt__gptype__gptypeName=gptype_name)
-
-        # Iterate over the TaskType names
-        for tasktype_name in tasktype_names:
-            # Get the Rubrick object for the current task type
-            rubrick = rubricks.filter(
-                taskTypeID__taskType=tasktype_name).first()
-
-            if rubrick:
-                # Get the rubric percentage for the current task type
-                rubrick_percentage = rubrick.percentage
-            else:
-                # If no rubric exists, default to 0 percentage
-                rubrick_percentage = 0
-
-            # Get the computed score per GPType and TaskType for the specific subject and student
-            if tasktype_name == 'Attendance':
-                # Set the attendance score to always be 100
-                average_score = 100
-            else:
-                task_scores = Task.objects.filter(
-                    taskSubject_id=subject_id,
-                    studentProfileID_id=student_id,  # Filter tasks by student ID
-                    gptype__gptypeName=gptype_name,
-                    taskType__taskType=tasktype_name,
-                ).values('score', 'overallscore')
-
-                # Calculate the average computed score for the specific GPType and TaskType
-                if task_scores.exists():
-                    total_weighted_score = sum(
-                        ((score['score'] / score['overallscore']) * 50) + 50
-                        for score in task_scores
-                    )
-                    average_score = total_weighted_score / task_scores.count()
-                else:
-                    average_score = 0
-
-            # Calculate the value for response_data[gptype_name][tasktype_name]
-            value = average_score * (rubrick_percentage / 100)
-            value_str = f'{round(value, 2)} / {rubrick_percentage} %'
-            valOnly = round(value, 2)
-            sumofdata[gptype_name] += valOnly
-
-            # Add the computed score to the GPType data in the response
-            response_data[gptype_name][tasktype_name] = value_str
-
-    # Create a new dictionary with subject code as key and response data as value
-    if isbar:
-        response_data = {subject_code: sumofdata}
-    else:
-        response_data = {subject_code: response_data}
-
-    # Return the response as JSON
-    return JsonResponse(response_data)
 
 
 def index(request):
@@ -193,6 +114,8 @@ def demographicForm(request):
         'yearLevels': YearLevel.objects.all(),
         'gender': Gender.objects.all(),
     })
+
+
 
 
 @csrf_exempt
@@ -492,6 +415,145 @@ def getSpecificSub(request, subID):
             dic['Finals'] = gp_dict
 
     return JsonResponse(dic, safe=False)
+
+
+def get_activities_average(request, subject_id, student_id, isbar=1):
+    # Get the subject code for the specific subject
+    subject_code = Subject.objects.get(id=subject_id).subjectName
+
+    # Get all distinct GPType names
+    gptype_names = ['Prelims', 'Midterm', 'Finals']
+
+    # Get all distinct TaskType names
+    tasktype_names = TaskType.objects.values_list('taskType', flat=True)
+
+    # Prepare the response data
+    response_data = {}
+    sumofdata = {
+        "Prelims": 0,
+        "Midterm": 0,
+        "Finals": 0,
+    }
+
+    # Iterate over the GPType names
+    for gptype_name in gptype_names:
+        # Prepare the GPType data in the response
+        response_data[gptype_name] = {}
+
+        # Get the Rubrick objects for the current subject and GPType
+        rubricks = Rubrick.objects.filter(
+            gpObjt__subject_id=subject_id, gpObjt__gptype__gptypeName=gptype_name)
+
+        # Iterate over the TaskType names
+        for tasktype_name in tasktype_names:
+            # Get the Rubrick object for the current task type
+            rubrick = rubricks.filter(
+                taskTypeID__taskType=tasktype_name).first()
+
+            if rubrick:
+                # Get the rubric percentage for the current task type
+                rubrick_percentage = rubrick.percentage
+            else:
+                # If no rubric exists, default to 0 percentage
+                rubrick_percentage = 0
+
+            # Get the computed score per GPType and TaskType for the specific subject and student
+            if tasktype_name == 'Attendance':
+                # Set the attendance score to always be 100
+                average_score = 100
+            else:
+                task_scores = Task.objects.filter(
+                    taskSubject_id=subject_id,
+                    studentProfileID_id=student_id,  # Filter tasks by student ID
+                    gptype__gptypeName=gptype_name,
+                    taskType__taskType=tasktype_name,
+                ).values('score', 'overallscore')
+
+                # Calculate the average computed score for the specific GPType and TaskType
+                if task_scores.exists():
+                    total_weighted_score = sum(
+                        ((score['score'] / score['overallscore']) * 50) + 50
+                        for score in task_scores
+                    )
+                    average_score = total_weighted_score / task_scores.count()
+                else:
+                    average_score = 0
+
+            # Calculate the value for response_data[gptype_name][tasktype_name]
+            value = average_score * (rubrick_percentage / 100)
+            value_str = f'{round(value, 2)} / {rubrick_percentage} %'
+            valOnly = round(value, 2)
+            sumofdata[gptype_name] += valOnly
+
+            # Add the computed score to the GPType data in the response
+            response_data[gptype_name][tasktype_name] = value_str
+
+    # Create a new dictionary with subject code as key and response data as value
+    if isbar:
+        response_data = {subject_code: sumofdata}
+    else:
+        response_data = {subject_code: response_data}
+
+    # Return the response as JSON
+    return JsonResponse(response_data)
+
+
+def get_gender_percentage_per_subject(request, subject_id, user_id):
+    user = User.objects.get(pk=user_id)
+    subject = Subject.objects.get(pk=subject_id)
+
+    male_count = StudentSubject.objects.filter(
+        subjectID=subject, subjectID__facultyName=user, studentProfileID__genderID__gender='Male').count()
+
+    female_count = StudentSubject.objects.filter(
+        subjectID=subject, subjectID__facultyName=user, studentProfileID__genderID__gender='Female').count()
+
+    total_students = male_count + female_count
+
+    if total_students > 0:
+        male_percentage = (male_count / total_students) * 100
+        female_percentage = (female_count / total_students) * 100
+    else:
+        male_percentage = 0
+        female_percentage = 0
+
+    gender_percentage = {
+        'subject': subject.subjectName,
+        'male_percentage': male_percentage,
+        'female_percentage': female_percentage
+    }
+
+    return JsonResponse(gender_percentage)
+
+
+def get_scholar_percentage_per_subject(request, subject_id, user_id):
+    user = User.objects.get(pk=user_id)
+    subject = Subject.objects.get(pk=subject_id)
+
+    scholar_count = StudentSubject.objects.filter(
+        subjectID=subject, subjectID__facultyName=user, studentProfileID__isScholar=True).count()
+
+    non_scholar_count = StudentSubject.objects.filter(
+        subjectID=subject, subjectID__facultyName=user, studentProfileID__isScholar=False).count()
+
+    total_students = scholar_count + non_scholar_count
+
+    if total_students > 0:
+        scholar_percentage = (scholar_count / total_students) * 100
+        non_scholar_percentage = (non_scholar_count / total_students) * 100
+    else:
+        scholar_percentage = 0
+        non_scholar_percentage = 0
+
+    scholar_percentage_data = {
+        'subject': subject.subjectName,
+        'scholar_percentage': scholar_percentage,
+        'non_scholar_percentage': non_scholar_percentage
+    }
+
+    return JsonResponse(scholar_percentage_data)
+
+
 
 
 def dataForGraph(subjects, studentTasks, isrubick=0):

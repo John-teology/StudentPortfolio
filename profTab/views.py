@@ -23,11 +23,13 @@ def index(request):
     subjects = Subject.objects.all()
     taskT = TaskType.objects.all()
     gpTypes = GPType.objects.all()
-
+    userFaculty = User.objects.get(pk=request.user.id)
+    availableSubs = Subject.objects.filter(facultyName=userFaculty)
     return render(request, "professor/prof.html", {
         'subjects': subjects,
         'tasksT': taskT,
-        'gpTypes': gpTypes
+        'gpTypes': gpTypes,
+        'mysubs':availableSubs,
     })
 
 
