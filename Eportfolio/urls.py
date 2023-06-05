@@ -22,16 +22,19 @@ urlpatterns = [
 
     # ajax
 
-    path('test/<int:subject_id>/<int:student_id>',views.get_activities_average,name='get_activitis'),
+    path('test/<int:subject_id>/<int:student_id>/<int:isbar>/',
+         views.get_activities_average, name='get_activitis'),
     path("getsubjects/<str:studentNumber>",
          views.getUserSubject, name="getUserSubject"),
     path("gettask/<str:studentNumber>", views.getUserTask, name="getUserTask"),
-    path("getallsubs/<str:studentNumber>", views.getAllSubject, name="getAllSubs"),
+    path("getallsubs/<str:studentNumber>",
+         views.getAllSubject, name="getAllSubs"),
     path("getallprofsubs/", views.getAllProfSubject, name="getAllProfSubs"),
-    path("getrubrick/<int:subjectid>",views.getUserRubrick, name="getUserRubrick"),
-    path("getcptypes/",views.getAllCpType, name="getcpTypes"),
-    path("getspecificsub/",views.getSpecificSub, name="getSpecificSub"),
-#     getSpecificSub
+    path("getrubrick/<int:subjectid>",
+         views.getUserRubrick, name="getUserRubrick"),
+    path("getcptypes/", views.getAllCpType, name="getcpTypes"),
+    path("getspecificsub/", views.getSpecificSub, name="getSpecificSub"),
+    #     getSpecificSub
 
 
 

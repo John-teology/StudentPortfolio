@@ -41,7 +41,7 @@
             class="form-control"
             id="courseName"
             name="courseName"
-            placeholder="Course Name"
+            placeholder="Course Description"
             required
           />
 
@@ -59,6 +59,7 @@
                 id="{{i.gptypeName}}percentage"
                 name="{{i.gptypeName}}percentage"
                 placeholder="Percentage"
+                required
               />
             </div>
             <div class="col-md-3">
@@ -82,6 +83,7 @@
                 id="{{i.gptypeName}}Attendance"
                 name="{{i.gptypeName}}Attendance"
                 placeholder="%"
+                required
               />
             </div>
             <div class="col-md-3">
@@ -100,11 +102,12 @@
               <label for="pProject">Project:</label>
               <input
                 type="number"
-                class="form-control"
+                class="form-control project-input"
                 value=""
                 id="{{i.gptypeName}}Project"
                 name="{{i.gptypeName}}Project"
                 placeholder="%"
+                required
               />
             </div>
 
@@ -118,6 +121,7 @@
                 id="{{i.gptypeName}}TotalExam"
                 name="{{i.gptypeName}}TotalExam"
                 placeholder="Total Score"
+                required
               />
             </div>
             <div class="input-group mb-2 mr-sm-2 mt-4">
@@ -126,10 +130,11 @@
               </div>
               <input
                 type="number"
-                class="form-control"
+                class="form-control total-project-input"
                 id="{{i.gptypeName}}TotalProject"
                 name="{{i.gptypeName}}TotalProject"
                 placeholder="Total Score"
+                required
               />
             </div>
 
@@ -144,6 +149,7 @@
               <select
                 class="custom-select cpTypes"
                 id="{{i.gptypeName}}cyTypesSelect"
+                required
               ></select>
               <div class="input-group-append">
                 <button
@@ -317,4 +323,6 @@
       $(this).closest(".row").remove();
     });
   });
+
+  // $("input").prop('required',true);
 </script>

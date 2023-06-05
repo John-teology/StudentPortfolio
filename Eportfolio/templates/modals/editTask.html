@@ -178,29 +178,41 @@ $(document).on('click',".EditTask", (event) => {
 
             // Display the form values
             console.log(formValues);
+            let score = Number($('#taskScoreEdit').val())
+            let total = Number($('#taskTotalEdit').val())
+            if(score>total){
+              alert('Invalid Score');
+            }
+            else{
+              $.ajax({
+                url: "{% url 'studentProfile' studentprof.studentNumber %}", // Replace with your actual submit URL
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                  // Handle success response
+                  $("#addTaskEdit")[0].reset();
+                  console.log(response);
+                  var dataTable = $("#tasksTable").DataTable();
+                  dataTable.ajax.reload(null, false); 
+                  $(".EditTask").click();
 
-        $.ajax({
-          url: "{% url 'studentProfile' studentprof.studentNumber %}", // Replace with your actual submit URL
-          type: "POST",
-          data: formData,
-          processData: false,
-          contentType: false,
-          success: function (response) {
-            // Handle success response
-            $("#addTaskEdit")[0].reset();
-            console.log(response);
-            var dataTable = $("#tasksTable").DataTable();
-            dataTable.ajax.reload(null, false); 
-            $(".EditTask").click();
-            // createBarGraph(response.graphdata);
-            // for (var key in response.dounut) {
-            //   createChart(response.dounut[key], key);
-            // }
-            // barGraphProfile(response.dounut);
+                  // var subs = response.value
+                  // subs.forEach((sub) =>{
+                  //   renderGradeBreakdown(sub.id,response.studentid,sub.subjectCode)
+                  // })
+                  // $('#listOfMySubjects').load(location.href)
+                  // createBarGraph(response.graphdata);
+                  // for (var key in response.dounut) {
+                  //   createChart(response.dounut[key], key);
+                  // }
+                  // barGraphProfile(response.dounut);
 
-            // Additional actions after form submission
-          },
-        });
+                  // Additional actions after form submission
+                },
+              });
+            }
       });
 
 

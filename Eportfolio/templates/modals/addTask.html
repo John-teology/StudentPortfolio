@@ -245,6 +245,7 @@
                 contentType: false,
                 success: function (response) {
                   // Handle success response
+                  console.log(response  )
                   if(response.message){
                     alert(response.message)
                   }
@@ -252,6 +253,14 @@
                   var dataTable = $("#tasksTable").DataTable();
                   dataTable.ajax.reload(null, false); 
                   $("#addUserTaskButton").click();
+                  var subs = response.value
+                  subs.forEach((sub) =>{
+                    renderGradeBreakdown(sub.id,response.studentid,sub.subjectCode)
+                    barpersub(sub.id, response.studentid);
+
+                  })
+
+
                   // $('#dataforbargrapht').load(location.href + ' #dataforbargraph');
                   // createBarGraph(response.data);
                   // barGraphProfile(response.dounut);

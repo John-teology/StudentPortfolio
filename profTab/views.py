@@ -235,13 +235,11 @@ def edit_subject_form(request, sub_id):
                 if not cptypeID:  # Skip the iteration if cptypeID is empty
                     continue
 
-                try:
-                    cptypeObj = CPType.objects.get(pk=cptypeID)
-                    newClassP = ClassPerformance(
-                            title=title, gpObject=subjectGP, cptype=cptypeObj, totalScore=totalItems)
-                    newClassP.save()
-                except IntegrityError:
-                    continue
+                cptypeObj = CPType.objects.get(pk=cptypeID)
+                newClassP = ClassPerformance(
+                        title=title, gpObject=subjectGP, cptype=cptypeObj, totalScore=totalItems)
+                newClassP.save()
+               
 
                     
         # Update the Rubrick objects
@@ -253,7 +251,8 @@ def edit_subject_form(request, sub_id):
                 continue
 
             rubrick.percentage = request.POST.get(
-                f"{gp}{task}Edit", rubrick.percentage)
+                f"{gp}{task}Edit", 0) if request.POST.get(
+                f"{gp}{task}Edit", 0) != '' else 0 
             rubrick.save()
 
     return JsonResponse({"message": "Data updated successfully."}, status=200)

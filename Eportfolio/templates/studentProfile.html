@@ -519,8 +519,8 @@
         {% include "modals/editTask.html" %} 
         {% include "modals/delete_sub_modal.html" %}
         <div class="container-fluid" id="subjectPage">
-          {% include "modals/addTask.html" %}
-           {% include "modals/delete_modal.html" %}
+          {% include "modals/addTask.html" %} 
+          {% include "modals/delete_modal.html" %}
 
           <div class="row cardwrapper">
             <div class="col-lg-12">
@@ -551,30 +551,24 @@
               <div class="panel">
                 <div class="panel-body bio-graph-info row">
                   <div class="col-md-12" style="margin-left: 1%">
-                    <h1 id="{{sub.subjectCode}}:{{sub.subjectName}}">
-                      {{sub.subjectCode}}:{{sub.subjectName}}
+                    <h1 id="{{sub.subjectCode}}:{{sub.subjectName}}" >
                     </h1>
                   </div>
                   <div class="row">
-                    <div class="col-xs-12 col-md-12 col-lg cardwrapper-graph">
-                      <div
-                        id="{{sub.subjectCode}}"
-                        class="donut-item"
-                        style="margin-top: 2%;"
-                      ></div>
-                      <div id="{{sub.subjectCode}}1" class="mt-4" ></div>
-                      <script>
-                        document.addEventListener("DOMContentLoaded", function() {
-                           renderGradeBreakdown("{{sub.id}}","{{studentprof.id}}","{{sub.subjectCode}}");
-                        });
-                      </script>
+                        <!-- <div
+                          id="{{sub.subjectCode}}"
+                          class="donut-item"
+                          style="margin-top: 2%;"
+                        ></div>
+                        <div id="{{sub.subjectCode}}1" class="mt-4" ></div>
+                        
+                      </div> -->
+                    
+                        <!-- <div class="col-xs-12 col-md-12 col-lg cardwrapper-graph">
+                        <center>
+                          <canvas id="{{sub.subjectName}}" class="donut"></canvas>
+                        </center> -->
                     </div>
-                    <!-- <div class="col-xs-12 col-md-12 col-lg cardwrapper-graph">
-                      <center>
-                        <canvas id="{{sub.subjectName}}" class="donut"></canvas>
-                      </center>
-                    </div> -->
-                  </div>
                 </div>
               </div>
               <br />
@@ -585,7 +579,7 @@
           </div>
         </div>
 
-        <div class="container-fluid" id="profilePage" >
+        <div class="container-fluid" id="profilePage">
           <div class="row cardwrapper">
             <div class="col-lg-12">
               <h1 class="title-text">My Profile</h1>
@@ -633,13 +627,22 @@
               </div>
             </div>
           </div>
+          {% for sub in subjects %}
+
           <div class="cardwrapper">
             <canvas
-              id="dataBars"
+              id="{{sub.subjectName}}"
               class="bar-data"
               style="width: 100%; margin-top: 3%"
             ></canvas>
+            <script>
+              document.addEventListener("DOMContentLoaded", function() {
+                
+                barpersub("{{sub.id}}", "{{studentprof.id}}");
+              });
+            </script>
           </div>
+          {% endfor %}
         </div>
 
         <div class="container-fluid cardwrapper" id="editPage">
@@ -826,6 +829,58 @@
                 },
               },
             ],
+            initComplete: function () {
+              this.api()
+                .columns([1, 2, 3])
+                .every(function () {
+                  var column = this;
+                  var header = $(column.header());
+
+                  // Create a label for the filter
+                  var label = $("<label></label>").text(
+                    getColumnLabel(column.index())
+                  );
+
+                  // Create a select element for filtering
+                  var select = $(
+                    '<select class="form-select form-select-mb"><option value=""></option></select>'
+                  )
+                    .appendTo(header.empty())
+                    .on("change", function () {
+                      var val = $.fn.dataTable.util.escapeRegex($(this).val());
+                      column
+                        .search(val ? "^" + val + "$" : "", true, false)
+                        .draw();
+                    });
+
+                  // Get unique values from the column
+                  column
+                    .data()
+                    .unique()
+                    .sort()
+                    .each(function (data, j) {
+                      select.append(
+                        '<option value="' + data + '">' + data + "</option>"
+                      );
+                    });
+
+                  // Append the label to the header
+                  label.prependTo(header);
+                });
+                 // Function to get the column label based on the column index
+              function getColumnLabel(columnIndex) {
+                switch (columnIndex) {
+                  case 1:
+                    return "Subject";
+                  case 2:
+                    return "Period";
+                  case 3:
+                    return "Type";
+                  default:
+                    return "";
+                }
+              }
+              }
           });
         } else {
           var tasksTable = $("#tasksTable").DataTable({
@@ -1024,11 +1079,10 @@
             var dataTable = $("#tasksTable").DataTable();
             dataTable.ajax.reload(null, false);
             $(".modaldelete").click();
-            createBarGraph(response.data);
-            barGraphProfile(response.dounut);
-            for (var key in response.dounut) {
-              createChart(response.dounut[key], key);
-            }
+            var subs = response.value;
+            subs.forEach((sub) => {
+              renderGradeBreakdown(sub.id, response.studentid, sub.subjectCode);
+            });
           },
         });
       });
@@ -1082,49 +1136,53 @@
       let chartInstance; // Define a variable to store the chart instance
 
       const barGraphProfile = (obj) => {
-        const canvas = document.getElementById("dataBars");
-        const context = canvas.getContext("2d");
+  const canvas = document.getElementById(Object.keys(obj)[0]);
+  const context = canvas.getContext("2d");
 
-        // Check if the chart instance already exists
-        if (chartInstance) {
-          chartInstance.destroy(); // Destroy the existing chart
-        }
+  newobj = Object.values(obj)[0];
+  const data = {
+    labels: Object.keys(newobj),
+    datasets: [
+      {
+        label: Object.keys(obj)[0],
+        data: Object.values(newobj),
+        backgroundColor: "rgba(255, 99, 132, 0.2)",
+        borderColor: "rgb(255, 99, 132)",
+        borderWidth: 2,
+      },
+    ],
+  };
 
-        const data = {
-          labels: Object.keys(obj),
-          datasets: [
-            {
-              label: "My Subjects Passing Rate",
-              data: Object.values(obj),
-              backgroundColor: "rgba(255, 99, 132, 0.2)",
-              borderColor: "rgb(255, 99, 132)",
-              borderWidth: 2,
+  chartInstance = new Chart(context, {
+    type: "bar",
+    data: data,
+    options: {
+      scales: {
+        yAxes: [
+          {
+            scaleLabel: {
+              display: true,
+              labelString: "Passing Rate (%)",
             },
-          ],
-        };
-
-        chartInstance = new Chart(context, {
-          type: "bar",
-          data: data,
-          options: {
-            scales: {
-              yAxes: [
-                {
-                  scaleLabel: {
-                    display: true,
-                    labelString: "Passing Rate (%)",
-                  },
-                  ticks: {
-                    beginAtZero: true,
-                  },
-                },
-              ],
+            ticks: {
+              beginAtZero: true,
             },
           },
-        });
-      };
+        ],
+      },
+      title: {
+        display: true,
+        text: Object.keys(obj)[0],
+        fontSize: 20, // Adjust the font size (in pixels)
+        fontWeight: "bold", // Set the font weight to "bold"
+      },
+    },
+  });
+};
 
-      barGraphProfile(dounuts);
+      
+
+      
 
       // bar for all chart -----------------------------
 
@@ -1187,16 +1245,9 @@
                 dataTable.ajax.reload(null, false);
 
                 alert("added New Subject!");
-                // $("#listOfMySubjects").load(
-                //   location.href + " #listOfMySubjects",
-                //   function () {
-                //     createBarGraph(response.data);
-                //     for (var key in response.dounut) {
-                //       createChart(response.dounut[key], key);
-                //     }
-                //   }
-                // );
-                // barGraphProfile(response.dounut);
+                $("#listOfMySubjects").load(
+                  location.href + " #listOfMySubjects"
+                );
                 $("#taskSubjectEdit")
                   .find("option")
                   .remove()
@@ -1311,12 +1362,23 @@
 
       // table----------------------------------
 
-      function renderGradeBreakdown(subid, userid,elementid) {
-        $.ajax({
-          url: `/test/${subid}/${userid}`,
+      const barpersub = (subid, userid) =>{
+          $.ajax({
+          url: `/test/${subid}/${userid}/1`,
           success: (data) => {
-            var gradeBreakdownContainer =
-              document.getElementById(`${elementid}1`);
+            console.log(data)
+            barGraphProfile(data);
+          },
+        });
+      }
+
+      function renderGradeBreakdown(subid, userid, elementid) {
+        $.ajax({
+          url: `/test/${subid}/${userid}/0`,
+          success: (data) => {
+            var gradeBreakdownContainer = document.getElementById(
+              `${elementid}1`
+            );
             var html = "";
 
             for (var subject in data) {
@@ -1341,13 +1403,10 @@
 
             gradeBreakdownContainer.innerHTML = html;
 
-           
-
             // createBarGraph(data);
           },
         });
       }
-
     </script>
   </body>
   <script src="../../static/eportfolio/innerstyle.js"></script>

@@ -11,27 +11,52 @@ from django.db.models import Avg, F, FloatField
 
 
 # Create your views here.
+import json
 
-def get_activities_average(request, subject_id, student_id):
+import json
+
+from django.http import JsonResponse
+
+def get_activities_average(request, subject_id, student_id, isbar=1):
     # Get the subject code for the specific subject
-    subject_code = Subject.objects.get(id=subject_id).subjectCode
+    subject_code = Subject.objects.get(id=subject_id).subjectName
 
     # Get all distinct GPType names
-    gptype_names = GPType.objects.values_list('gptypeName', flat=True)
+    gptype_names = ['Prelims', 'Midterm', 'Finals']
 
     # Get all distinct TaskType names
     tasktype_names = TaskType.objects.values_list('taskType', flat=True)
 
     # Prepare the response data
     response_data = {}
+    sumofdata = {
+        "Prelims": 0,
+        "Midterm": 0,
+        "Finals": 0,
+    }
 
     # Iterate over the GPType names
     for gptype_name in gptype_names:
         # Prepare the GPType data in the response
         response_data[gptype_name] = {}
 
+        # Get the Rubrick objects for the current subject and GPType
+        rubricks = Rubrick.objects.filter(
+            gpObjt__subject_id=subject_id, gpObjt__gptype__gptypeName=gptype_name)
+
         # Iterate over the TaskType names
         for tasktype_name in tasktype_names:
+            # Get the Rubrick object for the current task type
+            rubrick = rubricks.filter(
+                taskTypeID__taskType=tasktype_name).first()
+
+            if rubrick:
+                # Get the rubric percentage for the current task type
+                rubrick_percentage = rubrick.percentage
+            else:
+                # If no rubric exists, default to 0 percentage
+                rubrick_percentage = 0
+
             # Get the computed score per GPType and TaskType for the specific subject and student
             if tasktype_name == 'Attendance':
                 # Set the attendance score to always be 100
@@ -54,25 +79,20 @@ def get_activities_average(request, subject_id, student_id):
                 else:
                     average_score = 0
 
-            # Check if a Rubrick exists for the current task type
-            rubrick = Rubrick.objects.filter(
-                taskTypeID__taskType=tasktype_name
-            ).first()
-
-            if rubrick:
-                # Get the Rubrick percentage for the current task type
-                rubrick_percentage = rubrick.percentage
-
-                # Calculate the value for response_data[gptype_name][tasktype_name]
-                value = average_score * (rubrick_percentage / 100)
-            else:
-                value = round(average_score, 2)
+            # Calculate the value for response_data[gptype_name][tasktype_name]
+            value = average_score * (rubrick_percentage / 100)
+            value_str = f'{round(value, 2)} / {rubrick_percentage} %'
+            valOnly = round(value, 2)
+            sumofdata[gptype_name] += valOnly
 
             # Add the computed score to the GPType data in the response
-            response_data[gptype_name][tasktype_name] = f'{round(value,2)} / {rubrick_percentage} %'
+            response_data[gptype_name][tasktype_name] = value_str
 
     # Create a new dictionary with subject code as key and response data as value
-    response_data = {subject_code: response_data}
+    if isbar:
+        response_data = {subject_code: sumofdata}
+    else:
+        response_data = {subject_code: response_data}
 
     # Return the response as JSON
     return JsonResponse(response_data)
@@ -277,7 +297,7 @@ def studentProfile(request, studentID):
             # data = dataForGraph(subjects, studentTasks)
             # dataD = dataForGraph(subjects, studentTasks, isrubick=1)
 
-            return JsonResponse({"title": uploadedTask.title, "myscore": uploadedTask.score, "overallscore": uploadedTask.overallscore, "date": uploadedTask.date,  'subject': subject.subjectName, 'attaachment':  uploadedTask.image.url if uploadedTask.image else None, }, safe=False)
+            return JsonResponse({"title": uploadedTask.title, "myscore": uploadedTask.score, "overallscore": uploadedTask.overallscore, "date": uploadedTask.date,  'subject': subject.subjectName, 'attaachment':  uploadedTask.image.url if uploadedTask.image else None, 'studentid': studentprof.id, 'value': [sub.serialize() for sub in subjects]}, safe=False)
 
         if isEditType:
             try:
@@ -294,7 +314,7 @@ def studentProfile(request, studentID):
                 # data = dataForGraph(subjects, studentTasks)
                 # dataD = dataForGraph(subjects, studentTasks, isrubick=1)
 
-                return JsonResponse({'data': 1, }, safe=False)
+                return JsonResponse({'data': 1, 'studentid': studentprof.id, 'value': [sub.serialize() for sub in subjects]}, safe=False)
             except:
                 return JsonResponse({'data': 0}, safe=False)
 
