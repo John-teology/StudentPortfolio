@@ -548,7 +548,16 @@
             { data: "StudentSurname" },
             { data: "YearLevel" },
             { data: "Course" },
-            { data: "TotalGrade" },
+            {
+              data: "TotalGrade",
+              render: function (data, type, row) {
+                if (data < 75) {
+                  return "Too low";
+                } else {
+                  return data;
+                }
+              },
+            },
           ],
           ajax: {
             url: `getstudents/${user_id}/${sub_id}`,

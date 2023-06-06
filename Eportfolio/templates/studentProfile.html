@@ -1098,12 +1098,13 @@
             const selectElement = document.getElementById("selectMySub");
             selectElement.selectedIndex = 0;
             console.log(response);
-            // var subs = response.value;
-            // subs.forEach((sub) => {
-            //   // renderGradeBreakdown(sub.id, response.studentid, sub.subjectCode);
-            //   // barpersub(sub.id, response.studentid);
-
-            // });
+            var subs = response.value
+            subs.forEach((sub) =>{
+              barpersub(sub.id, response.studentid);
+              $.ajax({
+              url:`/totalScore/${sub.id}/${response.studentid}/`
+                })
+            })
           },
         });
       });
@@ -1329,16 +1330,8 @@
             $(".submodalDelete").click();
             var dataTableTask = $("#tasksTable").DataTable();
             dataTableTask.ajax.reload(null, false);
-            // barGraphProfile(response.dounut);
-            // $("#listOfMySubjects").load(
-            //   location.href + " #listOfMySubjects",
-            //   function () {
-            //     createBarGraph(response.data);
-            //     for (var key in response.dounut) {
-            //       createChart(response.dounut[key], key);
-            //     }
-            //   }
-            // );
+          
+          
 
             $("#taskSubjectEdit")
               .find("option")

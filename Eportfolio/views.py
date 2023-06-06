@@ -188,7 +188,7 @@ def studentProfile(request, studentID):
             # data = dataForGraph(subjects, studentTasks)
             # dataD = dataForGraph(subjects, studentTasks, isrubick=1)
 
-            return JsonResponse({'succes': 1, }, safe=False)
+            return JsonResponse({'succes': 1, 'studentid': studentprof.id, 'value': [sub.serialize() for sub in subjects]}, safe=False)
 
         if subjectID:
             gpType = GPType.objects.get(pk=gpTypeId)
