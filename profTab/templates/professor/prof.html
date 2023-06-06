@@ -508,6 +508,7 @@
                 <th>Student Surname</th>
                 <th>Year</th>
                 <th>Course</th>
+                <th>Approximate Grade</th>
               </tr>
             </thead>
           </table>
@@ -518,6 +519,20 @@
     {% include 'modals/editSubject_modal.html' %}
 
     <script>
+
+      const myStudentTable = $("#studentTableProf").DataTable({
+        responsive: true,
+        columns: [
+          { data: "StudentNumber" },
+          { data: "StudentName" },
+          { data: "StudentSurname" },
+          { data: "YearLevel" },
+          { data: "Course" },
+          { data: "TotalGrade" },
+        ],
+        data: [], // Set an empty array as the initial data source
+      });
+
       $(document).on("change", "#selectMySub", function () {
         var sub_id = $("#selectMySub").val();
         var user_id = "{{request.user.id}}";
@@ -533,6 +548,7 @@
             { data: "StudentSurname" },
             { data: "YearLevel" },
             { data: "Course" },
+            { data: "TotalGrade" },
           ],
           ajax: {
             url: `getstudents/${user_id}/${sub_id}`,

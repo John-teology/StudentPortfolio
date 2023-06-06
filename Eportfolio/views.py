@@ -559,11 +559,9 @@ def get_scholar_percentage_per_subject(request, subject_id, user_id):
     return JsonResponse(scholar_percentage_data)
 
 
-def totalSubjectRubrick(request, subject_id, student_id, isbar):
+def totalSubjectRubrick(request, subject_id, student_id):
     # Get the subject code for the specific subject
-    subject_code = Subject.objects.get(id=subject_id).subjectName
     subject_code_rubrick = Subject.objects.get(id=subject_id)
-    studentName = Studentprofile.objects.get(pk=student_id).studentNumber
 
     # Get all distinct GPType names
     gptype_names = ['Prelims', 'Midterm', 'Finals']
@@ -639,10 +637,17 @@ def totalSubjectRubrick(request, subject_id, student_id, isbar):
         # print(sumofdata[gptype_name])
         res = (sumofdata[gptype_name] / 100) * subRub.percentage
         Totalvalue += res
-        print(res)
+
     # Create a new dictionary with subject code as key and response data as value
-    print(Totalvalue)
-    response_data = {studentName: Totalvalue}
+    response_data = {"totalScore": Totalvalue,
+                     "subjectid": subject_id, "studentid": student_id}
+
+    student_final_grade, created = StudentFinalGrade.objects.get_or_create(
+        studentprofile_id=response_data["studentid"],
+        subject_id=response_data["subjectid"])
+    # Update the totalGrade field
+    student_final_grade.totalGrade = response_data["totalScore"]
+    student_final_grade.save()
 
     # Return the response as JSON
     return JsonResponse(response_data)

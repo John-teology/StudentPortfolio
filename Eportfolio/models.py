@@ -129,12 +129,18 @@ class StudentSubject(models.Model):
         return f"{self.studentProfileID.studentNumber}: {self.subjectID.subjectName}"
 
     def serialize(self):
+        student_final_grade = StudentFinalGrade.objects.filter(
+            studentprofile=self.studentProfileID,
+            subject=self.subjectID
+        ).first()
+
         return {
             "StudentName": self.studentProfileID.firstName,
             "StudentSurname": self.studentProfileID.lastName,
             "StudentNumber": f'<a href="{reverse("studentProfile", args=[self.studentProfileID.studentNumber])}"  target="_blank">{self.studentProfileID.studentNumber}</a>',
             "YearLevel": self.studentProfileID.yearID.yearLevel,
             "Course": self.studentProfileID.courseID.course,
+            "TotalGrade": student_final_grade.totalGrade if student_final_grade else None,
         }
 
 
@@ -229,6 +235,15 @@ class SubjectRubrick(models.Model):
     def __str__(self):
         return f"{self.subjectObj.subjectCode}:{self.subjectObj.subjectName}({self.gpObjt.gptypeName}) = {self.percentage}"
     
+class StudentFinalGrade(models.Model):
+    studentprofile = models.ForeignKey(
+        Studentprofile, on_delete=CASCADE, related_name="studentFinal")
+    subject = models.ForeignKey(
+    Subject, on_delete=CASCADE, related_name='SFSubject')
+    totalGrade = models.IntegerField(null=True)
+
+    def __str__(self):
+        return f'{self.studentprofile.studentNumber}:{self.subject.subjectName} = {self.totalGrade}'
 
 
     # def get_activities_average(request, subject_id, student_id):

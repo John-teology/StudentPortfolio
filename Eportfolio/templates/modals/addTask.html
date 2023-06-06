@@ -245,18 +245,21 @@
                 contentType: false,
                 success: function (response) {
                   // Handle success response
-                  console.log(response  )
                   if(response.message){
                     alert(response.message)
                   }
+                 
                   $("#addTask")[0].reset();
                   var dataTable = $("#tasksTable").DataTable();
                   dataTable.ajax.reload(null, false); 
                   $("#addUserTaskButton").click();
                   var subs = response.value
                   subs.forEach((sub) =>{
-                    renderGradeBreakdown(sub.id,response.studentid,sub.subjectCode)
+                    // renderGradeBreakdown(sub.id,response.studentid,sub.subjectCode)
                     barpersub(sub.id, response.studentid);
+                    $.ajax({
+                    url:`/totalScore/${sub.id}/${response.studentid}/`
+                  })
 
                   })
 

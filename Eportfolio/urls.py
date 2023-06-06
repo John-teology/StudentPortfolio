@@ -28,7 +28,7 @@ urlpatterns = [
     path('test/<int:subject_id>/<int:student_id>/<int:isbar>/',
          views.get_activities_average, name='get_activitis'),
 
-     path('totalScore/<int:subject_id>/<int:student_id>/<int:isbar>/',
+     path('totalScore/<int:subject_id>/<int:student_id>/',
          views.totalSubjectRubrick, name='get_total'),
 
 
