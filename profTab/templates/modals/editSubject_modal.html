@@ -139,7 +139,6 @@
               type="number"
               name="{{i.gptypeName}}CounterEdit"
               id="{{i.gptypeName}}CounterEdit"
-              hidden
             />
 
             <div class="input-group" style="margin-top: 3%">
@@ -302,7 +301,7 @@
           <div class="input-group-prepend">
             <div class="input-group-text">${name}</div>
           </div>
-          <input type="text" class="form-control" id="${value}TitleCP${currentCounter}Edit" name="${value}TitleCP${currentCounter}Edit" placeholder="Title" required/>
+          <input type="text" class="form-control" id="${value}TitleCP${newEditCounter}Edit" name="${value}TitleCP${newEditCounter}Edit" placeholder="Title" required/>
         </div>
       </div>
       <div class="col-sm-5">
@@ -310,10 +309,10 @@
           <div class="input-group-prepend">
             <div class="input-group-text">No. of Items</div>
           </div>
-          <input type="number" class="form-control" id="${value}TotalItemCP${currentCounter}Edit" name="${value}TotalItemCP${currentCounter}Edit" placeholder="Total" required/>
+          <input type="number" class="form-control" id="${value}TotalItemCP${newEditCounter}Edit" name="${value}TotalItemCP${newEditCounter}Edit" placeholder="Total" required/>
         </div>
       </div>
-      <input type="text" id="${value}ID${currentCounter}Edit" name="${value}ID${currentCounter}Edit" value="${cptypeID}" hidden />
+      <input type="text" id="${value}ID${newEditCounter}Edit" name="${value}ID${newEditCounter}Edit" value="${cptypeID}" hidden />
       <div class="col-sm-1">
         <div class="input-group mb-3 mt-4">
           <button class="btn btn-outline-secondary remove-row" type="button">

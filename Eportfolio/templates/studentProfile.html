@@ -473,7 +473,7 @@
             </li>
             {% endif %}
             <li id="activeSubject">
-              <a id="Subjects">Activities</a>
+              <a id="Subjects">Activities </a>
             </li>
             {% if request.user.first_name == studentprof.firstName %}
 
@@ -551,11 +551,10 @@
               <div class="panel">
                 <div class="panel-body bio-graph-info row">
                   <div class="col-md-12" style="margin-left: 1%">
-                    <h1 id="{{sub.subjectCode}}:{{sub.subjectName}}" >
-                    </h1>
+                    <h1 id="{{sub.subjectCode}}:{{sub.subjectName}}"></h1>
                   </div>
                   <div class="row">
-                        <!-- <div
+                    <!-- <div
                           id="{{sub.subjectCode}}"
                           class="donut-item"
                           style="margin-top: 2%;"
@@ -563,12 +562,12 @@
                         <div id="{{sub.subjectCode}}1" class="mt-4" ></div>
                         
                       </div> -->
-                    
-                        <!-- <div class="col-xs-12 col-md-12 col-lg cardwrapper-graph">
+
+                    <!-- <div class="col-xs-12 col-md-12 col-lg cardwrapper-graph">
                         <center>
                           <canvas id="{{sub.subjectName}}" class="donut"></canvas>
                         </center> -->
-                    </div>
+                  </div>
                 </div>
               </div>
               <br />
@@ -627,22 +626,38 @@
               </div>
             </div>
           </div>
-          {% for sub in subjects %}
-
-          <div class="cardwrapper">
+          <div id="loadoption">
+            <select
+              id="selectMySub"
+              class="form-select"
+              aria-label="Default select example"
+              style="
+                background-color: gray;
+                color: white;
+                text-align-last: center;
+              "
+            >
+              <option selected style="background-color: gray; color: white">
+                Select Subject
+              </option>
+              {% for i in subjects %}
+              <option value="{{i.id}}">
+                {{i.subjectCode}}:{{i.subjectName}}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
             <canvas
-              id="{{sub.subjectName}}"
+              id="showHere"
               class="bar-data"
-              style="width: 100%; margin-top: 3%"
+              style="margin-top: 3%"
             ></canvas>
-            <script>
+            <!-- <script>
               document.addEventListener("DOMContentLoaded", function() {
                 
                 barpersub("{{sub.id}}", "{{studentprof.id}}");
               });
-            </script>
-          </div>
-          {% endfor %}
+            </script> -->
         </div>
 
         <div class="container-fluid cardwrapper" id="editPage">
@@ -867,7 +882,7 @@
                   // Append the label to the header
                   label.prependTo(header);
                 });
-                 // Function to get the column label based on the column index
+              // Function to get the column label based on the column index
               function getColumnLabel(columnIndex) {
                 switch (columnIndex) {
                   case 1:
@@ -880,7 +895,7 @@
                     return "";
                 }
               }
-              }
+            },
           });
         } else {
           var tasksTable = $("#tasksTable").DataTable({
@@ -1079,10 +1094,16 @@
             var dataTable = $("#tasksTable").DataTable();
             dataTable.ajax.reload(null, false);
             $(".modaldelete").click();
-            var subs = response.value;
-            subs.forEach((sub) => {
-              renderGradeBreakdown(sub.id, response.studentid, sub.subjectCode);
-            });
+            $("#loadoption").load(location.href + " #loadoption");
+            const selectElement = document.getElementById("selectMySub");
+            selectElement.selectedIndex = 0;
+            console.log(response);
+            // var subs = response.value;
+            // subs.forEach((sub) => {
+            //   // renderGradeBreakdown(sub.id, response.studentid, sub.subjectCode);
+            //   // barpersub(sub.id, response.studentid);
+
+            // });
           },
         });
       });
@@ -1133,56 +1154,56 @@
 
       // bar for all chart -----------------------------
 
-      let chartInstance; // Define a variable to store the chart instance
-
       const barGraphProfile = (obj) => {
-  const canvas = document.getElementById(Object.keys(obj)[0]);
-  const context = canvas.getContext("2d");
+        const canvas = document.getElementById("showHere");
+        const context = canvas.getContext("2d");
 
-  newobj = Object.values(obj)[0];
-  const data = {
-    labels: Object.keys(newobj),
-    datasets: [
-      {
-        label: Object.keys(obj)[0],
-        data: Object.values(newobj),
-        backgroundColor: "rgba(255, 99, 132, 0.2)",
-        borderColor: "rgb(255, 99, 132)",
-        borderWidth: 2,
-      },
-    ],
-  };
+        // Delete the current graph if it exists
+        if (typeof chartInstance !== "undefined") {
+          chartInstance.destroy();
+        }
 
-  chartInstance = new Chart(context, {
-    type: "bar",
-    data: data,
-    options: {
-      scales: {
-        yAxes: [
-          {
-            scaleLabel: {
-              display: true,
-              labelString: "Passing Rate (%)",
+        const newobj = Object.values(obj)[0];
+        const data = {
+          labels: Object.keys(newobj),
+          datasets: [
+            {
+              label: Object.keys(obj)[0],
+              data: Object.values(newobj),
+              backgroundColor: "rgba(255, 99, 132, 0.2)",
+              borderColor: "rgb(255, 99, 132)",
+              borderWidth: 2,
             },
-            ticks: {
-              beginAtZero: true,
+          ],
+        };
+
+        chartInstance = new Chart(context, {
+          type: "bar",
+          data: data,
+          options: {
+            scales: {
+              yAxes: [
+                {
+                  scaleLabel: {
+                    display: true,
+                    labelString: "Passing Rate (%)",
+                  },
+                  ticks: {
+                    beginAtZero: true,
+                    max: 100,
+                  },
+                },
+              ],
+            },
+            title: {
+              display: true,
+              text: Object.keys(obj)[0],
+              fontSize: 20,
+              fontWeight: "bold",
             },
           },
-        ],
-      },
-      title: {
-        display: true,
-        text: Object.keys(obj)[0],
-        fontSize: 20, // Adjust the font size (in pixels)
-        fontWeight: "bold", // Set the font weight to "bold"
-      },
-    },
-  });
-};
-
-      
-
-      
+        });
+      };
 
       // bar for all chart -----------------------------
 
@@ -1241,6 +1262,8 @@
               if (response.isAlreadyAdded) {
                 alert("This Subject is Already Added");
               } else {
+              $("#loadoption").load(location.href + " #loadoption");
+
                 var dataTable = $("#subjectTable").DataTable();
                 dataTable.ajax.reload(null, false);
 
@@ -1362,15 +1385,14 @@
 
       // table----------------------------------
 
-      const barpersub = (subid, userid) =>{
-          $.ajax({
+      const barpersub = (subid, userid) => {
+        $.ajax({
           url: `/test/${subid}/${userid}/1`,
           success: (data) => {
-            console.log(data)
             barGraphProfile(data);
           },
         });
-      }
+      };
 
       function renderGradeBreakdown(subid, userid, elementid) {
         $.ajax({
@@ -1407,6 +1429,13 @@
           },
         });
       }
+
+      $(document).on("change", "#selectMySub", function () {
+        var sub_id = $("#selectMySub").val();
+        var user_id = "{{studentprof.id}}";
+
+        barpersub(sub_id, user_id);
+      });
     </script>
   </body>
   <script src="../../static/eportfolio/innerstyle.js"></script>

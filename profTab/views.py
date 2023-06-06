@@ -29,7 +29,7 @@ def index(request):
         'subjects': subjects,
         'tasksT': taskT,
         'gpTypes': gpTypes,
-        'mysubs':availableSubs,
+        'mysubs': availableSubs,
     })
 
 
@@ -108,13 +108,18 @@ def getMySubjects(request, subId):
     return JsonResponse([rub.serialize(isprof=1) for rub in rubricks], safe=False)
 
 
-def getAllMyStudents(request, profid):
+def getAllMyStudents(request, profid, subject_id):
     # Retrieve the faculty object based on the faculty_id
     faculty = User.objects.get(pk=profid)
 
-    # Get all the student subjects associated with the faculty
+    # Retrieve the subject object based on the subject_id
+    subject = Subject.objects.get(pk=subject_id)
+
+    # Get all the student subjects associated with the faculty and subject
     student_subjects = StudentSubject.objects.filter(
-        subjectID__facultyName=faculty)
+        subjectID=subject,
+        subjectID__facultyName=faculty
+    )
 
     serialized_data = []
     for rub in student_subjects:
@@ -124,6 +129,7 @@ def getAllMyStudents(request, profid):
             serialized_data.append(serialized_obj)
 
     return JsonResponse(serialized_data, safe=False)
+
 
 
 def editSubject(request, subID):
@@ -205,7 +211,7 @@ def edit_subject_form(request, sub_id):
 
     for gp in gpTypes:
 
-        percentageEdit = request.POST.get(f'{gp}percentageEdit',0)
+        percentageEdit = request.POST.get(f'{gp}percentageEdit', 0)
         updateSubRub = SubjectRubrick.objects.get(
             subjectObj=subject, gpObjt=gp)
         updateSubRub.percentage = percentageEdit if percentageEdit != '' else 0
@@ -224,26 +230,25 @@ def edit_subject_form(request, sub_id):
         subjectGP.save()
 
         gpCounter = request.POST.get(f'{gp}CounterEdit', 0)
-
+        print(f'{gp} = {gpCounter}')
         if gpCounter:
             # Update the ClassPerformance objects
             ClassPerformance.objects.filter(gpObject=subjectGP).delete()
 
             for i in range(int(gpCounter)):
+                print(f'counter {gp} = {i}')
                 title = request.POST.get(f"{gp}TitleCP{i+1}Edit", '')
                 totalItems = request.POST.get(f"{gp}TotalItemCP{i+1}Edit", '')
-                cptypeID = request.POST.get(f"{gp}ID{i+1}Edit", '')
+                cptypeID = request.POST.get(f"{gp}ID{i+1}Edit", 0)
 
                 if not cptypeID:  # Skip the iteration if cptypeID is empty
                     continue
-
+                
                 cptypeObj = CPType.objects.get(pk=cptypeID)
                 newClassP = ClassPerformance(
-                        title=title, gpObject=subjectGP, cptype=cptypeObj, totalScore=totalItems)
+                    title=title, gpObject=subjectGP, cptype=cptypeObj, totalScore=totalItems)
                 newClassP.save()
-               
 
-                    
         # Update the Rubrick objects
         for task in tasktypes:
             try:
@@ -254,7 +259,7 @@ def edit_subject_form(request, sub_id):
 
             rubrick.percentage = request.POST.get(
                 f"{gp}{task}Edit", 0) if request.POST.get(
-                f"{gp}{task}Edit", 0) != '' else 0 
+                f"{gp}{task}Edit", 0) != '' else 0
             rubrick.save()
 
     return JsonResponse({"message": "Data updated successfully."}, status=200)

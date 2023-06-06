@@ -24,8 +24,14 @@ urlpatterns = [
 
     path("gendersubject/<int:subject_id>/<int:user_id>", views.get_gender_percentage_per_subject, name="genderpersub"),
     path("scholarssubject/<int:subject_id>/<int:user_id>", views.get_scholar_percentage_per_subject, name="scholarpersub"),
+    
     path('test/<int:subject_id>/<int:student_id>/<int:isbar>/',
          views.get_activities_average, name='get_activitis'),
+
+     path('totalScore/<int:subject_id>/<int:student_id>/<int:isbar>/',
+         views.totalSubjectRubrick, name='get_total'),
+
+
     path("getsubjects/<str:studentNumber>",
          views.getUserSubject, name="getUserSubject"),
     path("gettask/<str:studentNumber>", views.getUserTask, name="getUserTask"),

@@ -465,17 +465,7 @@
         </div>
 
         <div class="container-fluid cardwrapper" id="myStudents">
-          <table id="studentTableProf">
-            <thead style="background-color: red; color: white">
-              <tr>
-                <th>Student Number</th>
-                <th>Student Name</th>
-                <th>Student Surname</th>
-                <th>Year</th>
-                <th>Course</th>
-              </tr>
-            </thead>
-          </table>
+         
           <div class="btn-group d-flex justify-content-center">
             <select
               id="selectMySub"
@@ -487,7 +477,11 @@
                 text-align-last: center;
               "
             >
-              <option selected style="background-color: gray; color: white">
+              <option
+                selected
+                style="background-color: gray; color: white"
+                disabled
+              >
                 Select Subject
               </option>
               {% for i in mysubs %}
@@ -498,16 +492,25 @@
             </select>
           </div>
           <!-- dito -->
-          <canvas
-            id="gender"
-            class="bar-data"
-            style="width: 100%; margin-top: 3%"
-          ></canvas>
-          <canvas
-            id="scholar"
-            class="bar-data"
-            style="width: 100%; margin-top: 3%"
-          ></canvas>
+          <div class="row">
+              <div class="col">
+                <canvas id="gender" style="max-width: 100%; max-height: 400px;" class="bar-data"></canvas>
+              </div>
+              <div class="col">
+                <canvas id="scholar" style="max-width: 100%; max-height: 400px;"  class="bar-data"></canvas>
+              </div>
+          </div>
+          <table id="studentTableProf">
+            <thead style="background-color: red; color: white">
+              <tr>
+                <th>Student Number</th>
+                <th>Student Name</th>
+                <th>Student Surname</th>
+                <th>Year</th>
+                <th>Course</th>
+              </tr>
+            </thead>
+          </table>
         </div>
       </div>
     </div>
@@ -518,6 +521,25 @@
       $(document).on("change", "#selectMySub", function () {
         var sub_id = $("#selectMySub").val();
         var user_id = "{{request.user.id}}";
+
+        var dataTable = $("#studentTableProf").DataTable();
+
+        dataTable.destroy();
+        const myStudentTable = $("#studentTableProf ").DataTable({
+          resonsive: true,
+          columns: [
+            { data: "StudentNumber" },
+            { data: "StudentName" },
+            { data: "StudentSurname" },
+            { data: "YearLevel" },
+            { data: "Course" },
+          ],
+          ajax: {
+            url: `getstudents/${user_id}/${sub_id}`,
+            type: "GET",
+            dataSrc: "",
+          },
+        });
         $.ajax({
           url: `/gendersubject/${sub_id}/${user_id}`,
           success: (response) => {
@@ -530,12 +552,16 @@
           },
         });
         $.ajax({
-          url:`/scholarssubject/${sub_id}/${user_id}`,
+          url: `/scholarssubject/${sub_id}/${user_id}`,
           success: (response) => {
-            console.log(response)
-            createChartScholar(response.scholar_percentage, response.non_scholar_percentage,"scholar")
-          }
-        })
+            console.log(response);
+            createChartScholar(
+              response.scholar_percentage,
+              response.non_scholar_percentage,
+              "scholar"
+            );
+          },
+        });
       });
 
       //  toggle button config -----------------------------------------------
@@ -603,21 +629,7 @@
         },
       });
 
-      const myStudentTable = $("#studentTableProf ").DataTable({
-        resonsive: true,
-        columns: [
-          { data: "StudentNumber" },
-          { data: "StudentName" },
-          { data: "StudentSurname" },
-          { data: "YearLevel" },
-          { data: "Course" },
-        ],
-        ajax: {
-          url: "{% url 'mystudents' request.user.id %}",
-          type: "GET",
-          dataSrc: "",
-        },
-      });
+     
 
       // delete
       $(document).on("click", ".deleteMySub", function (e) {
@@ -674,9 +686,6 @@
           options: options,
         });
       }
-
-
-
 
       function createChartScholar(malePercentage, femalePercentage, chartId) {
         const data = {

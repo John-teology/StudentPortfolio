@@ -193,10 +193,15 @@ $(document).on('click',".EditTask", (event) => {
                 success: function (response) {
                   // Handle success response
                   $("#addTaskEdit")[0].reset();
-                  console.log(response);
                   var dataTable = $("#tasksTable").DataTable();
                   dataTable.ajax.reload(null, false); 
                   $(".EditTask").click();
+                  var subs = response.value
+                  subs.forEach((sub) =>{
+                    // renderGradeBreakdown(sub.id,response.studentid,sub.subjectCode)
+                    barpersub(sub.id, response.studentid);
+
+                  })
 
                   // var subs = response.value
                   // subs.forEach((sub) =>{
