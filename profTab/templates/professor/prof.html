@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="icon"
-      href="../../media/images/logo-portfolio.png"
+      href="https://github.com/John-teology/StudentPortfolio/blob/master/media/images/logo-portfolio.png?raw=true"
       type="image/x-icon"
     />
     <title>Professor's Page</title>
@@ -398,7 +398,7 @@
       <div id="sidebar-wrapper">
         <ul class="sidebar-nav">
           <li class="sidebar-brand title-nav">
-            <img src="../media/images/logo-portfolio.png" alt="ep-logo" />
+            <img src="https://github.com/John-teology/StudentPortfolio/blob/master/media/images/logo-portfolio.png?raw=true" alt="ep-logo" />
             <a href="#">EPortfolio</a>
           </li>
           <div class="sidebar-hoverable">
@@ -465,7 +465,7 @@
         </div>
 
         <div class="container-fluid cardwrapper" id="myStudents">
-         
+
           <div class="btn-group d-flex justify-content-center">
             <select
               id="selectMySub"
@@ -508,6 +508,7 @@
                 <th>Student Surname</th>
                 <th>Year</th>
                 <th>Course</th>
+                <th>Scholar</th>
                 <th>Approximate Grade</th>
               </tr>
             </thead>
@@ -528,6 +529,7 @@
           { data: "StudentSurname" },
           { data: "YearLevel" },
           { data: "Course" },
+          { data: "Scholar" },
           { data: "TotalGrade" },
         ],
         data: [], // Set an empty array as the initial data source
@@ -548,6 +550,7 @@
             { data: "StudentSurname" },
             { data: "YearLevel" },
             { data: "Course" },
+            { data: "Scholar" },
             {
               data: "TotalGrade",
               render: function (data, type, row) {
@@ -654,7 +657,7 @@
         },
       });
 
-     
+
 
       // delete
       $(document).on("click", ".deleteMySub", function (e) {

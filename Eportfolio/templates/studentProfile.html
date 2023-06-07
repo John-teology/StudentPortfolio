@@ -6,7 +6,7 @@
     <title>Student EPortfolio</title>
     <link
       rel="icon"
-      href="../../media/images/logo-portfolio.png"
+      href="https://github.com/John-teology/StudentPortfolio/blob/master/media/images/logo-portfolio.png?raw=true"
       type="image/x-icon"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -457,7 +457,7 @@
       <div id="sidebar-wrapper">
         <ul class="sidebar-nav">
           <li class="sidebar-brand title-nav">
-            <img src="../media/images/logo-portfolio.png" alt="ep-logo" />
+            <img src="https://github.com/John-teology/StudentPortfolio/blob/master/media/images/logo-portfolio.png?raw=true" alt="ep-logo" />
             <a href="#">EPortfolio</a>
           </li>
           <div class="sidebar-hoverable">
@@ -516,10 +516,10 @@
           </div>
         </nav>
 
-        {% include "modals/editTask.html" %} 
+        {% include "modals/editTask.html" %}
         {% include "modals/delete_sub_modal.html" %}
         <div class="container-fluid" id="subjectPage">
-          {% include "modals/addTask.html" %} 
+          {% include "modals/addTask.html" %}
           {% include "modals/delete_modal.html" %}
 
           <div class="row cardwrapper">
@@ -560,7 +560,7 @@
                           style="margin-top: 2%;"
                         ></div>
                         <div id="{{sub.subjectCode}}1" class="mt-4" ></div>
-                        
+
                       </div> -->
 
                     <!-- <div class="col-xs-12 col-md-12 col-lg cardwrapper-graph">
@@ -654,7 +654,7 @@
             ></canvas>
             <!-- <script>
               document.addEventListener("DOMContentLoaded", function() {
-                
+
                 barpersub("{{sub.id}}", "{{studentprof.id}}");
               });
             </script> -->
@@ -1025,7 +1025,7 @@
                 data-toggle="modal"
                 data-target="#addTaskModalOriginal"
               >
-              <i class="fa fa-plus-square"></i> Add Item 
+              <i class="fa fa-plus-square"></i> Add Item
               </button>`
                 );
                 $(".dt-buttons").append(`
@@ -1330,8 +1330,8 @@
             $(".submodalDelete").click();
             var dataTableTask = $("#tasksTable").DataTable();
             dataTableTask.ajax.reload(null, false);
-          
-          
+
+
 
             $("#taskSubjectEdit")
               .find("option")

@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-)t*us&!u3i2yk14q4l++cqd#$r%7$r=37w+ckm@mfl4i&#pk1#'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['studentTUPortfolio.pythonanywhere.com']
 
 
 # Application definition
@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
     'django.contrib.sites',
     'allauth',
     'allauth.account',
@@ -68,6 +68,7 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 MIDDLEWARE = [
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -90,7 +91,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                
+
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
                 'django.template.context_processors.request',
@@ -164,7 +165,7 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# allauth 
+# allauth
 
 AUTHENTICATION_BACKENDS = [
     # Needed to login by username in Django admin, regardless of `allauth`
@@ -179,6 +180,8 @@ AUTHENTICATION_BACKENDS = [
 LOGIN_REDIRECT_URL = '/studentform'
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL='/'
+
+
 
 
 MEDIA_ROOT =  os.path.join(BASE_DIR, 'media')

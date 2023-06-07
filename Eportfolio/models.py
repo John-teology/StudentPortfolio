@@ -140,6 +140,7 @@ class StudentSubject(models.Model):
             "StudentNumber": f'<a href="{reverse("studentProfile", args=[self.studentProfileID.studentNumber])}"  target="_blank">{self.studentProfileID.studentNumber}</a>',
             "YearLevel": self.studentProfileID.yearID.yearLevel,
             "Course": self.studentProfileID.courseID.course,
+            "Scholar": "Scholar" if self.studentProfileID.isScholar else "" ,
             "TotalGrade": student_final_grade.totalGrade if student_final_grade else None,
         }
 
@@ -189,7 +190,7 @@ class GradePeriods(models.Model):
 
     def __str__(self):
         return f'{self.gptype.gptypeName}:{self.subject.subjectCode}'
-    
+
 
 
 class ClassPerformance(models.Model):
@@ -234,7 +235,7 @@ class SubjectRubrick(models.Model):
 
     def __str__(self):
         return f"{self.subjectObj.subjectCode}:{self.subjectObj.subjectName}({self.gpObjt.gptypeName}) = {self.percentage}"
-    
+
 class StudentFinalGrade(models.Model):
     studentprofile = models.ForeignKey(
         Studentprofile, on_delete=CASCADE, related_name="studentFinal")
