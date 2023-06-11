@@ -44,6 +44,8 @@ def subject(request):
 
     if deletemySub:
         subToDelete = Subject.objects.get(pk=deletemySub)
+        studentSubjects = StudentSubject.objects.filter(subjectID=subToDelete)
+        studentSubjects.delete()
         subToDelete.delete()
         return JsonResponse({"message": "data deleted successfully."}, status=201)
 
@@ -51,10 +53,20 @@ def subject(request):
 
     courseCode = request.POST.get('courseCode', '')
     courseName = request.POST.get('courseName', '')
+    year = request.POST.get('yearoption', '')
+    program = request.POST.get('courseoption', '')
     faculty = User.objects.get(pk=request.user.id)
+    yearObj = YearLevel.objects.get(pk=year)
+    programObj = Course.objects.get(pk=program)
+
+
+    checker = Subject.objects.filter(
+        subjectCode=courseCode, subjectName=courseName, facultyName=faculty,year=yearObj,course= programObj)
+    if checker:
+        return JsonResponse({"error": "Subject Already Added"})
 
     studentSubject = Subject(
-        subjectCode=courseCode, subjectName=courseName, facultyName=faculty)
+        subjectCode=courseCode, subjectName=courseName, facultyName=faculty,year=yearObj,course= programObj)
     studentSubject.save()
 
     gpTypes = GPType.objects.all()
@@ -141,6 +153,8 @@ def editSubject(request, subID):
 
     # Initialize the dictionary
     dic = {
+        'year' : subject.year.yearLevel,
+        'course' : subject.course.course,
         'courseCode': subject.subjectCode,
         'courseName': subject.subjectName,
         'ID': subject.id,
@@ -243,7 +257,7 @@ def edit_subject_form(request, sub_id):
 
                 if not cptypeID:  # Skip the iteration if cptypeID is empty
                     continue
-                
+
                 cptypeObj = CPType.objects.get(pk=cptypeID)
                 newClassP = ClassPerformance(
                     title=title, gpObject=subjectGP, cptype=cptypeObj, totalScore=totalItems)
@@ -263,3 +277,22 @@ def edit_subject_form(request, sub_id):
             rubrick.save()
 
     return JsonResponse({"message": "Data updated successfully."}, status=200)
+
+
+
+def getYearLevels(request):
+    yearlevels = YearLevel.objects.all()
+    return JsonResponse([year.serialize() for year in yearlevels], safe=False)
+
+
+def getcourses(request):
+    courses = Course.objects.all()
+    return JsonResponse([course.serialize() for course in courses], safe=False)
+
+
+def getCodeAndDescription(request,yearid,courseid):
+    year = YearLevel.objects.get(pk = yearid)
+    course = Course.objects.get(pk = courseid)
+    subjects = SubjectList.objects.filter(assignYear=year,assignCourse=course)
+    return JsonResponse([course.serialize() for course in subjects], safe=False)
+

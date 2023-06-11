@@ -19,8 +19,8 @@ class studentProfileFilter(admin.ModelAdmin):
 
 
 class subjectFilter(admin.ModelAdmin):
-    list_display = ['id', 'subjectCode', 'subjectName', 'facultyName']
-    list_editable = ['subjectCode', 'subjectName', 'facultyName']
+    list_display = ['id', 'subjectCode', 'subjectName', 'facultyName','year','course']
+    list_editable = ['subjectCode', 'subjectName', 'facultyName','year','course']
     search_fields = ['subjectCode']
 
 
@@ -65,6 +65,10 @@ class cpFilter(admin.ModelAdmin):
     list_editable = ['title', 'cptype', 'totalScore', 'gpObject']
 
 
+class subjectListFilter(admin.ModelAdmin):
+    list_display = ['id', 'courseCode', 'courseDescription', 'assignYear', 'assignCourse']
+    list_editable = ['courseCode', 'courseDescription', 'assignYear', 'assignCourse']
+
 admin.site.register(User)
 admin.site.register(Course)
 admin.site.register(YearLevel)
@@ -81,3 +85,5 @@ admin.site.register(GradePeriods, gradeperiodFilter)
 admin.site.register(ClassPerformance, cpFilter)
 admin.site.register(SubjectRubrick)
 admin.site.register(StudentFinalGrade)
+admin.site.register(SubjectList,subjectListFilter)
+

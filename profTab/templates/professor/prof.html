@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="icon"
-      href="https://github.com/John-teology/StudentPortfolio/blob/master/media/images/logo-portfolio.png?raw=true"
+      href="https://github.com/John-teology/Imageholder/blob/master/media/images/logo-portfolio.png?raw=true"
       type="image/x-icon"
     />
     <title>Professor's Page</title>
@@ -398,7 +398,7 @@
       <div id="sidebar-wrapper">
         <ul class="sidebar-nav">
           <li class="sidebar-brand title-nav">
-            <img src="https://github.com/John-teology/StudentPortfolio/blob/master/media/images/logo-portfolio.png?raw=true" alt="ep-logo" />
+            <img src="https://github.com/John-teology/Imageholder/blob/master/media/images/logo-portfolio.png?raw=true" />
             <a href="#">EPortfolio</a>
           </li>
           <div class="sidebar-hoverable">
@@ -456,8 +456,10 @@
           <table id="subjectTable">
             <thead style="background-color: red; color: white">
               <tr>
-                <th>Subject Code</th>
-                <th>Subject Name</th>
+                <th>Course Code</th>
+                <th>Course Description</th>
+                <th>Year Level</th>
+                <th>Program</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -466,7 +468,7 @@
 
         <div class="container-fluid cardwrapper" id="myStudents">
 
-          <div class="btn-group d-flex justify-content-center">
+          <div  id="selectholder">
             <select
               id="selectMySub"
               class="form-select"
@@ -486,7 +488,7 @@
               </option>
               {% for i in mysubs %}
               <option value="{{i.id}}">
-                {{i.subjectCode}}:{{i.subjectName}}
+                {{i.subjectCode}}: {{i.subjectName}} - {{i.year.yearLevel}} {{i.course.course}}
               </option>
               {% endfor %}
             </select>
@@ -537,12 +539,14 @@
 
       $(document).on("change", "#selectMySub", function () {
         var sub_id = $("#selectMySub").val();
+        var selectedText = $("#selectMySub option:selected").text();
         var user_id = "{{request.user.id}}";
 
         var dataTable = $("#studentTableProf").DataTable();
 
         dataTable.destroy();
         const myStudentTable = $("#studentTableProf ").DataTable({
+          dom: "Bfrtip",
           resonsive: true,
           columns: [
             { data: "StudentNumber" },
@@ -567,6 +571,22 @@
             type: "GET",
             dataSrc: "",
           },
+          buttons: [
+              {
+                extend: "excel",
+                text: "Export to Excel",
+                className: "btn btn-outline-success",
+                filename: `${selectedText}_report`,
+
+              },
+              {
+                extend: "pdf",
+                text: "Export to PDF",
+                className: "btn btn-outline-danger",
+                filename: `${selectedText}_report`,
+
+              },
+            ],
         });
         $.ajax({
           url: `/gendersubject/${sub_id}/${user_id}`,
@@ -640,6 +660,8 @@
         columns: [
           { data: "subjectCode" },
           { data: "subjectName" },
+          { data: "year" },
+          { data: "course" },
           { data: "action" },
         ],
         ajax: {
@@ -671,6 +693,8 @@
             var dataTable = $("#subjectTable").DataTable();
             dataTable.ajax.reload(null, false);
             $(".modaldelete").click();
+            $('#selectholder').load(location.href + ' #selectholder');
+
           },
         });
       });
@@ -755,13 +779,102 @@
         });
       }
 
-      // Assuming you have the gender percentages from the JSON response
-      // const genderPercentageData = {
-      //   male_percentage: 40.0,
-      //   female_percentage: 60.0,
-      // };
 
-      // Call the createChart function with the appropriate data
+
+    $.ajax({
+      url: `/getcptypes`,
+      success: (data) => {
+        $(".cpTypes")
+          .find("option")
+          .remove()
+          .end()
+          .append(
+            '<option value="69" disabled selected>Class Performance.</option>'
+          );
+        for (var i = 0; i <= data.length - 1; i++) {
+          var cpTypes = new Option(data[i].type, data[i].id);
+          $(".cpTypes").append(cpTypes);
+        }
+      },
+    });
+
+
+    $.ajax({
+      url: "{% url 'yearlevels' %}",
+      success: (data) => {
+        $(".selectYear")
+          .find("option")
+          .remove()
+          .end()
+          .append(
+            '<option value="" disabled selected>Select Year Level.</option>'
+          );
+        for (var i = 0; i <= data.length - 1; i++) {
+          var cpTypes = new Option(data[i].yearlevel, data[i].id);
+          $(".selectYear").append(cpTypes);
+        }
+      },
+    });
+
+
+    $(document).on('change','.selectYear', function(e) {
+      $.ajax({
+          url: "{% url 'courses' %}",
+          success: (data) => {
+            $(".selectCourse")
+              .find("option")
+              .remove()
+              .end()
+              .append(
+                '<option value="" disabled selected>Select Program</option>'
+              );
+            for (var i = 0; i <= data.length - 1; i++) {
+              var cpTypes = new Option(data[i].coursename, data[i].id);
+              $(".selectCourse").append(cpTypes);
+            }
+          },
+        });
+    })
+
+    $(document).on('change','.selectCourse', function(e) {
+        console.log($(this).val())
+        console.log($('#yearoption').val() ? $('#yearoption').val() : $('#yearoptionedit').val())
+        yearid = $('#yearoption').val() ? $('#yearoption').val() : $('#yearoptionedit').val()
+        courseid = $(this).val()
+
+        $.ajax({
+            url:`getsubjectsdetails/${yearid}/${courseid}`,
+            success: (data) => {
+                console.log(data)
+                  $(".selectSubject")
+                      .find("option")
+                      .remove()
+                      .end()
+                      .append(
+                        '<option value="" disabled selected>Select Course</option>'
+                      );
+                    for (var i = 0; i <= data.length - 1; i++) {
+                      var cpTypes = new Option(data[i].courseCode + " : " + data[i].courseDes, data[i].courseDes);
+                      $(cpTypes).attr('coursecode', data[i].courseCode);
+                      $(".selectSubject").append(cpTypes);
+                    }
+            }
+        })
+    })
+
+   $(document).on('change', '.selectSubject', function(e) {
+    var selectedOption = $(this).find(':selected');
+    var courseCode = selectedOption.attr('coursecode');
+    console.log(selectedOption.val());
+    console.log(selectedOption.attr('coursecode'));
+    $('#courseCode').val(selectedOption.attr('coursecode'));
+    $('#courseName').val(selectedOption.val());
+});
+
+
+
+
+
     </script>
   </body>
 </html>

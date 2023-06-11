@@ -26,18 +26,18 @@
         <form  id="addTask" enctype="multipart/form-data">
           {% csrf_token %}
 
-          
+
           <label for="taskSubject">Select Subject:</label>
-          <select name="taskSubject" id="taskSubject" 
-                  class="form-select form-select-mb" 
+          <select name="taskSubject" id="taskSubject"
+                  class="form-select form-select-mb"
                   aria-label=".form-select-lg example" required>
                   <option value="" selected disabled>Select</option>
           </select>
 
 
           <label for="gpType">Select:</label>
-          <select name="gpType" id="gpType" 
-                  class="form-select form-select-mb" 
+          <select name="gpType" id="gpType"
+                  class="form-select form-select-mb"
                   aria-label=".form-select-lg example" required>
                   <option value="" selected disabled>Select GradePeriod</option>
                   <option value="1" >Prelims</option>
@@ -47,8 +47,8 @@
 
 
           <label for="activity">Select Activity:</label>
-          <select name="activity" id="activity" 
-                  class="form-select form-select-mb" 
+          <select name="activity" id="activity"
+                  class="form-select form-select-mb"
                   aria-label=".form-select-lg example" required>
                   <option value="" selected disabled>Select</option>
           </select>
@@ -67,7 +67,7 @@
 
           <input type="number" id="cptypeid" name="cptypeid" hidden>
 
-          
+
           <label for="taskTotal">Total Score:</label>
           <input
             type="number"
@@ -89,7 +89,7 @@
             placeholder="Your Score"
             required
           />
-          
+
 
           <div id="errorHolder" style="color: red;"></div>
           <label for="taskDate">Date:</label>
@@ -112,7 +112,7 @@
             placeholder="Image"
           />
 
-         
+
 
       </div>
       <div class="modal-footer">
@@ -122,6 +122,7 @@
         <button
           type="submit"
           class="btn btn-primary btn-hovergreen"
+          id = "addtaskButtonsave"
           value="SUBMIT">
           Submit
         </button>
@@ -217,25 +218,23 @@
           $("#addTask").submit(function (event) {
             event.preventDefault(); // Prevent form submission
 
-            // Get form data
-            // errorHolder
+            $('#addtaskButtonsave').prop('disabled', true);
+            $('#addtaskButtonsave').html('<i class="fa fa-spinner fa-spin"></i> Loading');
             var formData = new FormData(this);
-            var formValues = {};
-            for (var pair of formData.entries()) {
-              var fieldName = pair[0];
-              var fieldValue = pair[1];
-              formValues[fieldName] = fieldValue;
-            }
-
-            // Display the form values
-            console.log(formValues);
+        //   addtaskButtonsave
             var total = Number($("#taskTotal").val())
             var score = Number($("#taskScore").val())
             if (total<score){
-              $("#errorHolder").append('<p>Invalid Total Score</p>')
+              $("#errorHolder").append('<p>Invalid Total Score</p>');
+              $('#addtaskButtonsave').removeAttr('disabled');
+              $('#addtaskButtonsave').html('Submit');
+              $('#spinner').remove();
             }
             else
             {
+                 $('#addtaskButtonsave').removeAttr('disabled');
+              $('#addtaskButtonsave').html('Submit');
+              $('#spinner').remove();
                 $('#errorHolder').empty();
                 $.ajax({
                 url: "{% url 'studentProfile' studentprof.studentNumber %}", // Replace with your actual submit URL
@@ -248,10 +247,10 @@
                   if(response.message){
                     alert(response.message)
                   }
-                 
+
                   $("#addTask")[0].reset();
                   var dataTable = $("#tasksTable").DataTable();
-                  dataTable.ajax.reload(null, false); 
+                  dataTable.ajax.reload(null, false);
                   $("#addUserTaskButton").click();
                   var subs = response.value
                   subs.forEach((sub) =>{
@@ -274,7 +273,7 @@
                 },
               });
             }
-            
+
           });
 
-</script> 
+</script>

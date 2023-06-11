@@ -10,8 +10,11 @@ urlpatterns = [
     path("getSub/<int:subId>",views.getMySubjects,name="getsubject"),
     path('getstudents/<int:profid>/<int:subject_id>',views.getAllMyStudents,name='mystudents'),
     path('editsubject/<int:subID>',views.editSubject,name='editsub'),
-    path('submiteditsubject/<int:sub_id>',views.edit_subject_form,name='editsubform')
+    path('submiteditsubject/<int:sub_id>',views.edit_subject_form,name='editsubform'),
 
-    
-    
+    path('getyearlevels/',views.getYearLevels,name='yearlevels'),
+    path('getcourses/',views.getcourses,name='courses'),
+    path('getsubjectsdetails/<int:yearid>/<int:courseid>', views.getCodeAndDescription,name='codeAndDescription')
+
+
 ]

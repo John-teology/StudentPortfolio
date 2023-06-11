@@ -6,7 +6,7 @@
     <title>Student EPortfolio</title>
     <link
       rel="icon"
-      href="https://github.com/John-teology/StudentPortfolio/blob/master/media/images/logo-portfolio.png?raw=true"
+      href="https://github.com/John-teology/Imageholder/blob/master/media/images/logo-portfolio.png?raw=true"
       type="image/x-icon"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -44,6 +44,7 @@
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+
     />
     <!-- font awesome -->
 
@@ -457,7 +458,7 @@
       <div id="sidebar-wrapper">
         <ul class="sidebar-nav">
           <li class="sidebar-brand title-nav">
-            <img src="https://github.com/John-teology/StudentPortfolio/blob/master/media/images/logo-portfolio.png?raw=true" alt="ep-logo" />
+            <img src="https://github.com/John-teology/Imageholder/blob/master/media/images/logo-portfolio.png?raw=true" alt="ep-logo" />
             <a href="#">EPortfolio</a>
           </li>
           <div class="sidebar-hoverable">
@@ -642,7 +643,7 @@
               </option>
               {% for i in subjects %}
               <option value="{{i.id}}">
-                {{i.subjectCode}}:{{i.subjectName}}
+                {{i.subjectCode}}: {{i.subjectName}}
               </option>
               {% endfor %}
             </select>
@@ -665,9 +666,11 @@
             <table class="display" style="width: 100%" id="subjectTable">
               <thead>
                 <tr>
-                  <th>Subject Code</th>
-                  <th>Subject Name</th>
+                  <th>Course Code</th>
+                  <th>Course Description</th>
                   <th>Faculty Name</th>
+                  <th>Program</th>
+                  <th>Year</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -708,11 +711,11 @@
                 <div class="bio-row">
                   <label for="courseID">Course:</label>
                   <select class="form-control" id="courseID" name="courseID">
-                    <option value="{{studentprof.courseID}}" selected disabled>
+                    <option value="{{studentprof.courseID.id}}" selected readonly>
                       {{studentprof.courseID}}
                     </option>
                     {% for course in courseList %}
-                    <option value="{{course.course}}">{{course.course}}</option>
+                    <option value="{{course.id}}">{{course.course}}</option>
                     {% endfor %}
                   </select>
                 </div>
@@ -720,12 +723,12 @@
                 <div class="bio-row">
                   <label for="yearID">Year Level:</label>
                   <select class="form-control" id="yearID" name="yearID">
-                    <option value="{{studentprof.yearID}}" selected disabled>
+                    <option value="{{studentprof.yearID.id}}" selected readonly>
                       {{studentprof.yearID}}
                     </option>
 
                     {% for year in yearList %}
-                    <option value="{{year.yearLevel}}">
+                    <option value="{{year.id}}">
                       {{year.yearLevel}}
                     </option>
                     {% endfor %}
@@ -1211,11 +1214,19 @@
       // edit profile -------------------------
 
       // editUserProfileForm
-      $("#editUserProfileForm").submit(function (event) {
+      $(document).on("submit","#editUserProfileForm", function (event) {
         event.preventDefault(); // Prevent form submission
 
         // Get form data
+        $('#saveProfile').prop('disabled', true);
+        $('#saveProfile').html('<i class="fa fa-spinner fa-spin"></i> Loading');
         var formData = new FormData(this);
+        var courseID = $("#courseID").val();
+        formData.append("courseID", courseID);
+
+        // Get the selected value from the "Year Level" dropdown
+        var userYearID = $("#yearID").val();
+        formData.append("userYearID", userYearID);
         $.ajax({
           url: "{% url 'studentProfile' studentprof.studentNumber %}",
           data: formData,
@@ -1223,6 +1234,9 @@
           processData: false,
           contentType: false,
           success: (data) => {
+            $('#saveProfile').removeAttr('disabled');
+            $('#saveProfile').html('Save');
+            $('#spinner').remove();
             $("#editProfileHolderReload").load(
               location.href + " #editProfileHolderReload"
             );
@@ -1240,6 +1254,8 @@
           { data: "subjectCode" },
           { data: "subjectName" },
           { data: "facultyName" },
+          { data: "course" },
+          { data: "year" },
           { data: "action" },
         ],
         ajax: {
@@ -1255,6 +1271,8 @@
 
       $(document).ready(() => {
         $(document).on("click", ".addSubButton", function (e) {
+          $(this).prop('disabled', true);
+          $(this).html('<i class="fa fa-spinner fa-spin"></i> Loading');
           $.ajax({
             url: "{% url 'studentProfile' studentprof.studentNumber %}",
             data: { addSub: $(e.target).val() },
@@ -1262,13 +1280,19 @@
             success: (response) => {
               if (response.isAlreadyAdded) {
                 alert("This Subject is Already Added");
+                  $(this).removeAttr('disabled');
+                  $(this).html('Add Suject');
+                  $('#spinner').remove();
               } else {
+              $(this).removeAttr('disabled');
+              $(this).html('Add Suject');
+              $('#spinner').remove();
               $("#loadoption").load(location.href + " #loadoption");
 
                 var dataTable = $("#subjectTable").DataTable();
                 dataTable.ajax.reload(null, false);
 
-                alert("added New Subject!");
+                alert("Added New Subject!");
                 $("#listOfMySubjects").load(
                   location.href + " #listOfMySubjects"
                 );
@@ -1324,7 +1348,7 @@
           data: { deleteSubId: $(e.currentTarget).val() },
           method: "POST",
           success: function (response) {
-            console.log(response);
+             $("#loadoption").load(location.href + " #loadoption");
             var dataTable = $("#subjectTable").DataTable();
             dataTable.ajax.reload(null, false);
             $(".submodalDelete").click();

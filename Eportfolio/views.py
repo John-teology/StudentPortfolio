@@ -20,10 +20,10 @@ from django.http import JsonResponse
 
 def index(request):
     if request.user.is_authenticated:
-        # if request.user.email[-10:] != 'tup.edu.ph':
-        #     Invalid_User = User.objects.get(pk =request.user.id)
-        #     Invalid_User.delete()
-        # return HttpResponseRedirect(reverse('index'))
+        if request.user.email[-10:] != 'tup.edu.ph':
+            Invalid_User = User.objects.get(pk =request.user.id)
+            Invalid_User.delete()
+            return HttpResponseRedirect(reverse('index'))
         if request.user.isProf == True:
             return redirect('indexProf')
         userid = User.objects.get(pk=request.user.id)
@@ -40,6 +40,10 @@ def index(request):
 
 @login_required
 def demographicForm(request):
+    if request.user.email[-10:] != 'tup.edu.ph':
+        Invalid_User = User.objects.get(pk =request.user.id)
+        Invalid_User.delete()
+        return HttpResponseRedirect(reverse('index'))
     if request.user.isProf == True:
         return redirect('indexProf')
     userid = User.objects.get(pk=request.user.id)
@@ -117,6 +121,10 @@ def demographicForm(request):
 
 @csrf_exempt
 def studentProfile(request, studentID):
+    if request.user.email[-10:] != 'tup.edu.ph':
+        Invalid_User = User.objects.get(pk =request.user.id)
+        Invalid_User.delete()
+        return HttpResponseRedirect(reverse('index'))
     studentprof = Studentprofile.objects.get(studentNumber=studentID)
     gender = Gender.objects.get(pk=1)
     yearlist = YearLevel.objects.all()
@@ -198,6 +206,7 @@ def studentProfile(request, studentID):
                 studentProfileID=studentprof, subjectID=subject)
 
             existing_task = Task.objects.filter(
+                studentProfileID = studentprof,
                 taskSubject=subject,
                 gptype=gpType,
                 taskType=tasktypeObj,
@@ -240,15 +249,16 @@ def studentProfile(request, studentID):
                 return JsonResponse({'data': 0}, safe=False)
 
         if isEdit:
-            yearObj = YearLevel.objects.get(yearLevel=yearName)
-            courseObj = Course.objects.get(course=courseName)
-            studentprof.guardianName = guardName
-            studentprof.guardianNumber = guardNumber
-            studentprof.courseID = courseObj
-            studentprof.yearID = yearObj
-            studentprof.contactNumber = contactD
+            newstudentprof = Studentprofile.objects.get(studentNumber=studentID)
+            yearObj = YearLevel.objects.get(pk=yearName)
+            courseObj = Course.objects.get(pk=courseName)
+            newstudentprof.guardianName = guardName
+            newstudentprof.guardianNumber = guardNumber
+            newstudentprof.courseID = courseObj
+            newstudentprof.yearID = yearObj
+            newstudentprof.contactNumber = contactD
 
-            studentprof.save()
+            newstudentprof.save()
 
         if subID:
             addedSubject = Subject.objects.get(pk=subID)

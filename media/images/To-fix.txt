@@ -1,0 +1,9 @@
+Disable add button when not yet picked      			DONE
+Put note that items should be a total of 100
+Auto refresh in select subject to graph				DONE
+Export report students						DONE
+
+
+fix invalid input bug
+Subjects dropdown should be based on course
+

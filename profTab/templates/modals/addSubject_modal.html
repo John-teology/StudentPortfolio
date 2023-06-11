@@ -14,7 +14,10 @@
   >
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Add Subject</h5>
+        <h5 class="modal-title" id="exampleModalLongTitle">
+          Add Subject:
+          <i>(Prelim, Midterm and Finals should be equal to 100)</i>
+        </h5>
         <button
           type="button"
           class="close"
@@ -25,8 +28,41 @@
         </button>
       </div>
       <div class="modal-body">
-        <form id="addSubjectForm">
-          <label for="courseCode">Course Code:</label>
+
+        <form id="addSubjectForm" >
+        <label for="yearoptionedit">Select Year:</label>
+        <select
+          id="yearoption"
+          name="yearoption"
+          class="form-select form-select-mb selectYear"
+          aria-label=".form-select-lg example"
+          required
+        >
+
+        </select>
+
+        <label for="courseoption">Select Program:</label>
+        <select
+          id="courseoption"
+          name="courseoption"
+          class="form-select form-select-mb selectCourse"
+          aria-label=".form-select-lg example"
+          required
+        >
+        <option value="" disabled selected>Select Program</option>
+        </select>
+
+         <label for="subjectoption">Select Course:</label>
+        <select
+          id="subjectoption"
+          class="form-select form-select-mb selectSubject"
+          aria-label=".form-select-lg example"
+          required
+        >
+        <option value="" disabled selected>Select Course</option>
+
+        </select>
+
           <input
             type="text"
             class="form-control"
@@ -34,8 +70,9 @@
             name="courseCode"
             placeholder="course Code"
             required
+            hidden
           />
-          <label for="courseName">Course Description:</label>
+
           <input
             type="text"
             class="form-control"
@@ -43,6 +80,7 @@
             name="courseName"
             placeholder="Course Description"
             required
+            hidden
           />
 
           <hr />
@@ -62,6 +100,7 @@
                 required
               />
             </div>
+              <i>(The following percentage should be equal to 100)</i>
             <div class="col-md-3">
               <label for="pCP">Class Performance:</label>
               <input
@@ -110,7 +149,6 @@
                 required
               />
             </div>
-
             <div class="input-group mb-2 mr-sm-2 mt-4">
               <div class="input-group-prepend">
                 <div class="input-group-text">Exam</div>
@@ -156,6 +194,7 @@
                   class="btn btn-outline-secondary add-cp-button"
                   value="{{i.gptypeName}}"
                   type="button"
+                  disabled
                 >
                   +
                 </button>
@@ -176,7 +215,7 @@
             >
               Close
             </button>
-            <button type="submit" class="btn btn-primary btn-hovergreen">
+            <button id="addsubjectformButton" type="submit" class="btn btn-primary btn-hovergreen">
               Submit
             </button>
           </div>
@@ -188,8 +227,12 @@
 
 <script>
   $(document).ready(() => {
+
     $("#addSubjectForm").submit(function (event) {
       event.preventDefault();
+
+       $("button[type='submit']").prop("disabled", true);
+       $("button[type='submit']").html('<i class="fas fa-spinner fa-spin"></i> Loading');
       var prelimsInput = Number($("#Prelimspercentage").val());
       var midtermInput = Number($("#Midtermpercentage").val());
       var finalsInput = Number($("#Finalspercentage").val());
@@ -198,7 +241,17 @@
 
       if (totalPercentage > 100 || totalPercentage < 50) {
         alert("The total percentage should be between 50 and 100.");
+
+         $("button[type='submit']").removeAttr('disabled');
+          $("button[type='submit']").html('Submit');
+          $('#spinner').remove();
+
       } else {
+               $("button[type='submit']").removeAttr('disabled');
+          $("button[type='submit']").html('Submit');
+          $('#spinner').remove();
+          $('#addsubjectformButton').removeAttr('disabled');
+
         const gtypes = ["Prelims", "Midterm", "Finals"];
         let isValid = true;
 
@@ -226,40 +279,26 @@
             processData: false,
             contentType: false,
             success: (response) => {
+                console.log(response);
               if (response.error) {
                 alert(response.error);
               }
               $("#addProfSubjectButton").click();
-              $("#editSubjectForm")[0].reset();
+              $("#addSubjectForm")[0].reset();
               var dataTable = $("#subjectTable").DataTable();
               dataTable.ajax.reload(null, false);
+              $("#selectholder").load(location.href + " #selectholder");
             },
           });
         }
       }
     });
 
-    $.ajax({
-      url: `/getcptypes`,
-      success: (data) => {
-        $(".cpTypes")
-          .find("option")
-          .remove()
-          .end()
-          .append(
-            '<option value="" disabled selected>Class Performance.</option>'
-          );
-        for (var i = 0; i <= data.length - 1; i++) {
-          var cpTypes = new Option(data[i].type, data[i].id);
-          $(".cpTypes").append(cpTypes);
-        }
-      },
-    });
-
     function handleCyTypesSelectChange(event) {
       var addButton = $(event.currentTarget)
         .closest(".input-group")
         .find(".add-cp-button");
+      $(".add-cp-button").prop("disabled", false);
       var selectedText = $(this).find(":selected").text();
       addButton.attr("id", $(event.currentTarget).val());
       addButton.attr("name", selectedText);
@@ -316,6 +355,8 @@
         </div>
       </div>
     </div>`);
+        $(".add-cp-button").prop("disabled", true);
+        $(".cpTypes").val("69");
       });
     });
 

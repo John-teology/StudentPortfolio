@@ -20,6 +20,14 @@ class Course(models.Model):
         return f"{self.course}"
 
 
+    def serialize(self):
+        return {
+            'id' : self.id,
+            'coursename': self.course
+        }
+
+
+
 class TaskType(models.Model):
     taskType = models.CharField(max_length=100)
 
@@ -32,6 +40,13 @@ class YearLevel(models.Model):
 
     def __str__(self):
         return f"{self.yearLevel}"
+
+
+    def serialize(self):
+        return {
+            'id' : self.id,
+            'yearlevel': self.yearLevel
+        }
 
 
 class Gender(models.Model):
@@ -85,6 +100,8 @@ class Subject(models.Model):
     subjectName = models.CharField(max_length=100)
     facultyName = models.ForeignKey(
         User, on_delete=CASCADE, related_name='profSubject')
+    year = models.ForeignKey(YearLevel, on_delete=CASCADE, null = True)
+    course = models.ForeignKey(Course, on_delete=CASCADE, null = True)
 
     def __str__(self):
         return f"{self.subjectCode}: {self.subjectName}"
@@ -106,6 +123,8 @@ class Subject(models.Model):
                 "subjectCode": self.subjectCode,
                 "subjectName": self.subjectName,
                 "facultyName": self.facultyName.first_name,
+                "year" : self.year.yearLevel,
+                "course" : self.course.course,
                 "action": action_button
             }
         else:
@@ -114,6 +133,8 @@ class Subject(models.Model):
                 "subjectCode": self.subjectCode,
                 "subjectName": self.subjectName,
                 "facultyName": self.facultyName.first_name,
+                "year" : self.year.yearLevel,
+                "course" : self.course.course,
                 "action": f'<button type="button" class="btn btn-danger modaldelete" value="{self.id}" name="taskDelete"data-toggle="modal" data-target="#confirmDeleteModal" > <i class="fa fa-trash"></i> </button> <button type="button" class="btn btn-info editSub" data-toggle="modal" data-target="#editSubjetModal" id = {self.pk} subjectcode= "{self.subjectCode}" subjectname = "{self.subjectName}" > <i class="fa fa-edit"></i> </button>'
             }
 
@@ -247,72 +268,22 @@ class StudentFinalGrade(models.Model):
         return f'{self.studentprofile.studentNumber}:{self.subject.subjectName} = {self.totalGrade}'
 
 
-    # def get_activities_average(request, subject_id, student_id):
-    # # Get the subject code for the specific subject
-    # subject_code = Subject.objects.get(id=subject_id).subjectCode
 
-    # # Get all distinct GPType names
-    # gptype_names = ['Prelims', 'Midterm', 'Finals']
+class SubjectList(models.Model):
+    courseCode = models.CharField(max_length=100)
+    courseDescription = models.CharField(max_length=100)
+    assignYear = models.ForeignKey(YearLevel, on_delete=CASCADE)
+    assignCourse = models.ForeignKey(Course, on_delete=CASCADE)
 
-    # # Get all distinct TaskType names
-    # tasktype_names = TaskType.objects.values_list('taskType', flat=True)
+    def __str__(self):
+        return f'{self.courseCode}:{self.courseDescription} = {self.assignCourse.course}({self.assignYear.yearLevel})'
 
-    # # Prepare the response data
-    # response_data = {}
+    def serialize(self):
+        return  {
+            'courseCode' : self.courseCode,
+            'courseDes' : self.courseDescription,
+        }
 
-    # # Iterate over the GPType names
-    # for gptype_name in gptype_names:
-    #     # Prepare the GPType data in the response
-    #     response_data[gptype_name] = {}
 
-    #     # Get the Rubrick objects for the current subject and GPType
-    #     rubricks = Rubrick.objects.filter(
-    #         gpObjt__subject_id=subject_id, gpObjt__gptype__gptypeName=gptype_name)
 
-    #     # Iterate over the TaskType names
-    #     for tasktype_name in tasktype_names:
-    #         # Get the Rubrick object for the current task type
-    #         rubrick = rubricks.filter(
-    #             taskTypeID__taskType=tasktype_name).first()
 
-    #         if rubrick:
-    #             # Get the rubric percentage for the current task type
-    #             rubrick_percentage = rubrick.percentage
-    #         else:
-    #             # If no rubric exists, default to 0 percentage
-    #             rubrick_percentage = 0
-
-    #         # Get the computed score per GPType and TaskType for the specific subject and student
-    #         if tasktype_name == 'Attendance':
-    #             # Set the attendance score to always be 100
-    #             average_score = 100
-    #         else:
-    #             task_scores = Task.objects.filter(
-    #                 taskSubject_id=subject_id,
-    #                 studentProfileID_id=student_id,  # Filter tasks by student ID
-    #                 gptype__gptypeName=gptype_name,
-    #                 taskType__taskType=tasktype_name,
-    #             ).values('score', 'overallscore')
-
-    #             # Calculate the average computed score for the specific GPType and TaskType
-    #             if task_scores.exists():
-    #                 total_weighted_score = sum(
-    #                     ((score['score'] / score['overallscore']) * 50) + 50
-    #                     for score in task_scores
-    #                 )
-    #                 average_score = total_weighted_score / task_scores.count()
-    #             else:
-    #                 average_score = 0
-
-    #         # Calculate the value for response_data[gptype_name][tasktype_name]
-    #         value = average_score * (rubrick_percentage / 100)
-    #         value_str = f'{round(value, 2)} / {rubrick_percentage} %'
-
-    #         # Add the computed score to the GPType data in the response
-    #         response_data[gptype_name][tasktype_name] = value_str
-
-    # # Create a new dictionary with subject code as key and response data as value
-    # response_data = {subject_code: response_data}
-
-    # # Return the response as JSON
-    # return JsonResponse(response_data)

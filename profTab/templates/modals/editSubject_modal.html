@@ -14,7 +14,8 @@
   >
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Add Subject</h5>
+        <h5 class="modal-title" id="exampleModalLongTitle">Edit Subject:
+        <i>(Prelim, Midterm and Finals should be equal to 100)</i></h5>
         <button
           type="button"
           class="close"
@@ -25,8 +26,44 @@
         </button>
       </div>
       <div class="modal-body">
+
         <form id="editSubjectForm">
-          <label for="courseCodeEdit">Course Code:</label>
+         <div class="input-group mb-2 mr-sm-2 mt-4">
+              <div class="input-group-prepend">
+                <div class="input-group-text">Year</div>
+              </div>
+              <input
+                type="text"
+                class="form-control"
+                id="yearvalueedit"
+                disabled
+              />
+            </div>
+
+             <div class="input-group mb-2 mr-sm-2 mt-4">
+              <div class="input-group-prepend">
+                <div class="input-group-text">Program</div>
+              </div>
+              <input
+                type="text"
+                class="form-control"
+                id="programvalueedit"
+                disabled
+
+              />
+            </div>
+
+             <div class="input-group mb-2 mr-sm-2 mt-4">
+              <div class="input-group-prepend">
+                <div class="input-group-text">Course</div>
+              </div>
+              <input
+                type="text"
+                class="form-control"
+                id="coursevalueedit"
+                disabled
+              />
+            </div>
           <input
             type="text"
             class="form-control"
@@ -34,8 +71,9 @@
             name="courseCodeEdit"
             placeholder="course Code"
             required
+            hidden
           />
-          <label for="courseNameEdit">Course Description:</label>
+
           <input
             type="text"
             class="form-control"
@@ -43,6 +81,7 @@
             name="courseNameEdit"
             placeholder="Course Description"
             required
+            hidden
           />
           <input type="number" id="subEditID" hidden />
 
@@ -62,6 +101,7 @@
                 placeholder="Percentage"
               />
             </div>
+             <i>(The following percentage should be equal to 100)</i>
             <div class="col-md-3">
               <label for="pCP">Class Performance:</label>
               <input
@@ -74,6 +114,7 @@
                 required
               />
             </div>
+
             <div class="col-md-3">
               <label for="pAttendance">Attendance:</label>
               <input
@@ -152,6 +193,7 @@
                   class="btn btn-outline-secondary add-cp-button"
                   value="{{i.gptypeName}}"
                   type="button"
+                  disabled
                 >
                   +
                 </button>
@@ -236,27 +278,11 @@
       }
     });
 
-    $.ajax({
-      url: `/getcptypes`,
-      success: (data) => {
-        $(".cpTypes")
-          .find("option")
-          .remove()
-          .end()
-          .append(
-            '<option value="" disabled selected>Class Performance.</option>'
-          );
-        for (var i = 0; i <= data.length - 1; i++) {
-          var cpTypes = new Option(data[i].type, data[i].id);
-          $(".cpTypes").append(cpTypes);
-        }
-      },
-    });
-
     function handleCyTypesSelectChange(event) {
       var addButton = $(event.currentTarget)
         .closest(".input-group")
         .find(".add-cp-button");
+        $(".add-cp-button").prop("disabled", false);
       var selectedText = $(this).find(":selected").text();
       addButton.attr("id", $(event.currentTarget).val());
       addButton.attr("name", selectedText);
@@ -322,6 +348,8 @@
         </div>
       </div>
     </div>`);
+        $(".add-cp-button").prop("disabled", true);
+        $(".cpTypes").val("69");
       });
     });
 
@@ -337,6 +365,10 @@
       $.ajax({
         url: `editsubject/${sub_id}`,
         success: (response) => {
+            console.log(response);
+          $('#coursevalueedit').val(response.courseCode+": "+response.courseName);
+          $('#yearvalueedit').val(response.year);
+          $('#programvalueedit').val(response.course);
           $("#courseCodeEdit").val(response.courseCode);
           $("#courseNameEdit").val(response.courseName);
           $("#PrelimsCPEdit").empty();
